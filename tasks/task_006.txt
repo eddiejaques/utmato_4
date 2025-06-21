@@ -1,0 +1,16 @@
+Section 3: Authentication & User Management
+Step 1: Integrate Clerk Webhooks for User Management
+
+
+Task: Implement FastAPI endpoints to securely handle Clerk webhooks for user.created, user.updated, and user.deleted events. These webhooks will be responsible for just-in-time user creation in the application's database, updating user profiles, and handling user deletions, including associating users with companies based on email domain.
+Files:
+app/api/webhooks.py: FastAPI router for Clerk webhooks, including endpoint for POST /webhooks/clerk.
+app/schemas/clerk.py: Pydantic schemas for Clerk webhook payloads (e.g., ClerkUserPayload, ClerkWebhookEvent).
+app/services/user_service.py: Service layer for user creation, update, and deletion logic, including finding or creating Company based on user email domain.
+app/main.py: Include the webhooks router.
+app/core/security.py: Utility function for Clerk webhook signature verification.
+Step Dependencies: Section 2, Step 3
+User Instructions:
+Configure Clerk to send webhook events (specifically user.created, user.updated, user.deleted) to the /webhooks/clerk endpoint of your FastAPI application.
+Ensure your Clerk webhook secret is securely stored in the backend .env as CLERK_WEBHOOK_SECRET.
+Test user registration and profile updates via Clerk to verify that the backend receives and processes webhooks correctly, creating/updating users and companies in your database.

@@ -1,0 +1,13 @@
+Step 2: Implement Authentication Middleware and Dependencies
+
+
+Task: Create a FastAPI middleware to validate incoming Clerk JWT tokens. This middleware will extract user and company information from the valid token and attach this context to the request. Develop dependency injection functions to make the current_user and current_company available to API route handlers. Ensure the current_company_id is set for RLS enforcement.
+Files:
+app/middleware/auth_middleware.py: Custom FastAPI middleware to intercept requests, validate Clerk JWT, and set request.state.user and request.state.company. Also sets app.current_company_id in DB session for RLS.
+app/dependencies/auth.py: Dependency functions (get_current_user, get_current_company) to retrieve user and company objects from request state.
+app/main.py: Register the auth_middleware.
+app/schemas/user.py: Pydantic schema for CurrentUser (representing authenticated user).
+Step Dependencies: Section 3, Step 1
+User Instructions:
+Ensure Clerk JWT public keys are accessible to the backend for token validation (usually handled by Clerk SDK or environment config).
+Test API endpoints (e.g., a dummy /me endpoint) with and without valid Clerk tokens to verify middleware behavior and successful extraction of user/company context.

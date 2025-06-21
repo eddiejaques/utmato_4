@@ -1,4 +1,4 @@
-Section 2: Core Backend Infrastructure and Database Setup
+Section 2: Core Backend Infrastructure and Database Setup -Completed
 Step 1: Define Database Models (SQLAlchemy)
 
 

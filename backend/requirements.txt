@@ -2,7 +2,11 @@ fastapi
 uvicorn[standard]
 sqlalchemy
 pydantic
+pydantic-settings
 asyncpg
+psycopg2-binary
 python-dotenv
 python-jose[cryptography]
-passlib[bcrypt] 
+passlib[bcrypt]
+alembic
+greenlet 
