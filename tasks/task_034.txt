@@ -1,0 +1,16 @@
+Step 1: Implement Logging, Monitoring, and Error Tracking
+
+
+Task: Set up comprehensive logging for both frontend and backend applications. Integrate monitoring tools (e.g., Prometheus/Grafana or cloud-specific monitoring) to track application health, performance metrics (latency, error rates), and resource utilization. Implement error tracking (e.g., Sentry) for real-time error alerts.
+Files:
+requirements.txt: Add loguru, sentry-sdk (backend).
+package.json: Add sentry-nextjs (frontend).
+app/main.py: Configure loguru for structured logging, integrate sentry-sdk initialization.
+app/core/logging_config.py: Centralized logging configuration.
+next.config.js: Configure Sentry for Next.js.
+src/utils/errorLogger.ts: Frontend error boundary or useEffect for Sentry integration.
+Step Dependencies: Section 1, Step 1 & 2 (Project Init)
+User Instructions:
+Integrate with chosen logging/monitoring/error tracking services.
+Generate various types of errors (e.g., API errors, frontend crashes) and verify they are captured and reported by the tracking systems.
+Observe logs for application activity and health. 

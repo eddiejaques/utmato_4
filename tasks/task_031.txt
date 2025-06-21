@@ -1,0 +1,17 @@
+Step 3: Develop Frontend Usage & Basic Analytics Display
+
+
+Task: Create frontend components to display the current usage against subscription limits and basic click analytics for campaigns and individual UTM links.
+Files:
+src/store/analyticsSlice.ts: New Redux slice for analytics data (usage, clicks).
+src/components/Dashboard/UsageSummary.tsx: Component to display current campaign/UTM link count and subscription tier.
+src/components/Campaigns/CampaignAnalyticsCard.tsx: Card on campaign detail view showing total clicks for the campaign.
+src/components/UTM/UTMLinkTable.tsx: Update to display click_count for each UTM link.
+src/pages/dashboard.tsx: Integrate UsageSummary.
+src/pages/campaigns/[id].tsx: Integrate CampaignAnalyticsCard.
+src/api/analytics.ts: Frontend API service for fetching usage and click data.
+Step Dependencies: Section 12, Step 2
+User Instructions:
+View the dashboard to see current usage against limits.
+Navigate to a campaign detail page and verify campaign-level click count.
+Observe click counts in the UTM link table. 

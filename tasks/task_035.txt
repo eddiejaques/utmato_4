@@ -1,0 +1,16 @@
+Step 2: Backend Performance Optimization (Advanced)
+
+
+Task: Implement advanced backend performance optimizations. This includes:
+Asynchronous I/O: Ensure all database operations and external API calls are non-blocking using async/await.
+Connection Pooling: Configure database connection pooling for efficient resource reuse.
+Load Testing: Conduct basic load testing to identify bottlenecks and validate scalability assumptions.
+Files:
+app/db/database.py: Ensure SQLAlchemy's async engine and session are correctly configured for connection pooling.
+app/services/*.py: Review all service methods to ensure proper use of await for database/external calls.
+alembic.ini: (Optional) Configure Alembic to use async for migrations.
+Step Dependencies: Section 8, Step 2 (Caching)
+User Instructions:
+Use a load testing tool (e.g., Locust, JMeter) to simulate concurrent users and requests.
+Monitor backend metrics (CPU, memory, latency) during load tests to identify and address bottlenecks.
+Ensure asynchronous operations are correctly implemented. 

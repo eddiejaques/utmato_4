@@ -1,0 +1,16 @@
+Step 3: Assemble Molecules and Organisms
+
+
+Task: Combine atomic components to build more complex UI elements (molecules) and then integrate these into larger, self-contained sections (organisms) that represent distinct parts of the interface. Examples include SearchBox, FormGroup (label + input), UTMParameterInputGroup, CampaignCard, Alert/Toast (molecules), and Header, Sidebar, CampaignListContainer, UTMBuilderForm (organisms).
+Files:
+src/components/molecules/SearchBox.tsx: Combines Input and Button (or Icon).
+src/components/molecules/FormGroup.tsx: Combines Label and Input/Textarea.
+src/components/molecules/UTMParameterInputGroup.tsx: Combines multiple Input components for UTM parameters.
+src/components/molecules/CampaignCard.tsx: Displays a campaign with Badge for status, Typography for name/desc.
+src/components/molecules/Alert.tsx: For toasts/banners, uses Icon and Typography.
+src/components/organisms/Header.tsx: Combines Icon (logo), SearchBox, UserProfile (molecule).
+src/components/organisms/Sidebar.tsx: Contains navigation links (using Button or Link atoms) and possibly user info.
+src/components/organisms/CampaignListContainer.tsx: Orchestrates CampaignList molecule, SearchBox, and pagination controls.
+src/components/organisms/UTMBuilderForm.tsx: The full UTM generation form, combining FormGroups, UTMParameterInputGroup, Button, URLPreview.
+Step Dependencies: Section 7, Step 2
+User Instructions: Verify that these molecular and organism components are correctly assembled, function as expected within their respective contexts, and maintain visual consistency from the atomic layer. 

@@ -1,0 +1,12 @@
+Step 2: Integrate External URL Validation Service
+
+
+Task: Enhance the validate_url endpoint to integrate with a robust external URL validation service (e.g., Google Safe Browse API, or another reputable service). This provides advanced checks for phishing, malware, and other security threats. Implement secure API key management, robust error handling for service timeouts/rate limiting, and provide a manual override option for trusted domains.
+Files:
+requirements.txt: Add required library for the chosen external API (e.g., google-cloud-safeBrowse if using GCP).
+app/core/external_api_clients.py: New module for clients interacting with external services (e.g., GoogleSafeBrowseClient).
+app/services/utm_service.py: Update validate_url method to call the external service via external_api_clients. Implement retry logic and fallbacks.
+app/core/config.py: Add configuration for external API keys/endpoints (e.g., GOOGLE_SAFE_Browse_API_KEY).
+app/schemas/utm.py: Potentially update URLValidationResult to include more detailed external service feedback.
+Step Dependencies: Section 5, Step 1 (URL Validation Endpoint)
+User Instructions: Obtain necessary API keys for the chosen external URL validation service. Test the URL validation endpoint with various URLs (including known unsafe ones) to ensure the external service integration is working as expected and providing accurate threat intelligence. 

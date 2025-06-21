@@ -1,0 +1,15 @@
+Step 1: Implement Authentication and Authorization Enhancements (RBAC)
+
+
+Task: Refine the authentication and authorization mechanisms. This includes:
+Role-Based Access Control (RBAC): Implement fine-grained access control based on the UserRole enum (Manager, Member, Viewer) defined in app/models/user.py. Apply decorators or dependencies to API endpoints to restrict access based on required roles.
+Secure JWT Token Handling: Ensure JWT tokens are handled securely (e.g., HttpOnly cookies for refresh tokens, short-lived access tokens).
+Automatic Token Refresh: Implement a mechanism for seamless token refresh on the frontend to maintain user sessions without requiring re-login.
+Files:
+app/dependencies/auth.py: Enhance get_current_user to include role information. Add new dependencies or decorators like require_role(role: UserRole).
+app/api/*.py: Apply @router.get(..., dependencies=[Depends(require_role(UserRole.MANAGER))]) to restrict access where needed.
+app/middleware/auth_middleware.py: Refine token validation and handling.
+src/store/authSlice.ts: Update to manage token refresh logic.
+src/api/auth.ts: Implement token refresh calls to a backend refresh endpoint (if applicable, or handle Clerk's session refresh).
+Step Dependencies: Section 3, Step 2 (Authentication Middleware), Section 8, Step 1 (Row-Level Security)
+User Instructions: Create users with different roles (Manager, Member, Viewer). Test all API endpoints and UI features to ensure correct access control is enforced for each role and that users cannot perform actions beyond their permissions. Verify seamless session persistence via token refresh. 

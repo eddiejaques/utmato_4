@@ -1,0 +1,15 @@
+Step 3: Set up End-to-End (E2E) Testing
+
+
+Task: Implement end-to-end tests to simulate full user journeys through the application (e.g., user signup -> create campaign -> generate UTM link -> search). Utilize Playwright for robust browser automation.
+Files:
+package.json: Add playwright.
+e2e/auth.spec.ts: E2E tests for user authentication flow.
+e2e/campaigns.spec.ts: E2E tests for campaign creation and management.
+e2e/utm.spec.ts: E2E tests for UTM link generation and usage.
+playwright.config.ts: Playwright configuration.
+Step Dependencies: All functional sections (Auth, Campaigns, UTM, Search, UI)
+User Instructions:
+Install Playwright browsers (npx playwright install).
+Run E2E tests (npx playwright test).
+Review test results and screenshots/videos for any failures. 

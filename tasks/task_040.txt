@@ -1,0 +1,17 @@
+Step 1: Configure Deployment for Frontend and Backend
+
+
+Task: Set up deployment pipelines for the Next.js frontend (e.g., Vercel, Netlify) and the FastAPI backend (e.g., Railway, Render, Fly.io, or AWS EC2/ECS). Configure environment variables, domain mapping, and ensure secure production deployments.
+Files:
+vercel.json (if using Vercel): Frontend deployment configuration.
+railway.json or Dockerfile for backend: Backend deployment configuration.
+nginx.conf (if self-hosting with Nginx): Reverse proxy configuration.
+Procfile (if using platforms like Render/Heroku).
+.github/workflows/deploy-frontend.yml: (For CI/CD, optional in this step, but foundational).
+.github/workflows/deploy-backend.yml: (For CI/CD, optional in this step, but foundational).
+Step Dependencies: All previous steps (fully functional application)
+User Instructions:
+Choose your deployment platforms.
+Follow platform-specific guides to link repositories and configure environment variables.
+Perform an initial manual deployment of both frontend and backend.
+Verify the application is accessible and functional in a production environment. 

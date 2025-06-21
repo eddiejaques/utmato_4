@@ -1,0 +1,11 @@
+Step 1: Implement Search API Endpoints
+
+
+Task: Develop FastAPI endpoints for company-scoped full-text search across campaigns and UTM links. This includes a general search endpoint (/api/search) with filtering and sorting options, and a dedicated reverse UTM lookup endpoint (/api/search/reverse-utm) to identify existing UTM links from a given URL. Utilize PostgreSQL's full-text search capabilities (e.g., tsquery, tsvector).
+Files:
+app/api/search.py: FastAPI router for search operations (GET /search and POST /search/reverse-utm).
+app/schemas/search.py: Pydantic schemas for SearchQueryRequest, SearchResultResponse (e.g., containing lists of CampaignResponse and UTMLinkResponse), ReverseUTMLookupRequest, and ReverseUTMLookupResponse.
+app/services/search_service.py: Service layer for search logic, including full-text search queries against PostgreSQL, company-scoped filtering, and reverse UTM lookup logic (parsing URL and matching parameters).
+app/main.py: Include the search router.
+Step Dependencies: Section 2, Step 3 (RLS), Section 4, Step 1 (Campaign CRUD API), Section 5, Step 2 (UTM Link Generation API)
+User Instructions: Test the /api/search and /api/search/reverse-utm endpoints with various queries and filters using an API client to ensure accurate and relevant results. Verify that search is company-scoped. 

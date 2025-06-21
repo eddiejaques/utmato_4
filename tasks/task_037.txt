@@ -1,0 +1,11 @@
+Step 1: Implement Backend Unit and Integration Tests
+
+
+Task: Write comprehensive unit tests for core backend services and integration tests for API endpoints. Utilize pytest for testing and mock database interactions where appropriate for unit tests. Ensure test coverage for critical business logic and API responses.
+Files:
+requirements.txt: Add pytest, pytest-asyncio, httpx (for API testing), pytest-mock (for mocking).
+tests/backend/conftest.py: Pytest fixtures (e.g., test database session, test client).
+tests/backend/unit/test_*.py: Unit tests for user_service.py, campaign_service.py, utm_service.py, etc.
+tests/backend/integration/test_api_*.py: Integration tests for api/auth.py, api/campaigns.py, api/utm.py, etc.
+Step Dependencies: Section 1, Step 2 (Backend Init), All backend API sections.
+User Instructions: Run backend tests (pytest tests/backend). Ensure tests pass and review test reports for coverage. 

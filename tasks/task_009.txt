@@ -1,0 +1,11 @@
+Step 1: Implement Campaign CRUD API Endpoints
+
+
+Task: Develop FastAPI endpoints for creating, reading (list and detail), updating, and deleting campaigns. These endpoints must enforce company-scoped data isolation through middleware and RLS, and handle unique campaign_id generation within a company.
+Files:
+app/api/campaigns.py: FastAPI router for campaign CRUD operations (GET /campaigns, POST /campaigns, GET /campaigns/{id}, PUT /campaigns/{id}, DELETE /campaigns/{id}).
+app/schemas/campaign.py: Pydantic schemas for CampaignCreate, CampaignUpdate, CampaignResponse, and CampaignFilter models.
+app/services/campaign_service.py: Service layer containing the business logic for campaign operations, including company-scoped filtering, unique campaign_id generation (e.g., UUID or slug), and database interactions.
+app/main.py: Include the campaigns router.
+Step Dependencies: Section 2, Step 3 (RLS), Section 3, Step 2 (Authentication Middleware)
+User Instructions: Test the API endpoints using an API client (e.g., Postman or Insomnia) to ensure proper functionality, data isolation (e.g., a user from Company A cannot see/modify Company B's campaigns), and correct response formats.

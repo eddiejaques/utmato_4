@@ -1,0 +1,19 @@
+Step 3: Develop Frontend Campaign Management UI (List & Forms)
+
+
+Task: Create the frontend components and Redux logic for managing campaigns. This includes a list view to display all company campaigns with filtering and sorting options, a form for creating new campaigns, and forms for editing existing campaign details. Implement optimistic UI updates with error rollback for a smooth user experience.
+Files:
+src/store/campaignSlice.ts: Redux slice for campaign state management, including actions for CRUD operations (createCampaign, fetchCampaigns, updateCampaign, deleteCampaign), status updates, and duplication.
+src/components/Campaigns/CampaignList.tsx: Component to display a list of campaigns, possibly using a CampaignCard or CampaignTableRow component, with filtering/sorting UI.
+src/components/Campaigns/CampaignForm.tsx: Reusable form component for creating and editing campaigns, handling various campaign metadata fields.
+src/pages/dashboard.tsx: Main dashboard page to integrate CampaignList and provide access to campaign creation.
+src/pages/campaigns/[id].tsx: Page to display individual campaign details and host edit/delete functionalities.
+src/api/campaigns.ts: Frontend API service for campaign-related calls to the backend.
+src/components/Campaigns/CampaignActions.tsx: UI components for status changes and duplication buttons (e.g., dropdown menu).
+Step Dependencies: Section 4, Step 2
+User Instructions:
+Navigate to the dashboard and verify the campaign list loads correctly.
+Use the "Create Campaign" form to add a new campaign and confirm it appears in the list.
+Navigate to a campaign's detail page, edit its details, and verify updates persist.
+Test changing campaign statuses and duplicating campaigns through the UI.
+Test deleting a campaign with a confirmation prompt. 

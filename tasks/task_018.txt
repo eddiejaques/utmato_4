@@ -1,0 +1,17 @@
+Step 2: Develop Atomic Components (Atoms)
+
+
+Task: Create the foundational UI components (atoms) as per the Atomic Design methodology. These components should be highly reusable, accessible (WCAG 2.1 AA), and strictly adhere to the established design system. Focus on creating Button, Input (text, number, email, password), Textarea, Icon, Badge, Spinner, Checkbox, Radio, and Toggle components.
+Files:
+src/components/atoms/Button.tsx: Reusable button component with variants (primary, secondary, outlined, text, disabled) and sizes.
+src/components/atoms/Input.tsx: Reusable input field component (accepting type prop), handling focus, disabled states.
+src/components/atoms/Textarea.tsx: Reusable textarea component.
+src/components/atoms/Icon.tsx: Component for displaying SVG icons, allowing size and color props.
+src/components/atoms/Badge.tsx: Component for small informational badges (e.g., campaign status).
+src/components/atoms/Spinner.tsx: Loading spinner component for various sizes.
+src/components/atoms/Checkbox.tsx: Accessible checkbox component.
+src/components/atoms/Radio.tsx: Accessible radio button component.
+src/components/atoms/Toggle.tsx: Accessible toggle switch component.
+src/utils/a11y.ts: (Optional) Helper functions for accessibility (e.g., aria-label generators).
+Step Dependencies: Section 7, Step 1
+User Instructions: Create a Storybook (or similar component documentation tool) environment to showcase and test these atomic components in isolation, ensuring they meet design and accessibility standards. 

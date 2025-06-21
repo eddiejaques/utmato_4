@@ -1,0 +1,13 @@
+Step 1: Implement User Invitation and Role Assignment Backend
+
+
+Task: Implement backend API endpoints and services to allow a Manager to invite new users to their company and assign them a specific UserRole (Member, Viewer). This involves generating invitation tokens or links and handling the acceptance process.
+Files:
+app/api/invitations.py: New FastAPI router for invitation management (POST /invitations/invite, GET /invitations/accept).
+app/schemas/invitation.py: Pydantic schemas for InviteUserRequest, InvitationResponse.
+app/services/invitation_service.py: Service logic for creating invitation tokens, sending emails (placeholder for now), and processing invitation acceptance.
+app/models/invitation.py: New SQLAlchemy model for storing invitation tokens (email, token, role, expires_at, company_id).
+Step Dependencies: Section 10, Step 1 (RBAC), Section 11, Step 1 (User Management)
+User Instructions:
+As a Manager, use an API client to send an invitation to a new user email with a specific role.
+Simulate the invitation acceptance process (e.g., call /invitations/accept with the token) and verify the new user is added to the company with the correct role. 
