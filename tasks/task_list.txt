@@ -1,0 +1,661 @@
+MANUS-
+UTM Campaign Management Platform - Comprehensive Task Plan
+This document outlines a highly-detailed, step-wise task plan for developing the UTM Campaign Management Platform, integrating feedback for enhanced granularity and comprehensiveness, based on the original technical specification.
+
+Section 1: Project Setup and Initial Configuration
+Step 1: Initialize Frontend Project (Next.js)
+
+
+Task: Set up a new Next.js project with TypeScript, TailwindCSS, and Redux Toolkit. This involves creating the basic project structure, configuring the necessary dependencies, and setting up the initial Redux store and Clerk provider.
+Files:
+package.json: Add Next.js, React, Redux Toolkit, TailwindCSS, Framer Motion, and TypeScript dependencies.
+tsconfig.json: Configure TypeScript settings for the Next.js project.
+tailwind.config.js: Configure TailwindCSS for styling.
+postcss.config.js: Configure PostCSS for TailwindCSS.
+next.config.js: Basic Next.js configuration.
+src/app/layout.tsx: Root layout for the Next.js application, integrating ClerkProvider and Redux Provider.
+src/app/page.tsx: Initial landing page component.
+src/app/globals.css: Global CSS file for TailwindCSS imports.
+src/store/index.ts: Redux store configuration.
+src/store/authSlice.ts: Initial Redux slice for authentication (placeholder).
+.env.example: Frontend environment variables (e.g., NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY).
+Step Dependencies: None
+User Instructions: Ensure Node.js 18+ is installed. Run npx create-next-app@latest and select TypeScript, Tailwind CSS, src/ directory, App Router. Install Redux Toolkit and Framer Motion. Create .env based on .env.example.
+Step 2: Initialize Backend Project (FastAPI)
+
+
+Task: Set up a new FastAPI project with Python 3.11+, Pydantic, SQLAlchemy (async), and Uvicorn. This includes creating the basic project structure, setting up a virtual environment, installing core dependencies, and creating a main application file with initial configuration settings.
+Files:
+requirements.txt: List FastAPI, Uvicorn, SQLAlchemy, Pydantic, Psycopg2 (or asyncpg for async PostgreSQL), python-dotenv, python-jose, passlib.
+main.py: Main FastAPI application instance and entry point.
+app/core/config.py: Configuration settings using Pydantic BaseSettings (e.g., database URL, Clerk secrets).
+app/db/database.py: SQLAlchemy async engine and session setup.
+app/db/base.py: Base for declarative models, to be imported by models.
+.env.example: Backend environment variables (e.g., DATABASE_URL, CLERK_SECRET_KEY).
+Step Dependencies: None
+User Instructions: Create a virtual environment (python3.11 -m venv venv), activate it (source venv/bin/activate), and install dependencies (pip install -r requirements.txt). Create .env based on .env.example.
+Section 2: Core Backend Infrastructure and Database Setup
+Step 1: Define Database Models (SQLAlchemy)
+
+
+Task: Translate the data models from the technical specification (Companies, Users, Campaigns, UTM_Links) into SQLAlchemy ORM models. Implement relationships (one-to-many, many-to-one), define table schemas, including UUID primary keys, foreign keys, and JSONB fields for flexible data storage (e.g., settings, profile_data).
+Files:
+app/models/company.py: SQLAlchemy model for the companies table.
+app/models/user.py: SQLAlchemy model for the users table, including clerk_id and role (e.g., Enum for Manager, Member, Viewer).
+app/models/campaign.py: SQLAlchemy model for the campaigns table, including company_id, status (Enum), budget_info (JSONB).
+app/models/utm_link.py: SQLAlchemy model for the utm_links table, including campaign_id, utm_source, utm_medium, utm_campaign, utm_content, utm_term, generated_url, click_count.
+app/db/base.py: Ensure all new models are imported here for Alembic autodiscovery.
+app/schemas/enums.py: Define Python Enums for UserRole and CampaignStatus.
+Step Dependencies: Section 1, Step 2
+User Instructions: Review the created SQLAlchemy models (app/models/*.py) to ensure they accurately reflect the database schema and relationships described in the technical specification.
+Step 2: Implement Database Migrations (Alembic)
+
+
+Task: Set up Alembic for declarative database migrations to manage schema changes effectively. Initialize Alembic, configure it to work with the SQLAlchemy models, and create the initial migration script to generate all defined tables and their relationships in the PostgreSQL database.
+Files:
+alembic.ini: Alembic configuration file (ensure script_location, sqlalchemy.url are correctly set).
+env.py: Alembic environment script (update to connect to the async SQLAlchemy engine and include all models from app.db.base).
+versions/xxxxxxxxxxxx_initial_migration.py: Generated migration script for initial table creation (will be created by Alembic).
+Step Dependencies: Section 2, Step 1
+User Instructions:
+Initialize Alembic within your backend root: alembic init -t async migrations.
+Update alembic.ini and migrations/env.py according to SQLAlchemy async setup.
+Generate the first migration: alembic revision --autogenerate -m "Initial database setup".
+Apply the migration to your Supabase PostgreSQL database: alembic upgrade head.
+Verify tables are created in Supabase.
+Step 3: Implement Row-Level Security (RLS) in PostgreSQL
+
+
+Task: Configure PostgreSQL to enforce row-level security (RLS) policies on the companies, users, campaigns, and utm_links tables. RLS will ensure that users can only access data associated with their company_id, providing strong data isolation.
+Files:
+alembic/versions/xxxxxxxxxxxx_add_rls_policies.py: New Alembic migration script to:
+Enable RLS on companies, users, campaigns, utm_links tables.
+Create RLS policies (e.g., FOR SELECT USING (company_id = current_setting('app.current_company_id')::uuid)).
+app/middleware/auth_middleware.py: (Will be created/updated in Section 3) Add logic to set app.current_company_id in the PostgreSQL session based on the authenticated user's company.
+Step Dependencies: Section 2, Step 2
+User Instructions:
+Generate a new Alembic migration for RLS policies: alembic revision --autogenerate -m "Add Row-Level Security policies".
+Manually review and refine the generated RLS policies in the migration file to ensure they correctly enforce company_id based access.
+Apply the migration: alembic upgrade head.
+Verify that data access is correctly restricted by company ID using direct SQL queries from different user contexts (e.g., using Supabase's SQL editor).
+Section 3: Authentication & User Management
+Step 1: Integrate Clerk Webhooks for User Management
+
+
+Task: Implement FastAPI endpoints to securely handle Clerk webhooks for user.created, user.updated, and user.deleted events. These webhooks will be responsible for just-in-time user creation in the application's database, updating user profiles, and handling user deletions, including associating users with companies based on email domain.
+Files:
+app/api/webhooks.py: FastAPI router for Clerk webhooks, including endpoint for POST /webhooks/clerk.
+app/schemas/clerk.py: Pydantic schemas for Clerk webhook payloads (e.g., ClerkUserPayload, ClerkWebhookEvent).
+app/services/user_service.py: Service layer for user creation, update, and deletion logic, including finding or creating Company based on user email domain.
+app/main.py: Include the webhooks router.
+app/core/security.py: Utility function for Clerk webhook signature verification.
+Step Dependencies: Section 2, Step 3
+User Instructions:
+Configure Clerk to send webhook events (specifically user.created, user.updated, user.deleted) to the /webhooks/clerk endpoint of your FastAPI application.
+Ensure your Clerk webhook secret is securely stored in the backend .env as CLERK_WEBHOOK_SECRET.
+Test user registration and profile updates via Clerk to verify that the backend receives and processes webhooks correctly, creating/updating users and companies in your database.
+Step 2: Implement Authentication Middleware and Dependencies
+
+
+Task: Create a FastAPI middleware to validate incoming Clerk JWT tokens. This middleware will extract user and company information from the valid token and attach this context to the request. Develop dependency injection functions to make the current_user and current_company available to API route handlers. Ensure the current_company_id is set for RLS enforcement.
+Files:
+app/middleware/auth_middleware.py: Custom FastAPI middleware to intercept requests, validate Clerk JWT, and set request.state.user and request.state.company. Also sets app.current_company_id in DB session for RLS.
+app/dependencies/auth.py: Dependency functions (get_current_user, get_current_company) to retrieve user and company objects from request state.
+app/main.py: Register the auth_middleware.
+app/schemas/user.py: Pydantic schema for CurrentUser (representing authenticated user).
+Step Dependencies: Section 3, Step 1
+User Instructions:
+Ensure Clerk JWT public keys are accessible to the backend for token validation (usually handled by Clerk SDK or environment config).
+Test API endpoints (e.g., a dummy /me endpoint) with and without valid Clerk tokens to verify middleware behavior and successful extraction of user/company context.
+Step 3: Develop Frontend Authentication Flow
+
+
+Task: Implement the frontend authentication flow using Clerk's Next.js SDK, integrating with Redux Toolkit for state management. This includes handling user login/logout, displaying user profiles, and managing session tokens. Implement optimistic UI updates and robust error handling.
+Files:
+src/store/authSlice.ts: Update Redux slice to handle authentication state, currentUser data, currentCompany information, and actions for login/logout (e.g., setAuthStatus, setUser, setCompany).
+src/components/Auth/SignInPage.tsx: Component for user sign-in using Clerk's UI components.
+src/components/Auth/SignUpPage.tsx: Component for user sign-up.
+src/components/Auth/UserProfile.tsx: Component to display and allow basic updates to user profile (e.g., name).
+src/api/auth.ts: Frontend API service for authentication-related calls to the backend (e.g., exchanging Clerk session for custom backend session if needed, or simply for profile retrieval).
+src/app/middleware/reduxMiddleware.ts: (Optional) Middleware for handling async auth actions and token refresh.
+Step Dependencies: Section 3, Step 2
+User Instructions:
+Configure Clerk frontend SDK with your NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY in the frontend .env.
+Test user sign-up and login flows on the frontend.
+Verify that upon successful login, user and company data is loaded into the Redux store.
+Section 4: Campaign Creation & Management
+Step 1: Implement Campaign CRUD API Endpoints
+
+
+Task: Develop FastAPI endpoints for creating, reading (list and detail), updating, and deleting campaigns. These endpoints must enforce company-scoped data isolation through middleware and RLS, and handle unique campaign_id generation within a company.
+Files:
+app/api/campaigns.py: FastAPI router for campaign CRUD operations (GET /campaigns, POST /campaigns, GET /campaigns/{id}, PUT /campaigns/{id}, DELETE /campaigns/{id}).
+app/schemas/campaign.py: Pydantic schemas for CampaignCreate, CampaignUpdate, CampaignResponse, and CampaignFilter models.
+app/services/campaign_service.py: Service layer containing the business logic for campaign operations, including company-scoped filtering, unique campaign_id generation (e.g., UUID or slug), and database interactions.
+app/main.py: Include the campaigns router.
+Step Dependencies: Section 2, Step 3 (RLS), Section 3, Step 2 (Authentication Middleware)
+User Instructions: Test the API endpoints using an API client (e.g., Postman or Insomnia) to ensure proper functionality, data isolation (e.g., a user from Company A cannot see/modify Company B's campaigns), and correct response formats.
+Step 2: Implement Campaign Status Management and Duplication (Backend)
+
+
+Task: Extend the backend campaign_service and API to support updating campaign statuses (Draft, Active, Paused, Completed, Archived) and duplicating existing campaigns. Ensure these operations respect company-scoping and authorization. Duplication should create a deep copy of campaign data (excluding associated UTM links initially, which will be handled in a later step if needed).
+Files:
+app/api/campaigns.py: Add endpoints like PUT /campaigns/{id}/status (or include status in PUT /campaigns/{id}) and POST /campaigns/{id}/duplicate.
+app/schemas/campaign.py: Update CampaignUpdate to include status, and define CampaignDuplicateRequest if parameters are needed.
+app/services/campaign_service.py: Add business logic for update_campaign_status and duplicate_campaign, ensuring all relevant campaign metadata is copied accurately and a new unique ID is generated for the duplicated campaign.
+Step Dependencies: Section 4, Step 1
+User Instructions: Use an API client to test campaign status changes and duplication. Verify that a duplicated campaign has a new ID and correct copied data, and that status updates persist.
+Step 3: Develop Frontend Campaign Management UI (List & Forms)
+
+
+Task: Create the frontend components and Redux logic for managing campaigns. This includes a list view to display all company campaigns with filtering and sorting options, a form for creating new campaigns, and forms for editing existing campaign details. Implement optimistic UI updates with error rollback for a smooth user experience.
+Files:
+src/store/campaignSlice.ts: Redux slice for campaign state management, including actions for CRUD operations (createCampaign, fetchCampaigns, updateCampaign, deleteCampaign), status updates, and duplication.
+src/components/Campaigns/CampaignList.tsx: Component to display a list of campaigns, possibly using a CampaignCard or CampaignTableRow component, with filtering/sorting UI.
+src/components/Campaigns/CampaignForm.tsx: Reusable form component for creating and editing campaigns, handling various campaign metadata fields.
+src/pages/dashboard.tsx: Main dashboard page to integrate CampaignList and provide access to campaign creation.
+src/pages/campaigns/[id].tsx: Page to display individual campaign details and host edit/delete functionalities.
+src/api/campaigns.ts: Frontend API service for campaign-related calls to the backend.
+src/components/Campaigns/CampaignActions.tsx: UI components for status changes and duplication buttons (e.g., dropdown menu).
+Step Dependencies: Section 4, Step 2
+User Instructions:
+Navigate to the dashboard and verify the campaign list loads correctly.
+Use the "Create Campaign" form to add a new campaign and confirm it appears in the list.
+Navigate to a campaign's detail page, edit its details, and verify updates persist.
+Test changing campaign statuses and duplicating campaigns through the UI.
+Test deleting a campaign with a confirmation prompt.
+Section 5: UTM Link Generation
+Step 1: Implement URL Validation Endpoint
+
+
+Task: Create a FastAPI endpoint to robustly validate destination URLs. This endpoint should perform comprehensive checks including schema validation (http/https), domain format, DNS lookup validation, and basic security checks for known malicious domains (e.g., using a simple blocklist or integrating with a free lookup API if available and simple).
+Files:
+app/api/utm.py: FastAPI router for UTM-related operations, including POST /utm/validate-url.
+app/schemas/utm.py: Pydantic schemas for URLValidationRequest (e.g., url: HttpUrl) and URLValidationResult (e.g., is_valid: bool, message: str).
+app/services/utm_service.py: Service layer containing the URL validation logic (e.g., using validators library for basic URL structure, socket for DNS lookup).
+app/main.py: Include the utm router.
+Step Dependencies: Section 2, Step 1 (Backend Setup)
+User Instructions: Test the /api/utm/validate-url endpoint with various URLs using an API client:
+Valid URLs (https://example.com/path?query=val)
+Invalid formats (not-a-url, ftp://invalid)
+Non-existent domains (https://nonexistentdomain123456.com)
+Verify that correct validation results and messages are returned.
+Step 2: Implement Single and Bulk UTM Link Generation Endpoints
+
+
+Task: Develop FastAPI endpoints for generating single and multiple UTM links. These endpoints should handle parameter parsing, enforce business rules (e.g., utm_source and utm_medium are required), construct the final generated URL, store links in the database with correct campaign association and created_by user, and return the generated UTM links. Bulk generation should include batch processing and detailed error reporting for partial failures.
+Files:
+app/api/utm.py: Add endpoints for POST /utm/generate (single) and POST /utm/generate-bulk (bulk).
+app/schemas/utm.py: Add Pydantic schemas for UTMLinkCreate (for single link), UTMLinkResponse, UTMBulkCreateRequest (list of UTMLinkCreate), and UTMBulkCreateResponse (list of results, including errors).
+app/services/utm_service.py: Add business logic for generate_single_utm_link and generate_bulk_utm_links, including constructing the URL, saving to DB, and handling errors for bulk operations.
+app/utils/utm_builder.py: Helper function for consistent URL parameter construction.
+Step Dependencies: Section 5, Step 1; Section 4, Step 1 (Campaign CRUD API)
+User Instructions:
+Test POST /api/utm/generate with valid campaign IDs and UTM parameters. Verify the generated URL and database entry.
+Test POST /api/utm/generate-bulk with a mix of valid and invalid UTM link requests. Verify that valid links are created and invalid ones are reported in the response.
+Check that utm_source and utm_medium are enforced as required.
+Step 3: Develop Frontend UTM Builder Component
+
+
+Task: Create a frontend component for building UTM links. This component should allow users to input a base URL, select UTM parameters (source, medium, campaign, content, term) with suggestions (e.g., based on past inputs or campaign context), validate the URL in real-time using the backend endpoint, display a live preview of the generated URL, and provide functionality to generate the link and copy it to the clipboard.
+Files:
+src/store/utmSlice.ts: Redux slice for UTM builder state management, including actions for URL validation, link generation, and managing parameter suggestions.
+src/components/UTM/UTMBuilderModal.tsx: Main component for the UTM builder UI, typically presented as a modal or slide-out.
+src/components/UTM/UTMParameterInput.tsx: Reusable component for UTM parameter input fields, potentially with autocomplete/suggestions.
+src/components/UTM/URLPreview.tsx: Component to display a live preview of the generated URL as parameters are entered.
+src/api/utm.ts: Frontend API service for UTM-related calls to the backend (validate-url, generate, generate-bulk).
+src/pages/campaigns/[id].tsx: Integrate the UTMBuilderModal into the campaign detail page, likely accessible via a button.
+src/utils/clipboard.ts: Utility for copying text to clipboard.
+Step Dependencies: Section 5, Step 2
+User Instructions:
+Navigate to a campaign detail page and open the UTM builder.
+Enter a base URL and various UTM parameters. Observe real-time validation and the live URL preview.
+Generate a UTM link and verify it appears in the campaign's UTM link list (after refresh or optimistic update).
+Test the "copy to clipboard" functionality.
+Verify parameter suggestions, if implemented, are helpful.
+Section 6: Search & Discovery
+Step 1: Implement Search API Endpoints
+
+
+Task: Develop FastAPI endpoints for company-scoped full-text search across campaigns and UTM links. This includes a general search endpoint (/api/search) with filtering and sorting options, and a dedicated reverse UTM lookup endpoint (/api/search/reverse-utm) to identify existing UTM links from a given URL. Utilize PostgreSQL's full-text search capabilities (e.g., tsquery, tsvector).
+Files:
+app/api/search.py: FastAPI router for search operations (GET /search and POST /search/reverse-utm).
+app/schemas/search.py: Pydantic schemas for SearchQueryRequest, SearchResultResponse (e.g., containing lists of CampaignResponse and UTMLinkResponse), ReverseUTMLookupRequest, and ReverseUTMLookupResponse.
+app/services/search_service.py: Service layer for search logic, including full-text search queries against PostgreSQL, company-scoped filtering, and reverse UTM lookup logic (parsing URL and matching parameters).
+app/main.py: Include the search router.
+Step Dependencies: Section 2, Step 3 (RLS), Section 4, Step 1 (Campaign CRUD API), Section 5, Step 2 (UTM Link Generation API)
+User Instructions: Test the /api/search and /api/search/reverse-utm endpoints with various queries and filters using an API client to ensure accurate and relevant results. Verify that search is company-scoped.
+Step 2: Develop Frontend Search Interface
+
+
+Task: Create the frontend components and Redux logic for the search interface. This includes a prominent search bar, filters for campaigns/UTM links (e.g., by status, source), display of search results categorized by Campaigns and UTM links, and the ability to perform reverse UTM lookups directly from the search interface. Implement pagination and a display of recent searches.
+Files:
+src/store/searchSlice.ts: Redux slice for search state management, including actions for performing searches, handling filters, setting pagination, and managing recentSearches history.
+src/components/Search/SearchBar.tsx: Component for the main search input field, potentially with a dropdown for quick access to reverse lookup or recent searches.
+src/components/Search/SearchResultsDisplay.tsx: Component to render categorized search results (e.g., list of campaign cards, table of UTM link entries).
+src/components/Search/SearchFilters.tsx: Component for applying filters to search results (e.g., radio buttons, checkboxes, date pickers).
+src/components/Search/ReverseUTMLookupForm.tsx: Component for the dedicated URL lookup feature within search.
+src/components/Search/RecentSearches.tsx: Component to display and manage recent search queries.
+src/pages/search/index.tsx: Dedicated page to host the comprehensive search interface.
+src/api/search.ts: Frontend API service for search-related calls to the backend.
+Step Dependencies: Section 6, Step 1
+User Instructions: Verify that the search interface functions correctly, displaying relevant results for both campaigns and UTM links. Test filters, pagination, and the reverse UTM lookup. Confirm that recent searches are tracked and displayed.
+Section 7: User Interface Specifications (Design System & Atomic Design)
+Step 1: Establish Design System Foundations (Color, Typography, Spacing)
+
+
+Task: Define and implement the core design system elements based on the provided specifications. This includes setting up a comprehensive color palette (Primary, Secondary, Neutral, Accent, Semantic colors), typography scales (font families, sizes, weights, line heights for headings, body text, captions), and a consistent spacing system (e.g., based on a 4px or 8px grid).
+Files:
+tailwind.config.js: Extend Tailwind's default theme with custom colors, fontFamily, fontSize, spacing, and borderRadius values to reflect the design system.
+src/styles/base.css: Define base typography styles, global resets (e.g., box-sizing), and import Tailwind's base, components, and utilities.
+src/styles/design-tokens.css: (Optional, for non-Tailwind specific tokens) Define CSS variables for design tokens if a more granular approach is needed for certain elements.
+Step Dependencies: Section 1, Step 1 (Frontend Project Initialization)
+User Instructions: Verify that the defined design tokens are correctly applied across the application by inspecting elements in the browser developer tools. Ensure visual consistency for colors, fonts, and spacing.
+Step 2: Develop Atomic Components (Atoms)
+
+
+Task: Create the foundational UI components (atoms) as per the Atomic Design methodology. These components should be highly reusable, accessible (WCAG 2.1 AA), and strictly adhere to the established design system. Focus on creating Button, Input (text, number, email, password), Textarea, Icon, Badge, Spinner, Checkbox, Radio, and Toggle components.
+Files:
+src/components/atoms/Button.tsx: Reusable button component with variants (primary, secondary, outlined, text, disabled) and sizes.
+src/components/atoms/Input.tsx: Reusable input field component (accepting type prop), handling focus, disabled states.
+src/components/atoms/Textarea.tsx: Reusable textarea component.
+src/components/atoms/Icon.tsx: Component for displaying SVG icons, allowing size and color props.
+src/components/atoms/Badge.tsx: Component for small informational badges (e.g., campaign status).
+src/components/atoms/Spinner.tsx: Loading spinner component for various sizes.
+src/components/atoms/Checkbox.tsx: Accessible checkbox component.
+src/components/atoms/Radio.tsx: Accessible radio button component.
+src/components/atoms/Toggle.tsx: Accessible toggle switch component.
+src/utils/a11y.ts: (Optional) Helper functions for accessibility (e.g., aria-label generators).
+Step Dependencies: Section 7, Step 1
+User Instructions: Create a Storybook (or similar component documentation tool) environment to showcase and test these atomic components in isolation, ensuring they meet design and accessibility standards.
+Step 3: Assemble Molecules and Organisms
+
+
+Task: Combine atomic components to build more complex UI elements (molecules) and then integrate these into larger, self-contained sections (organisms) that represent distinct parts of the interface. Examples include SearchBox, FormGroup (label + input), UTMParameterInputGroup, CampaignCard, Alert/Toast (molecules), and Header, Sidebar, CampaignListContainer, UTMBuilderForm (organisms).
+Files:
+src/components/molecules/SearchBox.tsx: Combines Input and Button (or Icon).
+src/components/molecules/FormGroup.tsx: Combines Label and Input/Textarea.
+src/components/molecules/UTMParameterInputGroup.tsx: Combines multiple Input components for UTM parameters.
+src/components/molecules/CampaignCard.tsx: Displays a campaign with Badge for status, Typography for name/desc.
+src/components/molecules/Alert.tsx: For toasts/banners, uses Icon and Typography.
+src/components/organisms/Header.tsx: Combines Icon (logo), SearchBox, UserProfile (molecule).
+src/components/organisms/Sidebar.tsx: Contains navigation links (using Button or Link atoms) and possibly user info.
+src/components/organisms/CampaignListContainer.tsx: Orchestrates CampaignList molecule, SearchBox, and pagination controls.
+src/components/organisms/UTMBuilderForm.tsx: The full UTM generation form, combining FormGroups, UTMParameterInputGroup, Button, URLPreview.
+Step Dependencies: Section 7, Step 2
+User Instructions: Verify that these molecular and organism components are correctly assembled, function as expected within their respective contexts, and maintain visual consistency from the atomic layer.
+Step 4: Implement Responsive Design and Accessibility
+
+
+Task: Ensure the entire UI is fully responsive across different breakpoints (mobile, tablet, desktop) using Tailwind's responsive utilities. Adhere to WCAG 2.1 AA accessibility standards by implementing proper semantic HTML, keyboard navigation for all interactive elements, sufficient color contrast, and appropriate ARIA attributes for dynamic content and complex widgets.
+Files:
+Modify existing component files (.tsx) to include responsive classes (e.g., md:flex-row, lg:grid-cols-3).
+Update src/styles/base.css or global styles for accessibility-related styles (e.g., :focus-visible outlines, skip-to-content links).
+Review and update all interactive components (buttons, inputs, links, modals) for keyboard navigation via tabindex, onKeyDown handlers where needed, and correct ARIA roles/states/properties (e.g., aria-expanded, aria-controls).
+src/utils/breakpoints.ts: (Optional) Utility for managing responsive breakpoints in JS.
+Step Dependencies: Section 7, Step 3
+User Instructions: Test the application on various screen sizes (using browser developer tools or actual devices). Perform thorough keyboard-only navigation tests. Use accessibility auditing tools (e.g., Lighthouse, axe DevTools) to identify and fix issues. Conduct color contrast checks.
+Section 8: Data Architecture Refinement
+Step 1: Optimize Database Queries and Indexing
+
+
+Task: Review and optimize all frequently executed database queries for campaigns, UTM links, and search results to ensure maximum performance. Implement additional database indexes (B-tree, GIN for JSONB/full-text search) where query performance analysis indicates benefits. Ensure efficient data retrieval, especially for lists and search operations.
+Files:
+app/services/*.py: Review and refine SQLAlchemy queries in service layers (campaign_service.py, utm_service.py, search_service.py) to use efficient patterns (e.g., selectinload, contains_eager for relationships, proper filtering and ordering).
+alembic/versions/xxxxxxxxxxxx_add_performance_indexes.py: New Alembic migration script to add any missing performance indexes (e.g., idx_campaigns_status, idx_utm_links_generated_url, GIN index on full-text search columns).
+app/db/utils.py: (Optional) Helper functions for common query patterns.
+Step Dependencies: Section 2, Step 3 (RLS), Section 4, Step 1 (Campaign CRUD API), Section 5, Step 2 (UTM Link Generation API), Section 6, Step 1 (Search API)
+User Instructions: Use database performance monitoring tools (e.g., Supabase Analytics, EXPLAIN ANALYZE in PostgreSQL) to analyze query execution times for critical paths. Identify and address any slow queries.
+Step 2: Implement Caching Mechanisms (Backend)
+
+
+Task: Integrate caching strategies at the application level to reduce database load and improve response times for frequently accessed or computationally expensive data. Implement caching for:
+Frequently accessed campaigns (e.g., get_campaign by ID).
+User session data and company context (to avoid repeated DB lookups).
+Search results for common queries.
+Explore database-level optimization techniques like materialized views for pre-computed aggregations if applicable for future analytics features.
+Files:
+requirements.txt: Add redis or python-redis client library.
+app/core/config.py: Add Redis connection settings (REDIS_URL).
+app/cache/cache.py: Module for caching utility functions and Redis client initialization.
+app/services/*.py: Implement caching logic (e.g., @cache decorators or explicit cache.get/cache.set calls) within relevant service methods (campaign_service.py, user_service.py, search_service.py).
+app/main.py: Initialize Redis client.
+Step Dependencies: Section 2, Step 1 (Backend Setup)
+User Instructions: Set up a Redis instance (locally for development, or via a cloud provider like Redis Cloud, Upstash). Verify that caching is working by observing reduced database queries for cached data using a debugger or logging.
+Section 9: API Specifications and External Integrations
+Step 1: Implement Internal API Endpoints (Comprehensive)
+
+
+Task: Fully implement all internal API endpoints as detailed in the technical specification, ensuring they are RESTful, follow standard HTTP methods, and handle all expected request/response schemas. This includes the comprehensive set of endpoints for:
+Authentication (/auth/login, /auth/profile)
+Campaign Management (/campaigns CRUD, status, duplicate)
+UTM Link Management (/utm/generate, /utm/generate-bulk, /utm/validate-url, /utm/{id} CRUD)
+Search (/search, /search/reverse-utm) Ensure proper error responses (e.g., 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 422 Unprocessable Entity) are returned.
+Files:
+app/api/auth.py: Implement POST /auth/login (if custom login) and GET /auth/profile.
+app/api/campaigns.py: Implement all campaign CRUD, status, and duplication endpoints.
+app/api/utm.py: Implement all UTM link generation, validation, and CRUD endpoints.
+app/api/search.py: Implement all search and reverse UTM lookup endpoints.
+app/schemas/*.py: Ensure all Pydantic schemas are complete and accurate for all API request and response bodies.
+app/services/*.py: Ensure corresponding service logic is robust and handles all business rules.
+Step Dependencies: Section 3, Step 2 (Authentication Middleware), Section 4, Step 2 (Campaign Features), Section 5, Step 2 (UTM Features), Section 6, Step 1 (Search API)
+User Instructions: Use an API client (e.g., Postman, Insomnia) to thoroughly test all implemented API endpoints. Verify request/response formats, correct data manipulation, and appropriate error handling, including testing unauthorized/forbidden access attempts.
+Step 2: Integrate External URL Validation Service
+
+
+Task: Enhance the validate_url endpoint to integrate with a robust external URL validation service (e.g., Google Safe Browse API, or another reputable service). This provides advanced checks for phishing, malware, and other security threats. Implement secure API key management, robust error handling for service timeouts/rate limiting, and provide a manual override option for trusted domains.
+Files:
+requirements.txt: Add required library for the chosen external API (e.g., google-cloud-safeBrowse if using GCP).
+app/core/external_api_clients.py: New module for clients interacting with external services (e.g., GoogleSafeBrowseClient).
+app/services/utm_service.py: Update validate_url method to call the external service via external_api_clients. Implement retry logic and fallbacks.
+app/core/config.py: Add configuration for external API keys/endpoints (e.g., GOOGLE_SAFE_Browse_API_KEY).
+app/schemas/utm.py: Potentially update URLValidationResult to include more detailed external service feedback.
+Step Dependencies: Section 5, Step 1 (URL Validation Endpoint)
+User Instructions: Obtain necessary API keys for the chosen external URL validation service. Test the URL validation endpoint with various URLs (including known unsafe ones) to ensure the external service integration is working as expected and providing accurate threat intelligence.
+Section 10: Security & Privacy
+Step 1: Implement Authentication and Authorization Enhancements (RBAC)
+
+
+Task: Refine the authentication and authorization mechanisms. This includes:
+Role-Based Access Control (RBAC): Implement fine-grained access control based on the UserRole enum (Manager, Member, Viewer) defined in app/models/user.py. Apply decorators or dependencies to API endpoints to restrict access based on required roles.
+Secure JWT Token Handling: Ensure JWT tokens are handled securely (e.g., HttpOnly cookies for refresh tokens, short-lived access tokens).
+Automatic Token Refresh: Implement a mechanism for seamless token refresh on the frontend to maintain user sessions without requiring re-login.
+Files:
+app/dependencies/auth.py: Enhance get_current_user to include role information. Add new dependencies or decorators like require_role(role: UserRole).
+app/api/*.py: Apply @router.get(..., dependencies=[Depends(require_role(UserRole.MANAGER))]) to restrict access where needed.
+app/middleware/auth_middleware.py: Refine token validation and handling.
+src/store/authSlice.ts: Update to manage token refresh logic.
+src/api/auth.ts: Implement token refresh calls to a backend refresh endpoint (if applicable, or handle Clerk's session refresh).
+Step Dependencies: Section 3, Step 2 (Authentication Middleware), Section 8, Step 1 (Row-Level Security)
+User Instructions: Create users with different roles (Manager, Member, Viewer). Test all API endpoints and UI features to ensure correct access control is enforced for each role and that users cannot perform actions beyond their permissions. Verify seamless session persistence via token refresh.
+Step 2: Implement Data Encryption and PII Protection
+
+
+Task: Ensure data at rest is encrypted (Supabase handles this by default for its PostgreSQL database). Implement TLS 1.3 encryption for all data in transit (client-server communication). Define and implement PII (Personally Identifiable Information) protection measures, including:
+Email Hashing/Pseudonymization: For sensitive email data if not directly needed for display (Clerk handles primary email, but for other uses).
+User ID Pseudonymization: Where direct user IDs are not strictly necessary, use pseudonyms.
+Automatic PII Redaction in Logs: Ensure no sensitive PII is logged in plain text.
+Files:
+app/core/config.py: Ensure secure configuration for TLS (usually handled by deployment environment/reverse proxy like Nginx or cloud provider).
+app/utils/pii_handler.py: New utility functions for hashing/pseudonymizing PII fields.
+app/main.py: Integrate PII redaction into logging configuration (e.g., using a custom logging formatter or loguru sinks).
+alembic/versions/xxxxxxxxxxxx_pii_updates.py: (If applying PII hashing to existing data or new columns).
+Step Dependencies: Section 1, Step 2 (Backend Setup)
+User Instructions:
+Verify that your deployment environment (e.g., Vercel/Netlify for frontend, railway.app/Fly.io for backend) enforces HTTPS/TLS 1.3.
+Test user registration/updates and verify that PII is appropriately handled (e.g., hashed) in the database and logs.
+Review logs to confirm PII redaction is active.
+Step 3: Implement Application Security Measures (Input Validation, Rate Limiting, Headers)
+
+
+Task: Implement robust application-level security measures to prevent common vulnerabilities:
+Comprehensive Input Validation & Sanitization: Enhance existing Pydantic schemas with stricter validation rules (e.g., regex patterns, min/max lengths) and sanitize all user inputs to prevent XSS (Cross-Site Scripting) and SQL injection attacks.
+HTTP Security Headers: Configure FastAPI to send appropriate HTTP security headers (e.g., Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security) to mitigate clickjacking, XSS, etc.
+API Rate Limiting: Implement API rate limiting to protect against brute-force attacks and denial-of-service (DoS) attempts on critical endpoints (e.g., login, password reset, bulk operations).
+Files:
+app/schemas/*.py: Review and enhance all Pydantic schemas with Field(min_length=..., max_length=..., pattern=...), validator functions for complex validation.
+app/middleware/security_headers.py: New FastAPI middleware for setting HTTP security headers.
+app/middleware/rate_limit.py: New FastAPI middleware or dependency for API rate limiting (e.g., using FastAPI-Limiter with Redis).
+app/main.py: Register security header and rate limiting middlewares.
+app/utils/sanitizers.py: (Optional) Helper functions for explicit input sanitization if needed beyond Pydantic.
+Step Dependencies: Section 5, Step 1 (URL Validation Endpoint), Section 8, Step 2 (Caching)
+User Instructions:
+Attempt to inject malicious scripts into text inputs or malformed data into API requests to verify input validation/sanitization.
+Use tools like curl or browser developer tools to check that HTTP security headers are correctly set in API responses.
+Conduct load tests or rapid-fire requests on rate-limited endpoints to confirm that rate limiting is effective and returns appropriate HTTP 429 (Too Many Requests) responses.
+Section 11: User Management (Advanced)
+Step 1: Implement User Profile Management and Deactivation
+Task: Develop the backend and frontend functionality for users to manage their own profiles (e.g., update name, profile data). Implement the ability for Managers to deactivate or reactivate user accounts within their company, which should logically restrict access without deleting the user.
+Files:
+app/api/users.py: FastAPI router for user-specific actions (GET /users/me, PUT /users/me, PUT /users/{id}/deactivate, PUT /users/{id}/activate).
+app/schemas/user.py: Define UserUpdate, UserProfileResponse.
+app/services/user_service.py: Add update_user_profile, deactivate_user, activate_user logic.
+src/components/Auth/UserProfileEditForm.tsx: Frontend form for user to edit their profile.
+src/components/UserManagement/UserTable.tsx: (New) Table to list users in a company for managers, with deactivate/activate buttons.
+src/store/userSlice.ts: Redux slice for managing user list and individual user profiles.
+src/pages/settings/profile.tsx: Page for user's own profile.
+src/pages/settings/users.tsx: Page for manager to manage users.
+Step Dependencies: Section 3, Step 3 (Frontend Auth Flow), Section 10, Step 1 (RBAC)
+User Instructions:
+Test updating your own user profile.
+As a Manager, test deactivating and reactivating another user in your company. Verify that deactivated users cannot log in or access the application.
+Section 12: Monetization & Analytics (Foundational)
+Step 1: Implement Subscription Tier Logic
+
+
+Task: Implement backend logic to manage subscription tiers (Free, Pro) based on the subscription_tier field in the companies table. This involves:
+Enforcing feature limits for the Free tier (e.g., 25 campaigns, 100 UTM links).
+Implementing checks within API endpoints (e.g., campaign_service.py, utm_service.py) to prevent exceeding limits for free users.
+Defining a simple API endpoint for displaying current usage against limits.
+Files:
+app/models/company.py: Ensure subscription_tier field is correctly defined (Enum).
+app/schemas/company.py: Add CompanyUsageResponse schema.
+app/services/company_service.py: Add check_usage_limits function.
+app/api/company.py: New FastAPI router for company settings/usage, with GET /company/usage.
+app/main.py: Include company router.
+Step Dependencies: Section 2, Step 1 (Database Models), Section 4, Step 1 (Campaign CRUD), Section 5, Step 2 (UTM Gen)
+User Instructions:
+Manually set a company's subscription_tier to Free in the database.
+Attempt to create more than 25 campaigns or 100 UTM links as a user of that company and verify that the API returns an error.
+Access the /api/company/usage endpoint to view current usage.
+Step 2: Implement Basic Click Tracking and Analytics Backend
+
+
+Task: Implement backend logic to track clicks on generated UTM links. This involves:
+Creating a dedicated endpoint for redirecting UTM links that increments a click_count in the database.
+Storing last_clicked timestamp.
+Developing a basic API endpoint to retrieve click_count for a given UTM link or campaign.
+Files:
+app/api/redirect.py: New FastAPI router for the redirect endpoint GET /r/{short_code} or GET /click/{utm_link_id}.
+app/models/utm_link.py: Ensure click_count and last_clicked fields are present.
+app/services/utm_service.py: Add track_click function.
+app/api/analytics.py: New FastAPI router for analytics, with GET /analytics/utm/{id}/clicks and GET /analytics/campaign/{id}/clicks.
+app/main.py: Include redirect and analytics routers.
+Step Dependencies: Section 5, Step 2 (UTM Link Generation)
+User Instructions:
+Generate a UTM link.
+Click on the generated link multiple times.
+Access the backend analytics endpoints (/api/analytics/utm/{id}/clicks or /api/analytics/campaign/{id}/clicks) to verify click_count is incrementing.
+Step 3: Develop Frontend Usage & Basic Analytics Display
+
+
+Task: Create frontend components to display the current usage against subscription limits and basic click analytics for campaigns and individual UTM links.
+Files:
+src/store/analyticsSlice.ts: New Redux slice for analytics data (usage, clicks).
+src/components/Dashboard/UsageSummary.tsx: Component to display current campaign/UTM link count and subscription tier.
+src/components/Campaigns/CampaignAnalyticsCard.tsx: Card on campaign detail view showing total clicks for the campaign.
+src/components/UTM/UTMLinkTable.tsx: Update to display click_count for each UTM link.
+src/pages/dashboard.tsx: Integrate UsageSummary.
+src/pages/campaigns/[id].tsx: Integrate CampaignAnalyticsCard.
+src/api/analytics.ts: Frontend API service for fetching usage and click data.
+Step Dependencies: Section 12, Step 2
+User Instructions:
+View the dashboard to see current usage against limits.
+Navigate to a campaign detail page and verify campaign-level click count.
+Observe click counts in the UTM link table.
+Section 13: Team Collaboration (Foundational)
+Step 1: Implement User Invitation and Role Assignment Backend
+
+
+Task: Implement backend API endpoints and services to allow a Manager to invite new users to their company and assign them a specific UserRole (Member, Viewer). This involves generating invitation tokens or links and handling the acceptance process.
+Files:
+app/api/invitations.py: New FastAPI router for invitation management (POST /invitations/invite, GET /invitations/accept).
+app/schemas/invitation.py: Pydantic schemas for InviteUserRequest, InvitationResponse.
+app/services/invitation_service.py: Service logic for creating invitation tokens, sending emails (placeholder for now), and processing invitation acceptance.
+app/models/invitation.py: New SQLAlchemy model for storing invitation tokens (email, token, role, expires_at, company_id).
+Step Dependencies: Section 10, Step 1 (RBAC), Section 11, Step 1 (User Management)
+User Instructions:
+As a Manager, use an API client to send an invitation to a new user email with a specific role.
+Simulate the invitation acceptance process (e.g., call /invitations/accept with the token) and verify the new user is added to the company with the correct role.
+Step 2: Develop Frontend Invitation and User List UI
+
+
+Task: Create frontend components for managers to invite new team members and view/manage existing team members within their company.
+Files:
+src/components/Team/InviteUserForm.tsx: Form for managers to invite new users (email, role selection).
+src/components/Team/TeamMemberList.tsx: Table displaying existing team members with their roles, and options to revoke/reassign roles (if roles can be changed).
+src/store/teamSlice.ts: New Redux slice for managing team member list and invitations.
+src/pages/settings/team.tsx: New page for team management.
+src/api/invitations.ts: Frontend API service for invitation-related calls.
+Step Dependencies: Section 13, Step 1
+User Instructions:
+As a Manager, navigate to the team settings page.
+Invite a new user and observe the invitation status.
+Verify the invited user appears in the team list (perhaps as "pending").
+Log in as the invited user (after simulating acceptance) and confirm they are part of the correct company with the assigned role.
+Section 14: Non-Functional Requirements (Performance & Scalability)
+Step 1: Implement Logging, Monitoring, and Error Tracking
+
+
+Task: Set up comprehensive logging for both frontend and backend applications. Integrate monitoring tools (e.g., Prometheus/Grafana or cloud-specific monitoring) to track application health, performance metrics (latency, error rates), and resource utilization. Implement error tracking (e.g., Sentry) for real-time error alerts.
+Files:
+requirements.txt: Add loguru, sentry-sdk (backend).
+package.json: Add sentry-nextjs (frontend).
+app/main.py: Configure loguru for structured logging, integrate sentry-sdk initialization.
+app/core/logging_config.py: Centralized logging configuration.
+next.config.js: Configure Sentry for Next.js.
+src/utils/errorLogger.ts: Frontend error boundary or useEffect for Sentry integration.
+Step Dependencies: Section 1, Step 1 & 2 (Project Init)
+User Instructions:
+Integrate with chosen logging/monitoring/error tracking services.
+Generate various types of errors (e.g., API errors, frontend crashes) and verify they are captured and reported by the tracking systems.
+Observe logs for application activity and health.
+Step 2: Backend Performance Optimization (Advanced)
+
+
+Task: Implement advanced backend performance optimizations. This includes:
+Asynchronous I/O: Ensure all database operations and external API calls are non-blocking using async/await.
+Connection Pooling: Configure database connection pooling for efficient resource reuse.
+Load Testing: Conduct basic load testing to identify bottlenecks and validate scalability assumptions.
+Files:
+app/db/database.py: Ensure SQLAlchemy's async engine and session are correctly configured for connection pooling.
+app/services/*.py: Review all service methods to ensure proper use of await for database/external calls.
+alembic.ini: (Optional) Configure Alembic to use async for migrations.
+Step Dependencies: Section 8, Step 2 (Caching)
+User Instructions:
+Use a load testing tool (e.g., Locust, JMeter) to simulate concurrent users and requests.
+Monitor backend metrics (CPU, memory, latency) during load tests to identify and address bottlenecks.
+Ensure asynchronous operations are correctly implemented.
+Step 3: Frontend Performance Optimization (Code Splitting, Image Opt)
+
+
+Task: Implement frontend performance optimizations to achieve page load times under 3 seconds. This includes:
+Code Splitting: Utilize Next.js automatic code splitting and dynamic imports for lazy loading components and pages.
+Image Optimization: Use next/image component for optimized images with lazy loading and responsive sizing.
+Resource Prioritization: Preload critical resources (fonts, CSS).
+Bundle Analysis: Analyze the frontend bundle size to identify and reduce unnecessary dependencies.
+Files:
+next.config.js: Configure image optimization domains.
+Modify src/app/layout.tsx, src/app/page.tsx, and other page/component files to use next/dynamic for lazy loading.
+Replace <img> tags with next/image.
+public/fonts.css: (If using custom fonts) Configure font preloading.
+package.json: Add bundle analyzer (@next/bundle-analyzer).
+Step Dependencies: Section 7, Step 4 (Responsive Design)
+User Instructions:
+Use browser developer tools (Lighthouse, Network tab) to measure page load times and identify performance bottlenecks.
+Run bundle analysis to check for large chunks and optimize imports.
+Verify images are optimized and lazy-loaded.
+Section 15: Testing Strategy (Foundational)
+Step 1: Implement Backend Unit and Integration Tests
+
+
+Task: Write comprehensive unit tests for core backend services and integration tests for API endpoints. Utilize pytest for testing and mock database interactions where appropriate for unit tests. Ensure test coverage for critical business logic and API responses.
+Files:
+requirements.txt: Add pytest, pytest-asyncio, httpx (for API testing), pytest-mock (for mocking).
+tests/backend/conftest.py: Pytest fixtures (e.g., test database session, test client).
+tests/backend/unit/test_*.py: Unit tests for user_service.py, campaign_service.py, utm_service.py, etc.
+tests/backend/integration/test_api_*.py: Integration tests for api/auth.py, api/campaigns.py, api/utm.py, etc.
+Step Dependencies: Section 1, Step 2 (Backend Init), All backend API sections.
+User Instructions: Run backend tests (pytest tests/backend). Ensure tests pass and review test reports for coverage.
+Step 2: Implement Frontend Unit and Integration Tests
+
+
+Task: Write unit tests for atomic components and Redux slices. Implement integration tests for composite components (molecules, organisms) and page-level interactions. Utilize Jest/React Testing Library for component testing.
+Files:
+package.json: Add jest, @testing-library/react, @testing-library/jest-dom, msw (for API mocking).
+jest.config.js: Jest configuration.
+src/components/**/*.test.tsx: Unit tests for Button.tsx, Input.tsx, etc.
+src/store/**/*.test.ts: Unit tests for authSlice.ts, campaignSlice.ts, etc.
+src/pages/**/*.test.tsx: Integration tests for pages.
+src/mocks/handlers.ts, src/mocks/server.ts: MSW setup for API mocking.
+Step Dependencies: Section 1, Step 1 (Frontend Init), All frontend UI sections.
+User Instructions: Run frontend tests (npm test). Ensure tests pass and verify component behavior under different states.
+Step 3: Set up End-to-End (E2E) Testing
+
+
+Task: Implement end-to-end tests to simulate full user journeys through the application (e.g., user signup -> create campaign -> generate UTM link -> search). Utilize Playwright for robust browser automation.
+Files:
+package.json: Add playwright.
+e2e/auth.spec.ts: E2E tests for user authentication flow.
+e2e/campaigns.spec.ts: E2E tests for campaign creation and management.
+e2e/utm.spec.ts: E2E tests for UTM link generation and usage.
+playwright.config.ts: Playwright configuration.
+Step Dependencies: All functional sections (Auth, Campaigns, UTM, Search, UI)
+User Instructions:
+Install Playwright browsers (npx playwright install).
+Run E2E tests (npx playwright test).
+Review test results and screenshots/videos for any failures.
+Section 16: Deployment & CI/CD
+Step 1: Configure Deployment for Frontend and Backend
+
+
+Task: Set up deployment pipelines for the Next.js frontend (e.g., Vercel, Netlify) and the FastAPI backend (e.g., Railway, Render, Fly.io, or AWS EC2/ECS). Configure environment variables, domain mapping, and ensure secure production deployments.
+Files:
+vercel.json (if using Vercel): Frontend deployment configuration.
+railway.json or Dockerfile for backend: Backend deployment configuration.
+nginx.conf (if self-hosting with Nginx): Reverse proxy configuration.
+Procfile (if using platforms like Render/Heroku).
+.github/workflows/deploy-frontend.yml: (For CI/CD, optional in this step, but foundational).
+.github/workflows/deploy-backend.yml: (For CI/CD, optional in this step, but foundational).
+Step Dependencies: All previous steps (fully functional application)
+User Instructions:
+Choose your deployment platforms.
+Follow platform-specific guides to link repositories and configure environment variables.
+Perform an initial manual deployment of both frontend and backend.
+Verify the application is accessible and functional in a production environment.
+Step 2: Set up Continuous Integration (CI)
+
+
+Task: Configure a Continuous Integration (CI) pipeline (e.g., GitHub Actions, GitLab CI/CD) for both frontend and backend. This pipeline should automatically run tests (unit, integration, linting) on every push to the main branch or pull request, providing rapid feedback on code quality and correctness.
+Files:
+.github/workflows/ci-frontend.yml: GitHub Actions workflow for frontend CI (install deps, run lint, run tests, build).
+.github/workflows/ci-backend.yml: GitHub Actions workflow for backend CI (install deps, run lint, run tests).
+Step Dependencies: Section 15, Step 1 & 2 (Unit/Integration Tests)
+User Instructions:
+Commit changes and push to a new branch. Create a pull request.
+Verify that the CI pipeline automatically triggers and runs all tests.
+Ensure PRs cannot be merged if CI checks fail.
+Step 3: Set up Continuous Delivery/Deployment (CD)
+
+
+Task: Extend the CI pipeline to implement Continuous Delivery (CD) or Continuous Deployment (CD). This involves automatically deploying the application to staging or production environments upon successful CI runs, or on specific branch merges (e.g., main).
+Files:
+.github/workflows/deploy-frontend.yml: Update to trigger deployment on main branch push or release tag.
+.github/workflows/deploy-backend.yml: Update to trigger deployment on main branch push or release tag.
+Step Dependencies: Section 16, Step 2 (CI), Section 16, Step 1 (Deployment Config)
+User Instructions:
+Merge a feature branch into main after all CI checks pass.
+Verify that the CD pipeline automatically deploys the latest changes to your chosen environment.
+Confirm the deployed application reflects the latest code.
+Section 17: Final Review and Deliverable
+Step 1: Comprehensive Review and Documentation Update
+
+
+Task: Conduct a final comprehensive review of the entire project against the technical specification. Ensure all features are implemented, non-functional requirements are addressed, and code quality is high. Update documentation (README, API docs, deployment guides) to reflect the complete application.
+Files:
+README.md: Update with project overview, setup, running, and deployment instructions.
+docs/api.md (or generate OpenAPI/Swagger docs): Comprehensive API documentation.
+docs/deployment.md: Detailed deployment guide.
+docs/architecture.md: High-level architecture overview.
+Review all codebase for consistency and adherence to standards.
+Step Dependencies: All previous sections completed.
+User Instructions: Review all updated documentation and the complete application to ensure everything aligns with expectations.
+Step 2: Deliver Comprehensive Task Plan to User
+
+
+Task: Present the finalized comprehensive task plan to the user. Provide a summary of the implemented features, highlight key architectural decisions, and offer to answer any questions or make further adjustments to the plan or the implemented solution.
+Files: (The task plan document itself)
+Step Dependencies: Section 17, Step 1
+User Instructions: None (This is the final action by the agent).
+
+

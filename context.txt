@@ -1,0 +1,76 @@
+Elevator Pitch
+A centralized campaign management platform that helps marketing teams maintain consistent metadata, generate trackable UTM links, and create a single source of truth for all campaign assets before launching across multiple advertising platforms.
+Problem Statement
+Marketing teams struggle with inconsistent campaign tracking and metadata management across multiple platforms. This leads to:
+Fragmented data attribution and reporting
+Difficulty in retroactively understanding campaign performance
+Inconsistent naming conventions and UTM structures
+Time wasted recreating similar campaigns
+Poor data quality affecting decision-making
+Target Audience
+Primary: Marketing managers and digital marketing teams at SMBs and mid-market companies (50-500 employees) Secondary: Marketing agencies managing multiple client campaigns User Personas:
+Marketing Manager: Needs oversight and consistency across campaigns (MVP focus)
+Campaign Specialists: Create and execute individual campaigns (Post-MVP)
+Data Analysts: Need clean, searchable campaign data for reporting (Post-MVP)
+USP
+The only platform that enforces campaign consistency from planning to execution, creating a searchable repository of campaign metadata and UTM links that grows more valuable over time.
+Target Platforms
+Web application (primary)
+Mobile-responsive design for on-the-go access
+Features List
+Authentication & User Management (MVP)
+[ ] As a new user, I can sign up with email and password
+[ ] During signup, I specify my company domain
+[ ] I am automatically assigned the "Manager" role upon signup
+[ ] As a user, I can log in securely to access my campaigns
+[ ] As a Manager, I can view my profile and update basic account settings
+Campaign Creation & Management (MVP)
+[ ] As a Manager, I can create a new campaign by defining demographics, audience criteria, and interests
+[ ] Each campaign automatically generates a unique Campaign ID
+[ ] As a Manager, I can view all my campaigns in a list/grid view
+[ ] As a Manager, I can edit campaign metadata after creation
+[ ] As a Manager, I can delete campaigns
+[ ] Campaign metadata includes: name, demographics, interests, audience criteria, creation date, status
+UTM Link Generation (MVP)
+[ ] As a Manager, I can generate UTM-tagged URLs for any existing campaign
+[ ] I can specify destination URL, source, medium, campaign ID (auto-populated), and content parameters
+[ ] The system validates URL format before generating UTM links
+[ ] Generated UTM links are automatically saved and associated with the campaign
+[ ] I can view all UTM links created for a specific campaign
+[ ] I can copy UTM links to clipboard with one click
+Search & Discovery (MVP)
+[ ] As a user, I can search campaigns by name, campaign ID, or metadata
+[ ] As a user, I can paste a UTM URL and instantly see its associated campaign details
+[ ] I can view a chronological list of all my campaigns
+[ ] Basic filtering by campaign creation date
+Post-MVP Features (Future Roadmap)
+[ ] Team member invitations and collaboration
+[ ] Role-based permissions (Manager, Team Member, Viewer)
+[ ] Campaign templates for common scenarios
+[ ] Platform integrations (Google Ads, Facebook, LinkedIn)
+[ ] Analytics integration and performance tracking
+[ ] Advanced filtering and saved searches
+[ ] Campaign duplication
+[ ] Data export functionality
+[ ] UTM Parameter Validation: 
+[ ] URL Validation: 
+UX/UI Considerations
+[ ] Landing Page: Clean hero section with value proposition, feature preview, sign-up CTA
+[ ] Dashboard: Simple campaign overview with "Create Campaign" and "Search" as primary actions
+[ ] Campaign Creation: Single-page form with clear sections for metadata input
+[ ] Campaign Detail View: Two-tab interface - "Details" (metadata) and "UTM Links" (generated links)
+[ ] UTM Generator: Modal or slide-out panel with form fields and live URL preview
+[ ] Search Interface: Prominent search bar with instant results and URL lookup feature
+[ ] States: Loading spinners, empty state for new users ("Create your first campaign"), success confirmations
+[ ] Mobile Design: Stacked layout, touch-friendly buttons, simplified navigation
+[ ] Visual Hierarchy: Clear headings, consistent button styles, color coding for different UTM sources
+Non-Functional Requirements
+[ ] Performance: Page load times under 3 seconds, search results in under 1 second
+[ ] Scalability: Support for 1,000+ campaigns per user (MVP limit)
+[ ] Security: HTTPS encryption, secure password storage, basic input validation
+[ ] Accessibility: Semantic HTML, keyboard navigation, adequate color contrast
+[ ] Browser Support: Modern browsers (Chrome, Firefox, Safari, Edge)
+Monetization
+MVP: Free during beta/early access Future:
+Freemium Model: Free tier with 25 campaigns, 100 UTM links
+Pro Plan ($29/month): Unlimited campaigns, team collaboration, advanced search
