@@ -1,3 +1,5 @@
+Section 10: Security & Privacy
+
 Step 1: Implement Authentication and Authorization Enhancements (RBAC)
 
 
