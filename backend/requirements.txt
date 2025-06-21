@@ -9,4 +9,5 @@ python-dotenv
 python-jose[cryptography]
 passlib[bcrypt]
 alembic
-greenlet 
+greenlet
+svix 

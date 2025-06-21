@@ -1,5 +1,5 @@
 Step 3: Implement Row-Level Security (RLS) in PostgreSQL
-
+Status - Completed
 
 Task: Configure PostgreSQL to enforce row-level security (RLS) policies on the companies, users, campaigns, and utm_links tables. RLS will ensure that users can only access data associated with their company_id, providing strong data isolation.
 Files:
