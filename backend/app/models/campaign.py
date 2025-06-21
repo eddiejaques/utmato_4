@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, ForeignKey, Enum, JSON, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
-from app.db.base import Base
+from app.db.base_class import Base
 from app.schemas.enums import CampaignStatus
 
 class Campaign(Base):

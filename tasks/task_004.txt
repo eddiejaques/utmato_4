@@ -1,4 +1,4 @@
-Step 2: Implement Database Migrations (Alembic)
+Step 2: Implement Database Migrations (Alembic) - Completed
 
 
 Task: Set up Alembic for declarative database migrations to manage schema changes effectively. Initialize Alembic, configure it to work with the SQLAlchemy models, and create the initial migration script to generate all defined tables and their relationships in the PostgreSQL database.
