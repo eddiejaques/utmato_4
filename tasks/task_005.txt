@@ -1,0 +1,15 @@
+Step 3: Implement Row-Level Security (RLS) in PostgreSQL
+
+
+Task: Configure PostgreSQL to enforce row-level security (RLS) policies on the companies, users, campaigns, and utm_links tables. RLS will ensure that users can only access data associated with their company_id, providing strong data isolation.
+Files:
+alembic/versions/xxxxxxxxxxxx_add_rls_policies.py: New Alembic migration script to:
+Enable RLS on companies, users, campaigns, utm_links tables.
+Create RLS policies (e.g., FOR SELECT USING (company_id = current_setting('app.current_company_id')::uuid)).
+app/middleware/auth_middleware.py: (Will be created/updated in Section 3) Add logic to set app.current_company_id in the PostgreSQL session based on the authenticated user's company.
+Step Dependencies: Section 2, Step 2
+User Instructions:
+Generate a new Alembic migration for RLS policies: alembic revision --autogenerate -m "Add Row-Level Security policies".
+Manually review and refine the generated RLS policies in the migration file to ensure they correctly enforce company_id based access.
+Apply the migration: alembic upgrade head.
+Verify that data access is correctly restricted by company ID using direct SQL queries from different user contexts (e.g., using Supabase's SQL editor).
