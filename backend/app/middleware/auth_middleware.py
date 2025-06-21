@@ -2,50 +2,67 @@ import logging
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseFunction
 from starlette.requests import Request
 from starlette.responses import Response
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from fastapi_clerk_auth import ClerkConfig, ClerkHTTPBearer
 
+from app.core.config import settings
 from app.db.database import SessionLocal
-from app.models.user import User
+from app.services.user_service import get_user_by_clerk_id
+from app.models.user import User  # For type hinting if needed
 
 logger = logging.getLogger(__name__)
 
-async def get_user_company_id(clerk_id: str, db: AsyncSession) -> str | None:
-    """Fetch the company_id for a given clerk_id."""
-    if not clerk_id:
-        return None
-    try:
-        result = await db.execute(select(User).filter(User.clerk_id == clerk_id))
-        user = result.scalars().first()
-        if user:
-            return str(user.company_id)
-    except Exception as e:
-        logger.error(f"Could not fetch user company_id: {e}")
-    return None
+# Configure Clerk
+clerk_config = ClerkConfig(
+    jwks_url=f"https://{settings.CLERK_FRONTEND_API}/.well-known/jwks.json"
+    if settings.CLERK_FRONTEND_API
+    else "",
+    auto_error=False,  # Allow public routes, auth is checked by dependencies
+)
+clerk_auth_guard = ClerkHTTPBearer(config=clerk_config)
 
 
-class RLSAuthMiddleware(BaseHTTPMiddleware):
+class AuthMiddleware(BaseHTTPMiddleware):
     """
-    Middleware to implement Row-Level Security.
-    It sets a company_id in the database session for the current request.
+    Authentication middleware that validates Clerk JWTs,
+    and sets user and company context on the request state.
+    It also sets the company_id for RLS in the database session.
     """
+
     async def dispatch(
         self, request: Request, call_next: RequestResponseFunction
     ) -> Response:
-        clerk_user_id = request.headers.get("x-clerk-user-id")
-        
-        db_session: AsyncSession = SessionLocal()
-        
+        db_session = SessionLocal()
+        request.state.db = db_session
+
         try:
-            if clerk_user_id:
-                company_id = await get_user_company_id(clerk_user_id, db_session)
-                if company_id:
-                    # Set company_id for RLS within the transaction
-                    await db_session.execute(f"SET app.current_company_id = '{company_id}'")
-            
-            request.state.db = db_session
+            # Skip auth for webhook endpoint
+            if request.url.path.startswith("/api/v1/webhooks/"):
+                 response = await call_next(request)
+                 return response
+                 
+            credentials = await clerk_auth_guard(request)
+
+            if credentials:
+                clerk_id = credentials.decoded.get("sub")
+                if clerk_id:
+                    user = await get_user_by_clerk_id(db_session, clerk_id)
+                    if user:
+                        request.state.user = user
+                        company = user.company
+                        if company:
+                            request.state.company = company
+                            # Set company_id for RLS within the transaction
+                            await db_session.execute(
+                                f"SET app.current_company_id = '{company.id}'"
+                            )
+
             response = await call_next(request)
+
+        except Exception as e:
+            logger.error(f"Error in auth middleware: {e}")
+            # Ensure we send a response even if an error occurs
+            response = Response("Internal Server Error", status_code=500)
         finally:
             await db_session.close()
-            
+
         return response 

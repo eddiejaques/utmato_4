@@ -10,4 +10,5 @@ python-jose[cryptography]
 passlib[bcrypt]
 alembic
 greenlet
-svix 
+svix
+fastapi-clerk-auth 

@@ -64,4 +64,8 @@ async def handle_user_deleted(db: AsyncSession, user_data: ClerkDeletedUserData)
     if user:
         await db.delete(user)
         await db.commit()
-    return {"status": "deleted", "clerk_id": user_data.id} 
+    return {"status": "deleted", "clerk_id": user_data.id}
+
+async def get_user_by_clerk_id(db: AsyncSession, clerk_id: str) -> User | None:
+    result = await db.execute(select(User).filter(User.clerk_id == clerk_id))
+    return result.scalars().first() 

@@ -1,3 +1,5 @@
+Section 11: User Management (Advanced)
+
 Step 1: Implement User Profile Management and Deactivation
 Task: Develop the backend and frontend functionality for users to manage their own profiles (e.g., update name, profile data). Implement the ability for Managers to deactivate or reactivate user accounts within their company, which should logically restrict access without deleting the user.
 Files:
