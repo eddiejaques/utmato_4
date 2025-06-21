@@ -1,0 +1,29 @@
+Title: Verify Row-Level Security Implementation
+
+Task: Manually verify that the Row-Level Security (RLS) policies are correctly isolating data for companies, users, campaigns, and UTM links.
+
+Dependencies: tasks/task_005.txt
+
+Verification Steps:
+
+1.  **Create Test Data:**
+    *   Connect to the PostgreSQL database.
+    *   Create two distinct companies (e.g., "Company A" and "Company B").
+    *   Create at least one user for each company, ensuring each user has a unique `clerk_id`. Make a note of these `clerk_id`s.
+
+2.  **Run the Application:**
+    *   Start the FastAPI backend server.
+
+3.  **Test API Endpoints:**
+    *   Use a tool like `curl` or a REST client (like Postman or Insomnia) to make requests to the `/api/v1/companies` endpoint.
+    *   **Test Case 1 (User from Company A):**
+        *   Make a GET request to `/api/v1/companies`.
+        *   Set the request header `x-clerk-user-id` to the `clerk_id` of the user from "Company A".
+        *   **Expected Result:** The API should return only the details for "Company A".
+    *   **Test Case 2 (User from Company B):**
+        *   Make a GET request to `/api/v1/companies`.
+        *   Set the request header `x-clerk-user-id` to the `clerk_id` of the user from "Company B".
+        *   **Expected Result:** The API should return only the details for "Company B".
+    *   **Test Case 3 (Unauthenticated User):**
+        *   Make a GET request to `/api/v1/companies` *without* the `x-clerk-user-id` header.
+        *   **Expected Result:** The API should return an empty list (`[]`), confirming no data is exposed without authentication. 

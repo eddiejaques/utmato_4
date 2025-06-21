@@ -1,3 +1,4 @@
+Section 6: Search & Discovery
 Step 1: Implement Search API Endpoints
 
 
