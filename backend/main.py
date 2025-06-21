@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.api import webhooks
 from app.middleware.auth_middleware import RLSAuthMiddleware
 from app.dependencies import get_db
 # Example imports for a protected route
@@ -12,6 +12,7 @@ app = FastAPI()
 # Add RLS middleware
 app.add_middleware(RLSAuthMiddleware)
 
+app.include_router(webhooks.router, prefix="/api/v1/webhooks", tags=["webhooks"])
 
 @app.get("/")
 def read_root():
