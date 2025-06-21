@@ -1,0 +1,14 @@
+Section 2: Core Backend Infrastructure and Database Setup
+Step 1: Define Database Models (SQLAlchemy)
+
+
+Task: Translate the data models from the technical specification (Companies, Users, Campaigns, UTM_Links) into SQLAlchemy ORM models. Implement relationships (one-to-many, many-to-one), define table schemas, including UUID primary keys, foreign keys, and JSONB fields for flexible data storage (e.g., settings, profile_data).
+Files:
+app/models/company.py: SQLAlchemy model for the companies table.
+app/models/user.py: SQLAlchemy model for the users table, including clerk_id and role (e.g., Enum for Manager, Member, Viewer).
+app/models/campaign.py: SQLAlchemy model for the campaigns table, including company_id, status (Enum), budget_info (JSONB).
+app/models/utm_link.py: SQLAlchemy model for the utm_links table, including campaign_id, utm_source, utm_medium, utm_campaign, utm_content, utm_term, generated_url, click_count.
+app/db/base.py: Ensure all new models are imported here for Alembic autodiscovery.
+app/schemas/enums.py: Define Python Enums for UserRole and CampaignStatus.
+Step Dependencies: Section 1, Step 2
+User Instructions: Review the created SQLAlchemy models (app/models/*.py) to ensure they accurately reflect the database schema and relationships described in the technical specification.

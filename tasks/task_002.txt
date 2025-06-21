@@ -1,0 +1,13 @@
+Step 2: Initialize Backend Project (FastAPI)
+
+
+Task: Set up a new FastAPI project with Python 3.11+, Pydantic, SQLAlchemy (async), and Uvicorn. This includes creating the basic project structure, setting up a virtual environment, installing core dependencies, and creating a main application file with initial configuration settings.
+Files:
+requirements.txt: List FastAPI, Uvicorn, SQLAlchemy, Pydantic, Psycopg2 (or asyncpg for async PostgreSQL), python-dotenv, python-jose, passlib.
+main.py: Main FastAPI application instance and entry point.
+app/core/config.py: Configuration settings using Pydantic BaseSettings (e.g., database URL, Clerk secrets).
+app/db/database.py: SQLAlchemy async engine and session setup.
+app/db/base.py: Base for declarative models, to be imported by models.
+.env.example: Backend environment variables (e.g., DATABASE_URL, CLERK_SECRET_KEY).
+Step Dependencies: None
+User Instructions: Create a virtual environment (python3.11 -m venv venv), activate it (source venv/bin/activate), and install dependencies (pip install -r requirements.txt). Create .env based on .env.example.
