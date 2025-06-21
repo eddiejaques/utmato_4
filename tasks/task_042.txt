@@ -1,0 +1,12 @@
+Step 3: Set up Continuous Delivery/Deployment (CD)
+
+
+Task: Extend the CI pipeline to implement Continuous Delivery (CD) or Continuous Deployment (CD). This involves automatically deploying the application to staging or production environments upon successful CI runs, or on specific branch merges (e.g., main).
+Files:
+.github/workflows/deploy-frontend.yml: Update to trigger deployment on main branch push or release tag.
+.github/workflows/deploy-backend.yml: Update to trigger deployment on main branch push or release tag.
+Step Dependencies: Section 16, Step 2 (CI), Section 16, Step 1 (Deployment Config)
+User Instructions:
+Merge a feature branch into main after all CI checks pass.
+Verify that the CD pipeline automatically deploys the latest changes to your chosen environment.
+Confirm the deployed application reflects the latest code. 

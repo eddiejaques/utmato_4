@@ -1,0 +1,18 @@
+Step 2: Implement Basic Click Tracking and Analytics Backend
+
+
+Task: Implement backend logic to track clicks on generated UTM links. This involves:
+Creating a dedicated endpoint for redirecting UTM links that increments a click_count in the database.
+Storing last_clicked timestamp.
+Developing a basic API endpoint to retrieve click_count for a given UTM link or campaign.
+Files:
+app/api/redirect.py: New FastAPI router for the redirect endpoint GET /r/{short_code} or GET /click/{utm_link_id}.
+app/models/utm_link.py: Ensure click_count and last_clicked fields are present.
+app/services/utm_service.py: Add track_click function.
+app/api/analytics.py: New FastAPI router for analytics, with GET /analytics/utm/{id}/clicks and GET /analytics/campaign/{id}/clicks.
+app/main.py: Include redirect and analytics routers.
+Step Dependencies: Section 5, Step 2 (UTM Link Generation)
+User Instructions:
+Generate a UTM link.
+Click on the generated link multiple times.
+Access the backend analytics endpoints (/api/analytics/utm/{id}/clicks or /api/analytics/campaign/{id}/clicks) to verify click_count is incrementing. 

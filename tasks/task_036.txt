@@ -1,0 +1,19 @@
+Step 3: Frontend Performance Optimization (Code Splitting, Image Opt)
+
+
+Task: Implement frontend performance optimizations to achieve page load times under 3 seconds. This includes:
+Code Splitting: Utilize Next.js automatic code splitting and dynamic imports for lazy loading components and pages.
+Image Optimization: Use next/image component for optimized images with lazy loading and responsive sizing.
+Resource Prioritization: Preload critical resources (fonts, CSS).
+Bundle Analysis: Analyze the frontend bundle size to identify and reduce unnecessary dependencies.
+Files:
+next.config.js: Configure image optimization domains.
+Modify src/app/layout.tsx, src/app/page.tsx, and other page/component files to use next/dynamic for lazy loading.
+Replace <img> tags with next/image.
+public/fonts.css: (If using custom fonts) Configure font preloading.
+package.json: Add bundle analyzer (@next/bundle-analyzer).
+Step Dependencies: Section 7, Step 4 (Responsive Design)
+User Instructions:
+Use browser developer tools (Lighthouse, Network tab) to measure page load times and identify performance bottlenecks.
+Run bundle analysis to check for large chunks and optimize imports.
+Verify images are optimized and lazy-loaded. 

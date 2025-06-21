@@ -1,0 +1,16 @@
+Step 2: Implement Caching Mechanisms (Backend)
+
+
+Task: Integrate caching strategies at the application level to reduce database load and improve response times for frequently accessed or computationally expensive data. Implement caching for:
+Frequently accessed campaigns (e.g., get_campaign by ID).
+User session data and company context (to avoid repeated DB lookups).
+Search results for common queries.
+Explore database-level optimization techniques like materialized views for pre-computed aggregations if applicable for future analytics features.
+Files:
+requirements.txt: Add redis or python-redis client library.
+app/core/config.py: Add Redis connection settings (REDIS_URL).
+app/cache/cache.py: Module for caching utility functions and Redis client initialization.
+app/services/*.py: Implement caching logic (e.g., @cache decorators or explicit cache.get/cache.set calls) within relevant service methods (campaign_service.py, user_service.py, search_service.py).
+app/main.py: Initialize Redis client.
+Step Dependencies: Section 2, Step 1 (Backend Setup)
+User Instructions: Set up a Redis instance (locally for development, or via a cloud provider like Redis Cloud, Upstash). Verify that caching is working by observing reduced database queries for cached data using a debugger or logging. 

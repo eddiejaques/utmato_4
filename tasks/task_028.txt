@@ -1,0 +1,15 @@
+Step 1: Implement User Profile Management and Deactivation
+Task: Develop the backend and frontend functionality for users to manage their own profiles (e.g., update name, profile data). Implement the ability for Managers to deactivate or reactivate user accounts within their company, which should logically restrict access without deleting the user.
+Files:
+app/api/users.py: FastAPI router for user-specific actions (GET /users/me, PUT /users/me, PUT /users/{id}/deactivate, PUT /users/{id}/activate).
+app/schemas/user.py: Define UserUpdate, UserProfileResponse.
+app/services/user_service.py: Add update_user_profile, deactivate_user, activate_user logic.
+src/components/Auth/UserProfileEditForm.tsx: Frontend form for user to edit their profile.
+src/components/UserManagement/UserTable.tsx: (New) Table to list users in a company for managers, with deactivate/activate buttons.
+src/store/userSlice.ts: Redux slice for managing user list and individual user profiles.
+src/pages/settings/profile.tsx: Page for user's own profile.
+src/pages/settings/users.tsx: Page for manager to manage users.
+Step Dependencies: Section 3, Step 3 (Frontend Auth Flow), Section 10, Step 1 (RBAC)
+User Instructions:
+Test updating your own user profile.
+As a Manager, test deactivating and reactivating another user in your company. Verify that deactivated users cannot log in or access the application. 

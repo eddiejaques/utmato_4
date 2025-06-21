@@ -1,0 +1,16 @@
+Step 2: Develop Frontend Invitation and User List UI
+
+
+Task: Create frontend components for managers to invite new team members and view/manage existing team members within their company.
+Files:
+src/components/Team/InviteUserForm.tsx: Form for managers to invite new users (email, role selection).
+src/components/Team/TeamMemberList.tsx: Table displaying existing team members with their roles, and options to revoke/reassign roles (if roles can be changed).
+src/store/teamSlice.ts: New Redux slice for managing team member list and invitations.
+src/pages/settings/team.tsx: New page for team management.
+src/api/invitations.ts: Frontend API service for invitation-related calls.
+Step Dependencies: Section 13, Step 1
+User Instructions:
+As a Manager, navigate to the team settings page.
+Invite a new user and observe the invitation status.
+Verify the invited user appears in the team list (perhaps as "pending").
+Log in as the invited user (after simulating acceptance) and confirm they are part of the correct company with the assigned role. 

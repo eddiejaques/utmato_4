@@ -1,0 +1,18 @@
+Step 1: Implement Subscription Tier Logic
+
+
+Task: Implement backend logic to manage subscription tiers (Free, Pro) based on the subscription_tier field in the companies table. This involves:
+Enforcing feature limits for the Free tier (e.g., 25 campaigns, 100 UTM links).
+Implementing checks within API endpoints (e.g., campaign_service.py, utm_service.py) to prevent exceeding limits for free users.
+Defining a simple API endpoint for displaying current usage against limits.
+Files:
+app/models/company.py: Ensure subscription_tier field is correctly defined (Enum).
+app/schemas/company.py: Add CompanyUsageResponse schema.
+app/services/company_service.py: Add check_usage_limits function.
+app/api/company.py: New FastAPI router for company settings/usage, with GET /company/usage.
+app/main.py: Include company router.
+Step Dependencies: Section 2, Step 1 (Database Models), Section 4, Step 1 (Campaign CRUD), Section 5, Step 2 (UTM Gen)
+User Instructions:
+Manually set a company's subscription_tier to Free in the database.
+Attempt to create more than 25 campaigns or 100 UTM links as a user of that company and verify that the API returns an error.
+Access the /api/company/usage endpoint to view current usage. 

@@ -1,0 +1,10 @@
+Step 1: Optimize Database Queries and Indexing
+
+
+Task: Review and optimize all frequently executed database queries for campaigns, UTM links, and search results to ensure maximum performance. Implement additional database indexes (B-tree, GIN for JSONB/full-text search) where query performance analysis indicates benefits. Ensure efficient data retrieval, especially for lists and search operations.
+Files:
+app/services/*.py: Review and refine SQLAlchemy queries in service layers (campaign_service.py, utm_service.py, search_service.py) to use efficient patterns (e.g., selectinload, contains_eager for relationships, proper filtering and ordering).
+alembic/versions/xxxxxxxxxxxx_add_performance_indexes.py: New Alembic migration script to add any missing performance indexes (e.g., idx_campaigns_status, idx_utm_links_generated_url, GIN index on full-text search columns).
+app/db/utils.py: (Optional) Helper functions for common query patterns.
+Step Dependencies: Section 2, Step 3 (RLS), Section 4, Step 1 (Campaign CRUD API), Section 5, Step 2 (UTM Link Generation API), Section 6, Step 1 (Search API)
+User Instructions: Use database performance monitoring tools (e.g., Supabase Analytics, EXPLAIN ANALYZE in PostgreSQL) to analyze query execution times for critical paths. Identify and address any slow queries. 

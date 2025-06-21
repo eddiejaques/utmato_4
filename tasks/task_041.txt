@@ -1,0 +1,12 @@
+Step 2: Set up Continuous Integration (CI)
+
+
+Task: Configure a Continuous Integration (CI) pipeline (e.g., GitHub Actions, GitLab CI/CD) for both frontend and backend. This pipeline should automatically run tests (unit, integration, linting) on every push to the main branch or pull request, providing rapid feedback on code quality and correctness.
+Files:
+.github/workflows/ci-frontend.yml: GitHub Actions workflow for frontend CI (install deps, run lint, run tests, build).
+.github/workflows/ci-backend.yml: GitHub Actions workflow for backend CI (install deps, run lint, run tests).
+Step Dependencies: Section 15, Step 1 & 2 (Unit/Integration Tests)
+User Instructions:
+Commit changes and push to a new branch. Create a pull request.
+Verify that the CI pipeline automatically triggers and runs all tests.
+Ensure PRs cannot be merged if CI checks fail. 

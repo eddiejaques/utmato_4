@@ -1,0 +1,14 @@
+Step 2: Implement Single and Bulk UTM Link Generation Endpoints
+
+
+Task: Develop FastAPI endpoints for generating single and multiple UTM links. These endpoints should handle parameter parsing, enforce business rules (e.g., utm_source and utm_medium are required), construct the final generated URL, store links in the database with correct campaign association and created_by user, and return the generated UTM links. Bulk generation should include batch processing and detailed error reporting for partial failures.
+Files:
+app/api/utm.py: Add endpoints for POST /utm/generate (single) and POST /utm/generate-bulk (bulk).
+app/schemas/utm.py: Add Pydantic schemas for UTMLinkCreate (for single link), UTMLinkResponse, UTMBulkCreateRequest (list of UTMLinkCreate), and UTMBulkCreateResponse (list of results, including errors).
+app/services/utm_service.py: Add business logic for generate_single_utm_link and generate_bulk_utm_links, including constructing the URL, saving to DB, and handling errors for bulk operations.
+app/utils/utm_builder.py: Helper function for consistent URL parameter construction.
+Step Dependencies: Section 5, Step 1; Section 4, Step 1 (Campaign CRUD API)
+User Instructions:
+Test POST /api/utm/generate with valid campaign IDs and UTM parameters. Verify the generated URL and database entry.
+Test POST /api/utm/generate-bulk with a mix of valid and invalid UTM link requests. Verify that valid links are created and invalid ones are reported in the response.
+Check that utm_source and utm_medium are enforced as required. 

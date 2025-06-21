@@ -1,0 +1,15 @@
+Step 2: Develop Frontend Search Interface
+
+
+Task: Create the frontend components and Redux logic for the search interface. This includes a prominent search bar, filters for campaigns/UTM links (e.g., by status, source), display of search results categorized by Campaigns and UTM links, and the ability to perform reverse UTM lookups directly from the search interface. Implement pagination and a display of recent searches.
+Files:
+src/store/searchSlice.ts: Redux slice for search state management, including actions for performing searches, handling filters, setting pagination, and managing recentSearches history.
+src/components/Search/SearchBar.tsx: Component for the main search input field, potentially with a dropdown for quick access to reverse lookup or recent searches.
+src/components/Search/SearchResultsDisplay.tsx: Component to render categorized search results (e.g., list of campaign cards, table of UTM link entries).
+src/components/Search/SearchFilters.tsx: Component for applying filters to search results (e.g., radio buttons, checkboxes, date pickers).
+src/components/Search/ReverseUTMLookupForm.tsx: Component for the dedicated URL lookup feature within search.
+src/components/Search/RecentSearches.tsx: Component to display and manage recent search queries.
+src/pages/search/index.tsx: Dedicated page to host the comprehensive search interface.
+src/api/search.ts: Frontend API service for search-related calls to the backend.
+Step Dependencies: Section 6, Step 1
+User Instructions: Verify that the search interface functions correctly, displaying relevant results for both campaigns and UTM links. Test filters, pagination, and the reverse UTM lookup. Confirm that recent searches are tracked and displayed. 

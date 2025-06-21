@@ -1,0 +1,16 @@
+Step 3: Develop Frontend Authentication Flow
+
+
+Task: Implement the frontend authentication flow using Clerk's Next.js SDK, integrating with Redux Toolkit for state management. This includes handling user login/logout, displaying user profiles, and managing session tokens. Implement optimistic UI updates and robust error handling.
+Files:
+src/store/authSlice.ts: Update Redux slice to handle authentication state, currentUser data, currentCompany information, and actions for login/logout (e.g., setAuthStatus, setUser, setCompany).
+src/components/Auth/SignInPage.tsx: Component for user sign-in using Clerk's UI components.
+src/components/Auth/SignUpPage.tsx: Component for user sign-up.
+src/components/Auth/UserProfile.tsx: Component to display and allow basic updates to user profile (e.g., name).
+src/api/auth.ts: Frontend API service for authentication-related calls to the backend (e.g., exchanging Clerk session for custom backend session if needed, or simply for profile retrieval).
+src/app/middleware/reduxMiddleware.ts: (Optional) Middleware for handling async auth actions and token refresh.
+Step Dependencies: Section 3, Step 2
+User Instructions:
+Configure Clerk frontend SDK with your NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY in the frontend .env.
+Test user sign-up and login flows on the frontend.
+Verify that upon successful login, user and company data is loaded into the Redux store.

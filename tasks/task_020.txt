@@ -1,0 +1,11 @@
+Step 4: Implement Responsive Design and Accessibility
+
+
+Task: Ensure the entire UI is fully responsive across different breakpoints (mobile, tablet, desktop) using Tailwind's responsive utilities. Adhere to WCAG 2.1 AA accessibility standards by implementing proper semantic HTML, keyboard navigation for all interactive elements, sufficient color contrast, and appropriate ARIA attributes for dynamic content and complex widgets.
+Files:
+Modify existing component files (.tsx) to include responsive classes (e.g., md:flex-row, lg:grid-cols-3).
+Update src/styles/base.css or global styles for accessibility-related styles (e.g., :focus-visible outlines, skip-to-content links).
+Review and update all interactive components (buttons, inputs, links, modals) for keyboard navigation via tabindex, onKeyDown handlers where needed, and correct ARIA roles/states/properties (e.g., aria-expanded, aria-controls).
+src/utils/breakpoints.ts: (Optional) Utility for managing responsive breakpoints in JS.
+Step Dependencies: Section 7, Step 3
+User Instructions: Test the application on various screen sizes (using browser developer tools or actual devices). Perform thorough keyboard-only navigation tests. Use accessibility auditing tools (e.g., Lighthouse, axe DevTools) to identify and fix issues. Conduct color contrast checks. 

@@ -1,0 +1,10 @@
+Step 2: Implement Campaign Status Management and Duplication (Backend)
+
+
+Task: Extend the backend campaign_service and API to support updating campaign statuses (Draft, Active, Paused, Completed, Archived) and duplicating existing campaigns. Ensure these operations respect company-scoping and authorization. Duplication should create a deep copy of campaign data (excluding associated UTM links initially, which will be handled in a later step if needed).
+Files:
+app/api/campaigns.py: Add endpoints like PUT /campaigns/{id}/status (or include status in PUT /campaigns/{id}) and POST /campaigns/{id}/duplicate.
+app/schemas/campaign.py: Update CampaignUpdate to include status, and define CampaignDuplicateRequest if parameters are needed.
+app/services/campaign_service.py: Add business logic for update_campaign_status and duplicate_campaign, ensuring all relevant campaign metadata is copied accurately and a new unique ID is generated for the duplicated campaign.
+Step Dependencies: Section 4, Step 1
+User Instructions: Use an API client to test campaign status changes and duplication. Verify that a duplicated campaign has a new ID and correct copied data, and that status updates persist. 

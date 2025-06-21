@@ -1,0 +1,17 @@
+Step 2: Implement Data Encryption and PII Protection
+
+
+Task: Ensure data at rest is encrypted (Supabase handles this by default for its PostgreSQL database). Implement TLS 1.3 encryption for all data in transit (client-server communication). Define and implement PII (Personally Identifiable Information) protection measures, including:
+Email Hashing/Pseudonymization: For sensitive email data if not directly needed for display (Clerk handles primary email, but for other uses).
+User ID Pseudonymization: Where direct user IDs are not strictly necessary, use pseudonyms.
+Automatic PII Redaction in Logs: Ensure no sensitive PII is logged in plain text.
+Files:
+app/core/config.py: Ensure secure configuration for TLS (usually handled by deployment environment/reverse proxy like Nginx or cloud provider).
+app/utils/pii_handler.py: New utility functions for hashing/pseudonymizing PII fields.
+app/main.py: Integrate PII redaction into logging configuration (e.g., using a custom logging formatter or loguru sinks).
+alembic/versions/xxxxxxxxxxxx_pii_updates.py: (If applying PII hashing to existing data or new columns).
+Step Dependencies: Section 1, Step 2 (Backend Setup)
+User Instructions:
+Verify that your deployment environment (e.g., Vercel/Netlify for frontend, railway.app/Fly.io for backend) enforces HTTPS/TLS 1.3.
+Test user registration/updates and verify that PII is appropriately handled (e.g., hashed) in the database and logs.
+Review logs to confirm PII redaction is active. 

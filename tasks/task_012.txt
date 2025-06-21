@@ -1,0 +1,15 @@
+Step 1: Implement URL Validation Endpoint
+
+
+Task: Create a FastAPI endpoint to robustly validate destination URLs. This endpoint should perform comprehensive checks including schema validation (http/https), domain format, DNS lookup validation, and basic security checks for known malicious domains (e.g., using a simple blocklist or integrating with a free lookup API if available and simple).
+Files:
+app/api/utm.py: FastAPI router for UTM-related operations, including POST /utm/validate-url.
+app/schemas/utm.py: Pydantic schemas for URLValidationRequest (e.g., url: HttpUrl) and URLValidationResult (e.g., is_valid: bool, message: str).
+app/services/utm_service.py: Service layer containing the URL validation logic (e.g., using validators library for basic URL structure, socket for DNS lookup).
+app/main.py: Include the utm router.
+Step Dependencies: Section 2, Step 1 (Backend Setup)
+User Instructions: Test the /api/utm/validate-url endpoint with various URLs using an API client:
+Valid URLs (https://example.com/path?query=val)
+Invalid formats (not-a-url, ftp://invalid)
+Non-existent domains (https://nonexistentdomain123456.com)
+Verify that correct validation results and messages are returned. 

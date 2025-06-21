@@ -1,0 +1,19 @@
+Step 3: Develop Frontend UTM Builder Component
+
+
+Task: Create a frontend component for building UTM links. This component should allow users to input a base URL, select UTM parameters (source, medium, campaign, content, term) with suggestions (e.g., based on past inputs or campaign context), validate the URL in real-time using the backend endpoint, display a live preview of the generated URL, and provide functionality to generate the link and copy it to the clipboard.
+Files:
+src/store/utmSlice.ts: Redux slice for UTM builder state management, including actions for URL validation, link generation, and managing parameter suggestions.
+src/components/UTM/UTMBuilderModal.tsx: Main component for the UTM builder UI, typically presented as a modal or slide-out.
+src/components/UTM/UTMParameterInput.tsx: Reusable component for UTM parameter input fields, potentially with autocomplete/suggestions.
+src/components/UTM/URLPreview.tsx: Component to display a live preview of the generated URL as parameters are entered.
+src/api/utm.ts: Frontend API service for UTM-related calls to the backend (validate-url, generate, generate-bulk).
+src/pages/campaigns/[id].tsx: Integrate the UTMBuilderModal into the campaign detail page, likely accessible via a button.
+src/utils/clipboard.ts: Utility for copying text to clipboard.
+Step Dependencies: Section 5, Step 2
+User Instructions:
+Navigate to a campaign detail page and open the UTM builder.
+Enter a base URL and various UTM parameters. Observe real-time validation and the live URL preview.
+Generate a UTM link and verify it appears in the campaign's UTM link list (after refresh or optimistic update).
+Test the "copy to clipboard" functionality.
+Verify parameter suggestions, if implemented, are helpful. 

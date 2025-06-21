@@ -1,0 +1,13 @@
+Step 2: Implement Frontend Unit and Integration Tests
+
+
+Task: Write unit tests for atomic components and Redux slices. Implement integration tests for composite components (molecules, organisms) and page-level interactions. Utilize Jest/React Testing Library for component testing.
+Files:
+package.json: Add jest, @testing-library/react, @testing-library/jest-dom, msw (for API mocking).
+jest.config.js: Jest configuration.
+src/components/**/*.test.tsx: Unit tests for Button.tsx, Input.tsx, etc.
+src/store/**/*.test.ts: Unit tests for authSlice.ts, campaignSlice.ts, etc.
+src/pages/**/*.test.tsx: Integration tests for pages.
+src/mocks/handlers.ts, src/mocks/server.ts: MSW setup for API mocking.
+Step Dependencies: Section 1, Step 1 (Frontend Init), All frontend UI sections.
+User Instructions: Run frontend tests (npm test). Ensure tests pass and verify component behavior under different states. 

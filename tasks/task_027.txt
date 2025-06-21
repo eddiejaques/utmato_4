@@ -1,0 +1,18 @@
+Step 3: Implement Application Security Measures (Input Validation, Rate Limiting, Headers)
+
+
+Task: Implement robust application-level security measures to prevent common vulnerabilities:
+Comprehensive Input Validation & Sanitization: Enhance existing Pydantic schemas with stricter validation rules (e.g., regex patterns, min/max lengths) and sanitize all user inputs to prevent XSS (Cross-Site Scripting) and SQL injection attacks.
+HTTP Security Headers: Configure FastAPI to send appropriate HTTP security headers (e.g., Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security) to mitigate clickjacking, XSS, etc.
+API Rate Limiting: Implement API rate limiting to protect against brute-force attacks and denial-of-service (DoS) attempts on critical endpoints (e.g., login, password reset, bulk operations).
+Files:
+app/schemas/*.py: Review and enhance all Pydantic schemas with Field(min_length=..., max_length=..., pattern=...), validator functions for complex validation.
+app/middleware/security_headers.py: New FastAPI middleware for setting HTTP security headers.
+app/middleware/rate_limit.py: New FastAPI middleware or dependency for API rate limiting (e.g., using FastAPI-Limiter with Redis).
+app/main.py: Register security header and rate limiting middlewares.
+app/utils/sanitizers.py: (Optional) Helper functions for explicit input sanitization if needed beyond Pydantic.
+Step Dependencies: Section 5, Step 1 (URL Validation Endpoint), Section 8, Step 2 (Caching)
+User Instructions:
+Attempt to inject malicious scripts into text inputs or malformed data into API requests to verify input validation/sanitization.
+Use tools like curl or browser developer tools to check that HTTP security headers are correctly set in API responses.
+Conduct load tests or rapid-fire requests on rate-limited endpoints to confirm that rate limiting is effective and returns appropriate HTTP 429 (Too Many Requests) responses. 
