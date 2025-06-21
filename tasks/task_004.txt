@@ -1,0 +1,15 @@
+Step 2: Implement Database Migrations (Alembic)
+
+
+Task: Set up Alembic for declarative database migrations to manage schema changes effectively. Initialize Alembic, configure it to work with the SQLAlchemy models, and create the initial migration script to generate all defined tables and their relationships in the PostgreSQL database.
+Files:
+alembic.ini: Alembic configuration file (ensure script_location, sqlalchemy.url are correctly set).
+env.py: Alembic environment script (update to connect to the async SQLAlchemy engine and include all models from app.db.base).
+versions/xxxxxxxxxxxx_initial_migration.py: Generated migration script for initial table creation (will be created by Alembic).
+Step Dependencies: Section 2, Step 1
+User Instructions:
+Initialize Alembic within your backend root: alembic init -t async migrations.
+Update alembic.ini and migrations/env.py according to SQLAlchemy async setup.
+Generate the first migration: alembic revision --autogenerate -m "Initial database setup".
+Apply the migration to your Supabase PostgreSQL database: alembic upgrade head.
+Verify tables are created in Supabase.
