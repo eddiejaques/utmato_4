@@ -15,7 +15,7 @@ export function UserSync() {
     async function sync() {
       if (isSignedIn && user) {
         try {
-          const token = await getToken({ template: 'supabase' }); // or your custom template
+          const token = await getToken();
           if (token) {
             await syncUser(user, token);
             dispatch(setAuthState(true));
