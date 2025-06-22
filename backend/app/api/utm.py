@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+import uuid
 
 from app.schemas.utm import URLValidationRequest, URLValidationResponse, UTMLinkCreate, UTMLinkResponse
 from app.services import utm_service
@@ -23,6 +24,20 @@ async def generate_utm_link(
     """
     utm_link = await utm_service.generate_single_utm_link(db=db, link_data=link_in, user=current_user)
     return utm_link
+
+
+@router.get("/campaign/{campaign_id}/links", response_model=list[UTMLinkResponse])
+async def get_campaign_utm_links(
+    *,
+    db: AsyncSession = Depends(get_db),
+    campaign_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Retrieve all UTM links for a specific campaign.
+    """
+    utm_links = await utm_service.get_utm_links_for_campaign(db=db, campaign_id=campaign_id, user=current_user)
+    return utm_links
 
 
 @router.post("/validate-url", response_model=URLValidationResponse)

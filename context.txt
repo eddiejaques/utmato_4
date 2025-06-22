@@ -1,3 +1,5 @@
+Proof of Concept.
+
 Elevator Pitch
 A centralized campaign management platform that helps marketing teams maintain consistent metadata, generate trackable UTM links, and create a single source of truth for all campaign assets before launching across multiple advertising platforms.
 Problem Statement
