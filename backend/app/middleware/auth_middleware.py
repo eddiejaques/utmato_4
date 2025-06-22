@@ -17,7 +17,7 @@ from app.models.company import Company
 logger = logging.getLogger(__name__)
 
 # Paths that DO NOT require authentication.
-AUTH_BYPASS_PATHS = ["/", "/docs", "/openapi.json", "/redoc", "/api/v1/webhooks/clerk"]
+AUTH_BYPASS_PATHS = ["/", "/docs", "/openapi.json", "/redoc", "/api/v1/webhooks/clerk", "/api/v1/utm/validate-url"]
 
 class AuthMiddleware(BaseHTTPMiddleware):
     """
