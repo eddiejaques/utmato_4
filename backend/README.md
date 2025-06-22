@@ -87,7 +87,7 @@ You can obtain a JWT for a test user from the Clerk dashboard or your frontend a
 How to get a token from the Clerk Dashboard
 
 For situations where you might not be running the frontend, you can get a token directly from the Clerk Dashboard. These are great for quickly testing with tools like Postman.
-Here’s how you do it:
+Here's how you do it:
 Go to your Clerk Dashboard and select your application.
 Navigate to the Users page from the sidebar.
 Click on the user you want to test with.
@@ -200,4 +200,66 @@ The base URL for the campaign endpoints is `http://localhost:8000/api/v1/campaig
       "status": "active",
       ...
     }
-    ``` 
+    ```
+
+## Testing the URL Validation Endpoint
+
+You can use a command-line tool like `curl` to test the URL validation endpoint.
+
+### Test Case 1: A Valid URL
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+-d '{"url": "https://www.google.com"}' \
+http://127.0.0.1:8000/api/v1/utm/validate-url
+```
+
+**Expected Response:**
+
+```json
+{"is_valid":true,"message":"URL is valid."}
+```
+
+### Test Case 2: An Invalid URL Format
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+-d '{"url": "not-a-valid-url"}' \
+http://127.0.0.1:8000/api/v1/utm/validate-url
+```
+
+**Expected Response:**
+
+```json
+{"is_valid":false,"message":"URL format is invalid."}
+```
+
+### Test Case 3: A Non-Existent Domain
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+-d '{"url": "https://thisdomainprobablydoesnotexist12345.com"}' \
+http://127.0.0.1:8000/api/v1/utm/validate-url
+```
+
+**Expected Response:**
+
+```json
+{"is_valid":false,"message":"Domain does not exist (DNS lookup failed)."}
+```
+
+### Test Case 4: A Malicious Domain
+
+This test uses one of the domains from the blocklist defined in `app/services/utm_service.py`.
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+-d '{"url": "https://malicious.com"}' \
+http://127.0.0.1:8000/api/v1/utm/validate-url
+```
+
+**Expected Response:**
+
+```json
+{"is_valid":false,"message":"URL is from a known malicious domain."}
+``` 

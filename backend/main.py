@@ -6,7 +6,6 @@ import os
 load_dotenv()
 
 # This import is crucial for SQLAlchemy to discover all models
-
 from app.db import base  # noqa
 
 from fastapi import FastAPI, Depends
@@ -15,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api import webhooks
 from app.api import users
 from app.api import campaigns
+from app.api import utm
 from app.middleware.auth_middleware import AuthMiddleware
 from app.dependencies.db import get_db
 from app.dependencies.auth import get_current_user
@@ -45,6 +45,7 @@ app.add_middleware(AuthMiddleware)
 app.include_router(webhooks.router, prefix="/api/v1/webhooks", tags=["webhooks"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(campaigns.router, prefix="/api/v1/campaigns", tags=["campaigns"])
+app.include_router(utm.router, prefix="/api/v1/utm", tags=["utm"])
 
 @app.get("/")
 def read_root():
