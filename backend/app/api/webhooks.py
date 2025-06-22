@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import verify_clerk_webhook
-from app.dependencies import get_db
+from app.dependencies.db import get_db
 from app.schemas.clerk import ClerkWebhookEvent, ClerkUserData, ClerkDeletedUserData
 from app.services import user_service
 

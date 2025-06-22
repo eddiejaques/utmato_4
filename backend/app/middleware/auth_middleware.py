@@ -1,5 +1,6 @@
 import logging
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseFunction
+from typing import Callable, Awaitable
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 from fastapi_clerk_auth import ClerkConfig, ClerkHTTPBearer
@@ -13,13 +14,14 @@ logger = logging.getLogger(__name__)
 
 # Configure Clerk
 clerk_config = ClerkConfig(
-    jwks_url=f"https://{settings.CLERK_FRONTEND_API}/.well-known/jwks.json"
-    if settings.CLERK_FRONTEND_API
+    jwks_url=f"https://{settings.CLERK_ISSUER_URL}/.well-known/jwks.json"
+    if settings.CLERK_ISSUER_URL
     else "",
     auto_error=False,  # Allow public routes, auth is checked by dependencies
 )
 clerk_auth_guard = ClerkHTTPBearer(config=clerk_config)
 
+PUBLIC_PATHS = ["/", "/docs", "/openapi.json", "/redoc"]
 
 class AuthMiddleware(BaseHTTPMiddleware):
     """
@@ -29,8 +31,11 @@ class AuthMiddleware(BaseHTTPMiddleware):
     """
 
     async def dispatch(
-        self, request: Request, call_next: RequestResponseFunction
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        if request.url.path in PUBLIC_PATHS:
+            return await call_next(request)
+            
         db_session = SessionLocal()
         request.state.db = db_session
 
