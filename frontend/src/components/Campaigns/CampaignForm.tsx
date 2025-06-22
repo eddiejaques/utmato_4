@@ -59,10 +59,14 @@ export function CampaignForm({ campaign, onSuccess }: CampaignFormProps) {
   }, [campaign, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const processedValues = {
+      ...values,
+      status: values.status.toLowerCase() as CampaignStatus,
+    };
     if (campaign) {
-      await dispatch(updateCampaign({ id: campaign.id, campaignData: values }));
+      await dispatch(updateCampaign({ id: campaign.id, campaignData: processedValues }));
     } else {
-      await dispatch(createCampaign(values));
+      await dispatch(createCampaign(processedValues));
     }
     onSuccess?.();
   }
