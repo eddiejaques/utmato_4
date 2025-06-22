@@ -15,6 +15,7 @@ from app.api import webhooks
 from app.api import users
 from app.api import campaigns
 from app.api import utm
+from app.api import search
 from app.middleware.auth_middleware import AuthMiddleware
 from app.dependencies.db import get_db
 from app.dependencies.auth import get_current_user
@@ -46,6 +47,7 @@ app.include_router(webhooks.router, prefix="/api/v1/webhooks", tags=["webhooks"]
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(campaigns.router, prefix="/api/v1/campaigns", tags=["campaigns"])
 app.include_router(utm.router, prefix="/api/v1/utm", tags=["utm"])
+app.include_router(search.router, prefix="/api/v1/search", tags=["search"])
 
 @app.get("/")
 def read_root():
