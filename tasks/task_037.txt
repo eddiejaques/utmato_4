@@ -1,3 +1,5 @@
+Section 15: Testing Strategy (Foundational)
+
 Step 1: Implement Backend Unit and Integration Tests
 
 
