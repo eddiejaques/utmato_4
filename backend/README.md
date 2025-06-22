@@ -202,6 +202,47 @@ The base URL for the campaign endpoints is `http://localhost:8000/api/v1/campaig
     }
     ```
 
+### UTM Link Generation Endpoint
+
+The base URL for the UTM link generation endpoint is `http://localhost:8000/api/v1/utm`.
+
+#### 1. Generate a Single UTM Link
+
+This endpoint allows you to generate a single UTM-tagged URL for an existing campaign. You must provide a valid `campaign_id`.
+
+-   **Method**: `POST`
+-   **URL**: `utm/generate`
+-   **Headers**: `Authorization: Bearer <YOUR_CLERK_JWT>`
+-   **Body** (raw, JSON):
+    Replace `"campaign_id"` with a valid ID from one of your campaigns.
+    ```json
+    {
+      "destination_url": "https://www.myproduct.com/landing",
+      "utm_source": "google",
+      "utm_medium": "cpc",
+      "utm_term": "saas_platform",
+      "utm_content": "ad_variant_1",
+      "campaign_id": "YOUR_CAMPAIGN_ID_HERE"
+    }
+    ```
+-   **Success Response** (200 OK):
+    The response will include the full generated URL and all the parameters stored in the database.
+    ```json
+    {
+        "destination_url": "https://www.myproduct.com/landing",
+        "utm_source": "google",
+        "utm_medium": "cpc",
+        "utm_term": "saas_platform",
+        "utm_content": "ad_variant_1",
+        "id": "e5c1a8a0-5b1e-4b2e-8b1e-2e8b1e2e8b1e",
+        "campaign_id": "YOUR_CAMPAIGN_ID_HERE",
+        "utm_campaign": "Your Campaign Name",
+        "generated_url": "https://www.myproduct.com/landing?utm_source=google&utm_medium=cpc&utm_campaign=Your+Campaign+Name&utm_term=saas_platform&utm_content=ad_variant_1",
+        "click_count": 0,
+        "created_at": "2024-07-29T12:00:00Z"
+    }
+    ```
+
 ## Testing the URL Validation Endpoint
 
 You can use a command-line tool like `curl` to test the URL validation endpoint.
