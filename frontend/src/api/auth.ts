@@ -1,41 +1,38 @@
-import { store } from '@/store';
-import { setCurrentUser, setCurrentCompany } from '@/store/authSlice';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { post } from './api';
+import { User } from '@/types/user'; 
+import { Company } from '@/types/company';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+interface SyncUserData {
+  user: User;
+  company: Company | null;
+  token: string | null;
+}
 
-export async function syncUser(clerkUser: any, token: string) {
+interface SyncUserArgs {
+  clerkUser: any;
+  token: string | null;
+}
+
+// Define the async thunk
+export const syncUser = createAsyncThunk<
+  SyncUserData, // Return type of the payload creator
+  SyncUserArgs, // Arguments to the payload creator
+  { rejectValue: string } // Types for thunkAPI
+>('auth/syncUser', async ({ clerkUser, token }, { rejectWithValue }) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/users/sync`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        clerk_id: clerkUser.id,
-        email: clerkUser.primaryEmailAddress.emailAddress,
-        first_name: clerkUser.firstName,
-        last_name: clerkUser.lastName,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || 'Failed to sync user');
-    }
-
-    const data = await response.json();
+    const syncData = {
+      clerk_id: clerkUser.id,
+      email: clerkUser.primaryEmailAddress.emailAddress,
+      first_name: clerkUser.firstName,
+      last_name: clerkUser.lastName,
+      image_url: clerkUser.imageUrl
+    };
     
-    // Dispatch actions to update Redux store
-    store.dispatch(setCurrentUser(data.user));
-    if (data.company) {
-      store.dispatch(setCurrentCompany(data.company));
-    }
-
-    return data;
-  } catch (error) {
+    const data = await post<SyncUserData>('/users/sync', syncData, token);
+    return { ...data, token };
+  } catch (error: any) {
     console.error('Error syncing user:', error);
-    // Handle error appropriately in the UI
-    throw error;
+    return rejectWithValue(error.response?.data?.detail || 'Failed to sync user');
   }
-} 
+}); 

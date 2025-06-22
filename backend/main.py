@@ -1,4 +1,12 @@
+from fastapi import FastAPI
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
 # This import is crucial for SQLAlchemy to discover all models
+
 from app.db import base  # noqa
 
 from fastapi import FastAPI, Depends

@@ -1,30 +1,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface UserProfile {
-  id: string;
-  clerkId: string;
-  email: string;
-  firstName: string | null;
-  lastName: string | null;
-  companyId: string | null;
-}
-
-interface Company {
-    id: string;
-    name: string;
-    domain: string;
-}
+import { User } from '@/types/user';
+import { Company } from '@/types/company';
+import { syncUser } from '@/api/auth';
 
 interface AuthState {
   isAuthenticated: boolean;
-  currentUser: UserProfile | null;
-  currentCompany: Company | null;
+  user: User | null;
+  company: Company | null;
+  token: string | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  currentUser: null,
-  currentCompany: null,
+  user: null,
+  company: null,
+  token: null,
+  loading: false,
+  error: null,
 };
 
 const authSlice = createSlice({
@@ -34,19 +28,37 @@ const authSlice = createSlice({
     setAuthState(state, action: PayloadAction<boolean>) {
       state.isAuthenticated = action.payload;
     },
-    setCurrentUser(state, action: PayloadAction<UserProfile | null>) {
-      state.currentUser = action.payload;
-    },
-    setCurrentCompany(state, action: PayloadAction<Company | null>) {
-      state.currentCompany = action.payload;
+    setToken(state, action: PayloadAction<string | null>) {
+      state.token = action.payload;
     },
     logout(state) {
       state.isAuthenticated = false;
-      state.currentUser = null;
-      state.currentCompany = null;
+      state.user = null;
+      state.company = null;
+      state.token = null;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(syncUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(syncUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.company = action.payload.company;
+        state.token = action.payload.token;
+        state.isAuthenticated = true; 
+      })
+      .addCase(syncUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+      });
   },
 });
 
-export const { setAuthState, setCurrentUser, setCurrentCompany, logout } = authSlice.actions;
+export const { setAuthState, setToken, logout } = authSlice.actions;
+
 export default authSlice.reducer; 

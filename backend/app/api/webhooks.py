@@ -1,40 +1,34 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Request, Depends, HTTPException, status
+from pydantic import ValidationError
+# from app.core.security import verify_clerk_webhook
+# from app.schemas.clerk import ClerkEvent, ClerkUserEvent, ClerkDeletedUserEvent
+from app.services.user_service import handle_user_created, handle_user_updated, handle_user_deleted
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.security import verify_clerk_webhook
 from app.dependencies.db import get_db
-from app.schemas.clerk import ClerkWebhookEvent, ClerkUserData, ClerkDeletedUserData
-from app.services import user_service
 
 router = APIRouter()
 
-@router.post("/clerk", status_code=status.HTTP_202_ACCEPTED)
-async def handle_clerk_webhooks(
+@router.post("/clerk")
+async def webhook_clerk(
     request: Request,
     db: AsyncSession = Depends(get_db)
 ):
-    try:
-        payload = await verify_clerk_webhook(request)
-    except HTTPException as e:
-        # Re-raise to let FastAPI handle the response
-        raise e
+    # body = await request.body()
+    # try:
+    #     event_data = verify_clerk_webhook(request, body)
+    #     event = ClerkEvent.parse_obj(event_data)
+    # except (ValueError, ValidationError) as e:
+    #     raise HTTPException(status_code=400, detail=f"Invalid payload: {e}")
 
-    event = ClerkWebhookEvent.model_validate(payload)
-
-    if event.type == "user.created":
-        user_data = ClerkUserData.model_validate(event.data)
-        await user_service.handle_user_created(db, user_data)
-        return {"status": "user created"}
-
-    elif event.type == "user.updated":
-        user_data = ClerkUserData.model_validate(event.data)
-        await user_service.handle_user_updated(db, user_data)
-        return {"status": "user updated"}
-
-    elif event.type == "user.deleted":
-        user_data = ClerkDeletedUserData.model_validate(event.data)
-        await user_service.handle_user_deleted(db, user_data)
-        return {"status": "user deleted"}
-
-    # If the event type is not one of the handled types,
-    # we can just acknowledge it without taking action.
-    return {"status": f"event type {event.type} received but not handled"} 
+    # # We are only interested in user events for now
+    # if event.type.startswith("user."):
+    #     user_event = ClerkUserEvent.parse_obj(event_data)
+    #     if user_event.type == "user.created":
+    #         await handle_user_created(db, user_event.data)
+    #     elif user_event.type == "user.updated":
+    #         await handle_user_updated(db, user_event.data)
+    # elif event.type == "user.deleted":
+    #     deleted_user_event = ClerkDeletedUserEvent.parse_obj(event_data)
+    #     await handle_user_deleted(db, deleted_user_event.data)
+        
+    return {"status": "ok"} 

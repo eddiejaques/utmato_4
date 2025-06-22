@@ -3,34 +3,24 @@
 import { useEffect } from 'react';
 import { useUser, useAuth } from '@clerk/nextjs';
 import { syncUser } from '@/api/auth';
-import { useDispatch } from 'react-redux';
-import { setAuthState } from '@/store/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 export function UserSync() {
-  const { isSignedIn, user } = useUser();
-  const { getToken } = useAuth();
   const dispatch = useDispatch();
+  const { getToken } = useAuth();
+  const { user, isSignedIn } = useUser();
+  const { isAuthenticated, loading } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    async function sync() {
-      if (isSignedIn && user) {
-        try {
-          const token = await getToken();
-          if (token) {
-            await syncUser(user, token);
-            dispatch(setAuthState(true));
-          }
-        } catch (error) {
-          console.error('Failed to sync user or get token:', error);
-          dispatch(setAuthState(false));
-        }
-      } else {
-        dispatch(setAuthState(false));
-      }
+    const sync = async () => {
+    if (isSignedIn && user && !isAuthenticated && !loading) {
+        const token = await getToken();
+        dispatch(syncUser({ clerkUser: user, token }));
     }
-
+    };
     sync();
-  }, [isSignedIn, user, getToken, dispatch]);
+  }, [user, isSignedIn, isAuthenticated, loading, dispatch, getToken]);
 
   // Log the JWT in development for API testing
   useEffect(() => {
@@ -44,4 +34,6 @@ export function UserSync() {
   }, [isSignedIn, getToken]);
 
   return null; // This component does not render anything
-} 
+}
+
+export default UserSync; 
