@@ -32,5 +32,16 @@ export function UserSync() {
     sync();
   }, [isSignedIn, user, getToken, dispatch]);
 
+  // Log the JWT in development for API testing
+  useEffect(() => {
+    const logToken = async () => {
+      if (process.env.NODE_ENV === 'development' && isSignedIn) {
+        const token = await getToken();
+        console.log('CLERK JWT (for API testing):', token);
+      }
+    };
+    logToken();
+  }, [isSignedIn, getToken]);
+
   return null; // This component does not render anything
 } 
