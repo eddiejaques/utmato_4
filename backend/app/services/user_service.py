@@ -73,55 +73,59 @@ async def get_user_by_clerk_id(db: AsyncSession, clerk_id: str) -> User | None:
     result = await db.execute(select(User).filter(User.clerk_id == clerk_id))
     return result.scalars().first()
 
-async def find_or_create_user_with_company(db: AsyncSession, user_data: UserSyncRequest) -> tuple[User, Company | None]:
+async def find_or_create_user_with_company(
+    db: AsyncSession, user_data: UserSyncRequest
+) -> tuple[User, Company | None]:
     """
     Finds a user by Clerk ID or creates a new one,
     also finding or creating the associated company based on email domain.
-    Temporarily elevates privileges to bypass RLS for user/company creation.
     """
-    # Temporarily set the role to one that bypasses RLS for this transaction
-    await db.execute(text("SET ROLE postgres;"))
-    
-    try:
-        existing_user = await db.execute(
-            select(User)
-            .options(selectinload(User.company))
-            .filter(User.clerk_id == user_data.clerk_id)
+    # Check for existing user first.
+    # Use selectinload to fetch the company in the same query.
+    existing_user_result = await db.execute(
+        select(User)
+        .options(selectinload(User.company))
+        .filter(User.clerk_id == user_data.clerk_id)
+    )
+    user = existing_user_result.scalars().first()
+
+    if user:
+        # If user exists, no changes are needed, just return.
+        return user, user.company
+
+    # If user does not exist, create user and potentially company in one atomic operation.
+    email_domain = user_data.email.split("@")[1]
+
+    existing_company_result = await db.execute(
+        select(Company).filter(Company.domain == email_domain)
+    )
+    company = existing_company_result.scalars().first()
+
+    if not company:
+        company = Company(
+            name=email_domain.split(".")[0].capitalize(), domain=email_domain
         )
-        user = existing_user.scalars().first()
+        db.add(company)
+        # Flush to ensure the company object is persisted and has an ID
+        # before creating the user that depends on it.
+        await db.flush()
 
-        if user:
-            return user, user.company
+    new_user = User(
+        clerk_id=user_data.clerk_id,
+        email=user_data.email,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
+        company_id=company.id,
+        role=UserRole.MANAGER,
+    )
+    db.add(new_user)
 
-        email_domain = user_data.email.split('@')[1]
-        
-        existing_company = await db.execute(
-            select(Company).filter(Company.domain == email_domain)
-        )
-        company = existing_company.scalars().first()
+    # Commit all changes (new company and/or new user) to the database.
+    await db.commit()
 
-        if not company:
-            company = Company(
-                name=email_domain.split('.')[0].capitalize(),
-                domain=email_domain
-            )
-            db.add(company)
-            await db.flush()
-
-        new_user = User(
-            clerk_id=user_data.clerk_id,
-            email=user_data.email,
-            first_name=user_data.first_name,
-            last_name=user_data.last_name,
-            company_id=company.id,
-            role="manager",  # Set the default role
-        )
-        db.add(new_user)
-        await db.commit()
-        await db.refresh(new_user)
+    # Refresh objects to get the latest state from the DB (e.g., generated IDs)
+    await db.refresh(new_user)
+    if "company" in locals() and company:
         await db.refresh(company)
 
-        return new_user, company
-    finally:
-        # Always reset the role at the end of the transaction
-        await db.execute(text("RESET ROLE;"))
+    return new_user, company
