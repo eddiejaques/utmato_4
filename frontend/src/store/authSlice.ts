@@ -19,12 +19,14 @@ interface AuthState {
   isAuthenticated: boolean;
   currentUser: UserProfile | null;
   currentCompany: Company | null;
+  token: string | null;
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
   currentUser: null,
   currentCompany: null,
+  token: null,
 };
 
 const authSlice = createSlice({
@@ -40,13 +42,17 @@ const authSlice = createSlice({
     setCurrentCompany(state, action: PayloadAction<Company | null>) {
       state.currentCompany = action.payload;
     },
+    setToken(state, action: PayloadAction<string | null>) {
+      state.token = action.payload;
+    },
     logout(state) {
       state.isAuthenticated = false;
       state.currentUser = null;
       state.currentCompany = null;
+      state.token = null;
     },
   },
 });
 
-export const { setAuthState, setCurrentUser, setCurrentCompany, logout } = authSlice.actions;
+export const { setAuthState, setCurrentUser, setCurrentCompany, setToken, logout } = authSlice.actions;
 export default authSlice.reducer; 

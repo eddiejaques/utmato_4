@@ -1,5 +1,5 @@
 Step 2: Implement Campaign Status Management and Duplication (Backend)
-
+status - completed
 
 Task: Extend the backend campaign_service and API to support updating campaign statuses (Draft, Active, Paused, Completed, Archived) and duplicating existing campaigns. Ensure these operations respect company-scoping and authorization. Duplication should create a deep copy of campaign data (excluding associated UTM links initially, which will be handled in a later step if needed).
 Files:

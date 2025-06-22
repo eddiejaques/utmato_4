@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useUser, useAuth } from '@clerk/nextjs';
 import { syncUser } from '@/api/auth';
 import { useDispatch } from 'react-redux';
-import { setAuthState } from '@/store/authSlice';
+import { setAuthState, setToken } from '@/store/authSlice';
 
 export function UserSync() {
   const { isSignedIn, user } = useUser();
@@ -17,15 +17,18 @@ export function UserSync() {
         try {
           const token = await getToken();
           if (token) {
-            await syncUser(user, token);
+            dispatch(setToken(token));
+            await syncUser(user);
             dispatch(setAuthState(true));
           }
         } catch (error) {
           console.error('Failed to sync user or get token:', error);
           dispatch(setAuthState(false));
+          dispatch(setToken(null));
         }
       } else {
         dispatch(setAuthState(false));
+        dispatch(setToken(null));
       }
     }
 

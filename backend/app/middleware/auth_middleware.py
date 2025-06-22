@@ -4,6 +4,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 from fastapi_clerk_auth import ClerkConfig, ClerkHTTPBearer
+from sqlalchemy import text
 
 from app.core.config import settings
 from app.db.database import SessionLocal
@@ -35,33 +36,34 @@ class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        db_session = SessionLocal()
-        request.state.db = db_session
+        # Create a new session for each request
+        async with SessionLocal() as db_session:
+            request.state.db = db_session
+            try:
+                # Check if the current path should bypass the main auth logic
+                bypass_auth = any(request.url.path.startswith(path) for path in AUTH_BYPASS_PATHS)
 
-        try:
-            # Check if the current path should bypass the main auth logic
-            bypass_auth = any(request.url.path.startswith(path) for path in AUTH_BYPASS_PATHS)
+                if not bypass_auth:
+                    credentials = await clerk_auth_guard(request)
+                    if credentials:
+                        clerk_id = credentials.decoded.get("sub")
+                        if clerk_id:
+                            # get_user_by_clerk_id is async and uses the session
+                            user = await get_user_by_clerk_id(db_session, clerk_id)
+                            if user and user.company:
+                                request.state.user = user
+                                request.state.company = user.company
+                                # Set company_id for RLS within the transaction
+                                await db_session.execute(
+                                    text(f"SET app.current_company_id = '{user.company.id}'")
+                                )
 
-            if not bypass_auth:
-                credentials = await clerk_auth_guard(request)
-                if credentials:
-                    clerk_id = credentials.decoded.get("sub")
-                    if clerk_id:
-                        user = await get_user_by_clerk_id(db_session, clerk_id)
-                        if user and user.company:
-                            request.state.user = user
-                            request.state.company = user.company
-                            # Set company_id for RLS within the transaction
-                            await db_session.execute(
-                                f"SET app.current_company_id = '{user.company.id}'"
-                            )
-
-            response = await call_next(request)
-        except Exception as e:
-            logger.error(f"Error in auth middleware: {e}")
-            # Ensure we send a response even if an error occurs
-            response = Response("Internal Server Error", status_code=500)
-        finally:
-            await db_session.close()
-
-        return response 
+                response = await call_next(request)
+            except Exception as e:
+                logger.error(f"Error in auth middleware: {e}")
+                # Rollback in case of error
+                await db_session.rollback()
+                # Ensure we send a response even if an error occurs
+                response = Response("Internal Server Error", status_code=500)
+            
+            return response 
