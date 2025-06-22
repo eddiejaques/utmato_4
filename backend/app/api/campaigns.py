@@ -83,4 +83,19 @@ def delete_campaign(
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     campaign = campaign_service.delete_campaign(db=db, db_campaign=campaign)
+    return campaign
+
+@router.post("/{campaign_id}/duplicate", response_model=CampaignResponse, status_code=status.HTTP_201_CREATED)
+def duplicate_campaign(
+    *,
+    db: Session = Depends(get_db),
+    current_company: Company = Depends(get_current_company),
+    campaign_id: uuid.UUID,
+):
+    """
+    Duplicate a campaign.
+    """
+    campaign = campaign_service.duplicate_campaign(db=db, campaign_id=campaign_id, company_id=current_company.id)
+    if not campaign:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Campaign to duplicate not found")
     return campaign 
