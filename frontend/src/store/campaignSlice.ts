@@ -16,29 +16,41 @@ const initialState: CampaignState = {
   error: null,
 };
 
-export const fetchCampaigns = createAsyncThunk('campaigns/fetchCampaigns', async () => {
-  return await campaignApi.fetchCampaigns();
+// Types for thunkAPI
+interface ThunkApiConfig {
+    state: { auth: { token: string | null } };
+    rejectValue: string;
+}
+
+export const fetchCampaigns = createAsyncThunk<Campaign[], void, ThunkApiConfig>('campaigns/fetchCampaigns', async (_, thunkAPI) => {
+    const token = thunkAPI.getState().auth.token;
+    return await campaignApi.fetchCampaigns(token);
 });
 
-export const fetchCampaignById = createAsyncThunk('campaigns/fetchCampaignById', async (id: string) => {
-  return await campaignApi.fetchCampaignById(id);
+export const fetchCampaignById = createAsyncThunk<Campaign, string, ThunkApiConfig>('campaigns/fetchCampaignById', async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.token;
+    return await campaignApi.fetchCampaignById(id, token);
 });
 
-export const createCampaign = createAsyncThunk('campaigns/createCampaign', async (campaignData: CampaignCreate) => {
-  return await campaignApi.createCampaign(campaignData);
+export const createCampaign = createAsyncThunk<Campaign, CampaignCreate, ThunkApiConfig>('campaigns/createCampaign', async (campaignData, thunkAPI) => {
+    const token = thunkAPI.getState().auth.token;
+    return await campaignApi.createCampaign(campaignData, token);
 });
 
-export const updateCampaign = createAsyncThunk('campaigns/updateCampaign', async ({ id, campaignData }: { id: string; campaignData: CampaignUpdate }) => {
-  return await campaignApi.updateCampaign(id, campaignData);
+export const updateCampaign = createAsyncThunk<Campaign, { id: string; campaignData: CampaignUpdate }, ThunkApiConfig>('campaigns/updateCampaign', async ({ id, campaignData }, thunkAPI) => {
+    const token = thunkAPI.getState().auth.token;
+    return await campaignApi.updateCampaign(id, campaignData, token);
 });
 
-export const deleteCampaign = createAsyncThunk('campaigns/deleteCampaign', async (id: string) => {
-  await campaignApi.deleteCampaign(id);
-  return id;
+export const deleteCampaign = createAsyncThunk<string, string, ThunkApiConfig>('campaigns/deleteCampaign', async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.token;
+    await campaignApi.deleteCampaign(id, token);
+    return id;
 });
 
-export const duplicateCampaign = createAsyncThunk('campaigns/duplicateCampaign', async (id: string) => {
-  return await campaignApi.duplicateCampaign(id);
+export const duplicateCampaign = createAsyncThunk<Campaign, string, ThunkApiConfig>('campaigns/duplicateCampaign', async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.token;
+    return await campaignApi.duplicateCampaign(id, token);
 });
 
 

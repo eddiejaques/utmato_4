@@ -14,10 +14,10 @@ export function UserSync() {
 
   useEffect(() => {
     const sync = async () => {
-      if (isSignedIn && user && !isAuthenticated && !loading) {
+    if (isSignedIn && user && !isAuthenticated && !loading) {
         const token = await getToken();
         dispatch(syncUser({ clerkUser: user, token }));
-      }
+    }
     };
     sync();
   }, [user, isSignedIn, isAuthenticated, loading, dispatch, getToken]);

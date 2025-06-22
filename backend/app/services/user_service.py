@@ -111,10 +111,9 @@ async def find_or_create_user_with_company(
             user.company_id = company.id
             db.add(user)
             await db.commit()
-            await db.refresh(user)
-            # Manually load the company relationship after refresh
-            await db.refresh(company)
-            user.company = company
+            
+            # After committing, the user object needs to be refreshed to load the new relationship
+            await db.refresh(user, relationship_names=["company"])
             
         return user, user.company
 

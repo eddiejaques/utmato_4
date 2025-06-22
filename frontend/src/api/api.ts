@@ -8,10 +8,11 @@ interface RequestOptions {
   body?: any;
 }
 
-async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-  const { auth } = store.getState();
-  const token = auth.token;
-
+async function request<T>(
+  endpoint: string,
+  options: RequestOptions = {},
+  token?: string | null
+): Promise<T> {
   const config: RequestInit = {
     method: options.method || 'GET',
     headers: {
@@ -50,7 +51,14 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   return response.json();
 }
 
-export const get = <T>(endpoint: string): Promise<T> => request<T>(endpoint);
-export const post = <T>(endpoint:string, body: any): Promise<T> => request<T>(endpoint, { method: 'POST', body });
-export const put = <T>(endpoint: string, body: any): Promise<T> => request<T>(endpoint, { method: 'PUT', body });
-export const del = <T>(endpoint: string): Promise<T> => request<T>(endpoint, { method: 'DELETE' }); 
+export const get = <T>(endpoint: string, token?: string | null): Promise<T> =>
+  request<T>(endpoint, {}, token);
+
+export const post = <T>(endpoint: string, body: any, token?: string | null): Promise<T> =>
+  request<T>(endpoint, { method: 'POST', body }, token);
+
+export const put = <T>(endpoint: string, body: any, token?: string | null): Promise<T> =>
+  request<T>(endpoint, { method: 'PUT', body }, token);
+
+export const del = <T>(endpoint: string, token?: string | null): Promise<T> =>
+  request<T>(endpoint, { method: 'DELETE' }, token); 

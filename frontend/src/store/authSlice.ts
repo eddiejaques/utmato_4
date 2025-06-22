@@ -49,7 +49,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.company = action.payload.company;
         state.token = action.payload.token;
-        state.isAuthenticated = true;
+        state.isAuthenticated = true; 
       })
       .addCase(syncUser.rejected, (state, action) => {
         state.loading = false;

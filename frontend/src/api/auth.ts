@@ -29,7 +29,7 @@ export const syncUser = createAsyncThunk<
       image_url: clerkUser.imageUrl
     };
     
-    const data = await post<SyncUserData>('/users/sync', syncData);
+    const data = await post<SyncUserData>('/users/sync', syncData, token);
     return { ...data, token };
   } catch (error: any) {
     console.error('Error syncing user:', error);
