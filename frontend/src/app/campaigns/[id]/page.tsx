@@ -4,11 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import { fetchCampaignById, deleteCampaign, updateCampaign } from '@/store/campaignSlice';
+import { fetchUTMLinksByCampaign } from '@/store/utmSlice';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { CampaignForm } from '@/components/Campaigns/CampaignForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Campaign, CampaignStatus } from '@/types/campaign';
+import { UTMBuilderModal } from '@/components/UTM/UTMBuilderModal';
+import { UTMLinkList } from '@/components/UTM/UTMLinkList';
 import {
     Card,
     CardContent,
@@ -26,11 +29,13 @@ export default function CampaignDetailPage() {
     const id = params.id as string;
     
     const { currentCampaign, loading, error } = useSelector((state: RootState) => state.campaigns);
+    const { campaignLinks, loading: utmLoading } = useSelector((state: RootState) => state.utm);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
 
     useEffect(() => {
         if (id) {
             dispatch(fetchCampaignById(id));
+            dispatch(fetchUTMLinksByCampaign(id));
         }
     }, [dispatch, id]);
 
@@ -60,10 +65,13 @@ export default function CampaignDetailPage() {
                 </CardContent>
                 <CardFooter className="flex justify-end gap-2">
                     <Button variant="outline" onClick={() => router.push('/dashboard')}>Back to List</Button>
+                    <UTMBuilderModal campaignId={currentCampaign.id} />
                     <Button onClick={() => setEditModalOpen(true)}>Edit</Button>
                     <Button variant="destructive" onClick={handleDelete}>Delete</Button>
                 </CardFooter>
             </Card>
+
+            <UTMLinkList links={campaignLinks} />
 
             <Dialog open={isEditModalOpen} onOpenChange={setEditModalOpen}>
                 <DialogContent>

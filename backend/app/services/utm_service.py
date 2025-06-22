@@ -152,3 +152,40 @@ async def generate_single_utm_link(db: Session, *, link_data: UTMLinkCreate, use
     await db.refresh(db_utm_link)
 
     return db_utm_link 
+
+async def get_utm_links_for_campaign(db: Session, *, campaign_id: uuid.UUID, user: CurrentUser) -> list[UTMLink]:
+    """
+    Retrieves all UTM links for a specific campaign.
+
+    Args:
+        db: The database session.
+        campaign_id: The ID of the campaign.
+        user: The currently authenticated user.
+
+    Returns:
+        A list of UTMLink objects.
+        
+    Raises:
+        HTTPException: If the campaign is not found or the user is not authorized.
+    """
+    stmt = select(Campaign).where(Campaign.id == campaign_id)
+    result = await db.execute(stmt)
+    campaign = result.scalars().first()
+
+    if not campaign:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Campaign not found.",
+        )
+    
+    if campaign.company_id != user.company_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to view links for this campaign.",
+        )
+
+    stmt = select(UTMLink).where(UTMLink.campaign_id == campaign_id)
+    result = await db.execute(stmt)
+    utm_links = result.scalars().all()
+    
+    return utm_links 

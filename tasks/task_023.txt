@@ -5,7 +5,7 @@ Step 1: Implement Internal API Endpoints (Comprehensive)
 Task: Fully implement all internal API endpoints as detailed in the technical specification, ensuring they are RESTful, follow standard HTTP methods, and handle all expected request/response schemas. This includes the comprehensive set of endpoints for:
 Authentication (/auth/login, /auth/profile)
 Campaign Management (/campaigns CRUD, status, duplicate)
-UTM Link Management (/utm/generate, /utm/generate-bulk, /utm/validate-url, /utm/{id} CRUD)
+UTM Link Management (/utm/generate, /utm/validate-url, /utm/{id} CRUD)
 Search (/search, /search/reverse-utm) Ensure proper error responses (e.g., 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 422 Unprocessable Entity) are returned.
 Files:
 app/api/auth.py: Implement POST /auth/login (if custom login) and GET /auth/profile.
