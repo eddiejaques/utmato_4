@@ -7,7 +7,7 @@ src/store/utmSlice.ts: Redux slice for UTM builder state management, including a
 src/components/UTM/UTMBuilderModal.tsx: Main component for the UTM builder UI, typically presented as a modal or slide-out.
 src/components/UTM/UTMParameterInput.tsx: Reusable component for UTM parameter input fields, potentially with autocomplete/suggestions.
 src/components/UTM/URLPreview.tsx: Component to display a live preview of the generated URL as parameters are entered.
-src/api/utm.ts: Frontend API service for UTM-related calls to the backend (validate-url, generate, generate-bulk).
+src/api/utm.ts: Frontend API service for UTM-related calls to the backend (validate-url, generate).
 src/pages/campaigns/[id].tsx: Integrate the UTMBuilderModal into the campaign detail page, likely accessible via a button.
 src/utils/clipboard.ts: Utility for copying text to clipboard.
 Step Dependencies: Section 5, Step 2
