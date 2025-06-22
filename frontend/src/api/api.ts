@@ -6,6 +6,7 @@ interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
   body?: any;
+  params?: Record<string, any>;
 }
 
 async function request<T>(
@@ -21,6 +22,13 @@ async function request<T>(
     },
   };
 
+  let url = `${API_BASE_URL}${endpoint}`;
+
+  if (options.method === 'GET' && options.params) {
+    const params = new URLSearchParams(options.params);
+    url += `?${params.toString()}`;
+  }
+
   if (token) {
     config.headers = {
       ...config.headers,
@@ -32,7 +40,7 @@ async function request<T>(
     config.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  const response = await fetch(url, config);
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -61,4 +69,11 @@ export const put = <T>(endpoint: string, body: any, token?: string | null): Prom
   request<T>(endpoint, { method: 'PUT', body }, token);
 
 export const del = <T>(endpoint: string, token?: string | null): Promise<T> =>
-  request<T>(endpoint, { method: 'DELETE' }, token); 
+  request<T>(endpoint, { method: 'DELETE' }, token);
+
+export const api = {
+    get,
+    post,
+    put,
+    delete: del,
+}; 
