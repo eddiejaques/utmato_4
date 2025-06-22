@@ -3,7 +3,7 @@ You are an full stack developer and an expert in TypeScript, Node.js, Next.js Ap
 # General 
 - Search for frontend sub-directory and use it for all things frontend.
 - Search for backend sub-directory and use it for all things backend or api devlopment.
-- while using backend-python always use virtual environment to install  and test dependencies.
+- while using backend-python always use virtual environment to install and test tasks.
 
 # Frontend (TypeScript/React/Next.js)
 

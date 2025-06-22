@@ -69,4 +69,135 @@ Once the server is running, you can verify that it's operating correctly in a co
     You should receive a JSON response confirming that the API is running:
     ```json
     {"message":"UTMato API is running"}
+    ```
+
+## Testing the API with Postman
+
+You can use an API client like Postman or Insomnia to test the campaign endpoints.
+
+### Authentication
+
+The API uses JWT-based authentication handled by Clerk. To access protected endpoints, you need to include an `Authorization` header with a valid JWT bearer token.
+
+-   **Header Key**: `Authorization`
+-   **Header Value**: `Bearer <YOUR_CLERK_JWT>`
+
+You can obtain a JWT for a test user from the Clerk dashboard or your frontend application during development.
+
+How to get a token from the Clerk Dashboard
+
+For situations where you might not be running the frontend, you can get a token directly from the Clerk Dashboard. These are great for quickly testing with tools like Postman.
+Here’s how you do it:
+Go to your Clerk Dashboard and select your application.
+Navigate to the Users page from the sidebar.
+Click on the user you want to test with.
+In the user's profile, go to the Sessions tab.
+You will see a list of active sessions for that user. Click on one to expand it.
+You'll find a JWT section with a button to copy the token. These tokens are typically short-lived (e.g., 60 seconds), so you may need to click the "refresh" icon to get a new one before making your API request.
+This should give you two solid ways to get a token for testing your API endpoints.
+
+### Campaign Endpoints
+
+The base URL for the campaign endpoints is `http://localhost:8000/api/v1/campaigns`.
+
+#### 1. Create a Campaign
+
+-   **Method**: `POST`
+-   **URL**: `/`
+-   **Headers**: `Authorization: Bearer <YOUR_CLERK_JWT>`
+-   **Body** (raw, JSON):
+    ```json
+    {
+      "name": "Summer Sale 2024",
+      "status": "draft",
+      "budget_info": {
+        "total_budget": 5000,
+        "currency": "USD"
+      }
+    }
+    ```
+-   **Success Response** (201 Created):
+    ```json
+    {
+      "name": "Summer Sale 2024",
+      "status": "draft",
+      "budget_info": {
+        "total_budget": 5000,
+        "currency": "USD"
+      },
+      "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      "company_id": "d4c3b2a1-f6e5-9078-4321-fedcba098765",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": null
+    }
+    ```
+
+#### 2. Get All Campaigns
+
+-   **Method**: `GET`
+-   **URL**: `/`
+-   **Headers**: `Authorization: Bearer <YOUR_CLERK_JWT>`
+-   **Success Response** (200 OK):
+    ```json
+    [
+      {
+        "name": "Summer Sale 2024",
+        "status": "draft",
+        ...
+      },
+      {
+        "name": "Winter Promo",
+        "status": "active",
+        ...
+      }
+    ]
+    ```
+
+#### 3. Get a Single Campaign
+
+-   **Method**: `GET`
+-   **URL**: `/{campaign_id}`
+-   **Headers**: `Authorization: Bearer <YOUR_CLERK_JWT>`
+-   **Success Response** (200 OK):
+    ```json
+    {
+      "name": "Summer Sale 2024",
+      "status": "draft",
+      ...
+    }
+    ```
+
+#### 4. Update a Campaign
+
+-   **Method**: `PUT`
+-   **URL**: `/{campaign_id}`
+-   **Headers**: `Authorization: Bearer <YOUR_CLERK_JWT>`
+-   **Body** (raw, JSON):
+    ```json
+    {
+      "name": "Summer Sale 2024 (Updated)",
+      "status": "active"
+    }
+    ```
+-   **Success Response** (200 OK):
+    ```json
+    {
+      "name": "Summer Sale 2024 (Updated)",
+      "status": "active",
+      ...
+    }
+    ```
+
+#### 5. Delete a Campaign
+
+-   **Method**: `DELETE`
+-   **URL**: `/{campaign_id}`
+-   **Headers**: `Authorization: Bearer <YOUR_CLERK_JWT>`
+-   **Success Response** (200 OK):
+    ```json
+    {
+      "name": "Summer Sale 2024 (Updated)",
+      "status": "active",
+      ...
+    }
     ``` 
