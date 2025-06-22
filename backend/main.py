@@ -1,6 +1,11 @@
+# This import is crucial for SQLAlchemy to discover all models
+from app.db import base  # noqa
+
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.api import webhooks
+from app.api import users  # Import the new users router
 from app.middleware.auth_middleware import AuthMiddleware
 from app.dependencies.db import get_db
 from app.dependencies.auth import get_current_user
@@ -11,10 +16,25 @@ from sqlalchemy.future import select
 
 app = FastAPI()
 
+# CORS Middleware
+origins = [
+    "http://localhost:3000",
+    # Add other origins if needed, e.g., your production frontend URL
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Add RLS middleware
 app.add_middleware(AuthMiddleware)
 
 app.include_router(webhooks.router, prefix="/api/v1/webhooks", tags=["webhooks"])
+app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 
 @app.get("/")
 def read_root():

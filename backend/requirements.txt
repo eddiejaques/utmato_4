@@ -11,4 +11,5 @@ passlib[bcrypt]
 alembic
 greenlet
 svix
-fastapi-clerk-auth 
+fastapi-clerk-auth
+pydantic[email]

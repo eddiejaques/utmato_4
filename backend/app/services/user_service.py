@@ -1,9 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 from app.models.user import User
 from app.models.company import Company
 from app.schemas.clerk import ClerkUserData, ClerkDeletedUserData
 from app.schemas.enums import UserRole
+from app.schemas.user import UserSyncRequest
+from sqlalchemy import text
 
 async def get_company_by_domain(db: AsyncSession, domain: str) -> Company | None:
     result = await db.execute(select(Company).filter(Company.domain == domain))
@@ -25,7 +28,7 @@ async def create_company(db: AsyncSession, domain: str) -> Company:
     await db.refresh(new_company)
     return new_company
 
-async def handle_user_created(db: AsyncSession, user_data: ClerkUserData):
+async def handle_user_created(db: AsyncSession, user_data: ClerkUserData) -> None:
     email = user_data.email_addresses[0].email_address
     domain = email.split('@')[1]
 
@@ -40,7 +43,7 @@ async def handle_user_created(db: AsyncSession, user_data: ClerkUserData):
         last_name=user_data.last_name,
         image_url=user_data.image_url,
         company_id=company.id,
-        role=UserRole.MANAGER, 
+        role="manager",  # Set the default role
     )
     db.add(new_user)
     await db.commit()
@@ -68,4 +71,61 @@ async def handle_user_deleted(db: AsyncSession, user_data: ClerkDeletedUserData)
 
 async def get_user_by_clerk_id(db: AsyncSession, clerk_id: str) -> User | None:
     result = await db.execute(select(User).filter(User.clerk_id == clerk_id))
-    return result.scalars().first() 
+    return result.scalars().first()
+
+async def find_or_create_user_with_company(
+    db: AsyncSession, user_data: UserSyncRequest
+) -> tuple[User, Company | None]:
+    """
+    Finds a user by Clerk ID or creates a new one,
+    also finding or creating the associated company based on email domain.
+    """
+    # Check for existing user first.
+    # Use selectinload to fetch the company in the same query.
+    existing_user_result = await db.execute(
+        select(User)
+        .options(selectinload(User.company))
+        .filter(User.clerk_id == user_data.clerk_id)
+    )
+    user = existing_user_result.scalars().first()
+
+    if user:
+        # If user exists, no changes are needed, just return.
+        return user, user.company
+
+    # If user does not exist, create user and potentially company in one atomic operation.
+    email_domain = user_data.email.split("@")[1]
+
+    existing_company_result = await db.execute(
+        select(Company).filter(Company.domain == email_domain)
+    )
+    company = existing_company_result.scalars().first()
+
+    if not company:
+        company = Company(
+            name=email_domain.split(".")[0].capitalize(), domain=email_domain
+        )
+        db.add(company)
+        # Flush to ensure the company object is persisted and has an ID
+        # before creating the user that depends on it.
+        await db.flush()
+
+    new_user = User(
+        clerk_id=user_data.clerk_id,
+        email=user_data.email,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
+        company_id=company.id,
+        role=UserRole.MANAGER,
+    )
+    db.add(new_user)
+
+    # Commit all changes (new company and/or new user) to the database.
+    await db.commit()
+
+    # Refresh objects to get the latest state from the DB (e.g., generated IDs)
+    await db.refresh(new_user)
+    if "company" in locals() and company:
+        await db.refresh(company)
+
+    return new_user, company
