@@ -35,7 +35,6 @@ async def handle_clerk_webhooks(
         await user_service.handle_user_deleted(db, user_data)
         return {"status": "user deleted"}
 
-    raise HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        detail=f"Unhandled webhook event type: {event.type}",
-    ) 
+    # If the event type is not one of the handled types,
+    # we can just acknowledge it without taking action.
+    return {"status": f"event type {event.type} received but not handled"} 

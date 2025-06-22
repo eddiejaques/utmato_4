@@ -12,10 +12,10 @@ export async function syncUser(clerkUser: any, token: string) {
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({
-        clerkId: clerkUser.id,
+        clerk_id: clerkUser.id,
         email: clerkUser.primaryEmailAddress.emailAddress,
-        firstName: clerkUser.firstName,
-        lastName: clerkUser.lastName,
+        first_name: clerkUser.firstName,
+        last_name: clerkUser.lastName,
       }),
     });
 

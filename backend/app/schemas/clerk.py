@@ -24,7 +24,7 @@ class ClerkDeletedUserData(BaseModel):
     deleted: bool
 
 class ClerkWebhookEvent(BaseModel):
-    type: Literal['user.created', 'user.updated', 'user.deleted']
+    type: str
     data: dict
 
 class ClerkUserCreatedEvent(BaseModel):

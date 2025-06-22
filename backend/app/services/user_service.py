@@ -6,6 +6,7 @@ from app.models.company import Company
 from app.schemas.clerk import ClerkUserData, ClerkDeletedUserData
 from app.schemas.enums import UserRole
 from app.schemas.user import UserSyncRequest
+from sqlalchemy import text
 
 async def get_company_by_domain(db: AsyncSession, domain: str) -> Company | None:
     result = await db.execute(select(Company).filter(Company.domain == domain))
@@ -27,7 +28,7 @@ async def create_company(db: AsyncSession, domain: str) -> Company:
     await db.refresh(new_company)
     return new_company
 
-async def handle_user_created(db: AsyncSession, user_data: ClerkUserData):
+async def handle_user_created(db: AsyncSession, user_data: ClerkUserData) -> None:
     email = user_data.email_addresses[0].email_address
     domain = email.split('@')[1]
 
@@ -42,7 +43,7 @@ async def handle_user_created(db: AsyncSession, user_data: ClerkUserData):
         last_name=user_data.last_name,
         image_url=user_data.image_url,
         company_id=company.id,
-        role=UserRole.MANAGER, 
+        role="manager",  # Set the default role
     )
     db.add(new_user)
     await db.commit()
@@ -76,46 +77,51 @@ async def find_or_create_user_with_company(db: AsyncSession, user_data: UserSync
     """
     Finds a user by Clerk ID or creates a new one,
     also finding or creating the associated company based on email domain.
+    Temporarily elevates privileges to bypass RLS for user/company creation.
     """
-    existing_user = await db.execute(
-        select(User)
-        .options(selectinload(User.company))
-        .filter(User.clerk_id == user_data.clerk_id)
-    )
-    user = existing_user.scalars().first()
-
-    if user:
-        # Optionally update user fields here if they can change
-        return user, user.company
-
-    # User does not exist, create them
-    email_domain = user_data.email.split('@')[1]
+    # Temporarily set the role to one that bypasses RLS for this transaction
+    await db.execute(text("SET ROLE postgres;"))
     
-    # Find or create company
-    existing_company = await db.execute(
-        select(Company).filter(Company.domain == email_domain)
-    )
-    company = existing_company.scalars().first()
-
-    if not company:
-        company = Company(
-            name=email_domain.split('.')[0].capitalize(),
-            domain=email_domain
+    try:
+        existing_user = await db.execute(
+            select(User)
+            .options(selectinload(User.company))
+            .filter(User.clerk_id == user_data.clerk_id)
         )
-        db.add(company)
-        await db.flush() # Flush to get company.id
+        user = existing_user.scalars().first()
 
-    # Create new user
-    new_user = User(
-        clerk_id=user_data.clerk_id,
-        email=user_data.email,
-        first_name=user_data.first_name,
-        last_name=user_data.last_name,
-        company_id=company.id,
-    )
-    db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
-    await db.refresh(company)
+        if user:
+            return user, user.company
 
-    return new_user, company 
+        email_domain = user_data.email.split('@')[1]
+        
+        existing_company = await db.execute(
+            select(Company).filter(Company.domain == email_domain)
+        )
+        company = existing_company.scalars().first()
+
+        if not company:
+            company = Company(
+                name=email_domain.split('.')[0].capitalize(),
+                domain=email_domain
+            )
+            db.add(company)
+            await db.flush()
+
+        new_user = User(
+            clerk_id=user_data.clerk_id,
+            email=user_data.email,
+            first_name=user_data.first_name,
+            last_name=user_data.last_name,
+            company_id=company.id,
+            role="manager",  # Set the default role
+        )
+        db.add(new_user)
+        await db.commit()
+        await db.refresh(new_user)
+        await db.refresh(company)
+
+        return new_user, company
+    finally:
+        # Always reset the role at the end of the transaction
+        await db.execute(text("RESET ROLE;"))

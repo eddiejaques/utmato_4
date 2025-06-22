@@ -21,48 +21,42 @@ clerk_config = ClerkConfig(
 )
 clerk_auth_guard = ClerkHTTPBearer(config=clerk_config)
 
-PUBLIC_PATHS = ["/", "/docs", "/openapi.json", "/redoc"]
+# Paths that DO NOT require user lookup and RLS setup in the middleware.
+# These might be fully public, or they might handle their own authorization.
+AUTH_BYPASS_PATHS = ["/", "/docs", "/openapi.json", "/redoc", "/api/v1/webhooks/clerk", "/api/v1/users/sync"]
 
 class AuthMiddleware(BaseHTTPMiddleware):
     """
-    Authentication middleware that validates Clerk JWTs,
-    and sets user and company context on the request state.
-    It also sets the company_id for RLS in the database session.
+    Middleware to:
+    1. Manage DB session lifecycle for each request.
+    2. For protected routes, validate Clerk JWT, find the user in DB, and set RLS.
     """
 
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        if request.url.path in PUBLIC_PATHS:
-            return await call_next(request)
-            
         db_session = SessionLocal()
         request.state.db = db_session
 
         try:
-            # Skip auth for webhook endpoint
-            if request.url.path.startswith("/api/v1/webhooks/"):
-                 response = await call_next(request)
-                 return response
-                 
-            credentials = await clerk_auth_guard(request)
+            # Check if the current path should bypass the main auth logic
+            bypass_auth = any(request.url.path.startswith(path) for path in AUTH_BYPASS_PATHS)
 
-            if credentials:
-                clerk_id = credentials.decoded.get("sub")
-                if clerk_id:
-                    user = await get_user_by_clerk_id(db_session, clerk_id)
-                    if user:
-                        request.state.user = user
-                        company = user.company
-                        if company:
-                            request.state.company = company
+            if not bypass_auth:
+                credentials = await clerk_auth_guard(request)
+                if credentials:
+                    clerk_id = credentials.decoded.get("sub")
+                    if clerk_id:
+                        user = await get_user_by_clerk_id(db_session, clerk_id)
+                        if user and user.company:
+                            request.state.user = user
+                            request.state.company = user.company
                             # Set company_id for RLS within the transaction
                             await db_session.execute(
-                                f"SET app.current_company_id = '{company.id}'"
+                                f"SET app.current_company_id = '{user.company.id}'"
                             )
 
             response = await call_next(request)
-
         except Exception as e:
             logger.error(f"Error in auth middleware: {e}")
             # Ensure we send a response even if an error occurs
