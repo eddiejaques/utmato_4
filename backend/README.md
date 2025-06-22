@@ -243,6 +243,77 @@ This endpoint allows you to generate a single UTM-tagged URL for an existing cam
     }
     ```
 
+### Search Endpoints
+
+The base URL for the search endpoints is `http://localhost:8000/api/v1/search`.
+
+#### 1. Full-Text Search
+
+-   **Method**: `GET`
+-   **URL**: `/`
+-   **Headers**: `Authorization: Bearer <YOUR_CLERK_JWT>`
+-   **Query Parameters**:
+    -   `query`: The search term (e.g., `Summer Sale`)
+-   **Example URL**: `http://localhost:8000/api/v1/search/?query=Summer%20Sale`
+-   **Success Response** (200 OK):
+    ```json
+    {
+        "campaigns": [
+            {
+                "name": "Summer Sale 2024",
+                "status": "draft",
+                ...
+            }
+        ],
+        "utm_links": [
+            {
+                "utm_source": "google",
+                "utm_medium": "cpc",
+                "generated_url": "https://...",
+                ...
+            }
+        ]
+    }
+    ```
+
+#### 2. Reverse UTM Lookup
+
+-   **Method**: `POST`
+-   **URL**: `/reverse-utm`
+-   **Headers**: `Authorization: Bearer <YOUR_CLERK_JWT>`
+-   **Body** (raw, JSON):
+    Provide a full URL that includes UTM parameters you want to look up.
+    ```json
+    {
+      "url": "https://www.myproduct.com/landing?utm_source=google&utm_medium=cpc&utm_campaign=Summer+Sale+2024&utm_content=ad_variant_1"
+    }
+    ```
+-   **Success Response** (200 OK):
+    If a matching UTM link is found, the response will contain both the link and its associated campaign details.
+    ```json
+    {
+        "utm_link": {
+            "destination_url": "https://www.myproduct.com/landing",
+            "utm_source": "google",
+            "utm_medium": "cpc",
+            "id": "e5c1a8a0-5b1e-4b2e-8b1e-2e8b1e2e8b1e",
+            ...
+        },
+        "campaign": {
+            "name": "Summer Sale 2024",
+            "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+            ...
+        }
+    }
+    ```
+    If no match is found, the response will contain `null` values.
+    ```json
+    {
+        "utm_link": null,
+        "campaign": null
+    }
+    ```
+
 ## Testing the URL Validation Endpoint
 
 You can use a command-line tool like `curl` to test the URL validation endpoint.
