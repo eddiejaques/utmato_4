@@ -92,10 +92,33 @@ async def find_or_create_user_with_company(
     user = existing_user_result.scalars().first()
 
     if user:
-        # If user exists, no changes are needed, just return.
+        # If user exists, check if they are associated with a company.
+        # If not, find or create one and associate it.
+        if not user.company:
+            email_domain = user.email.split("@")[1]
+            company_result = await db.execute(
+                select(Company).filter(Company.domain == email_domain)
+            )
+            company = company_result.scalars().first()
+
+            if not company:
+                company = Company(
+                    name=email_domain.split(".")[0].capitalize(), domain=email_domain
+                )
+                db.add(company)
+                await db.flush()
+
+            user.company_id = company.id
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+            # Manually load the company relationship after refresh
+            await db.refresh(company)
+            user.company = company
+            
         return user, user.company
 
-    # If user does not exist, create user and potentially company in one atomic operation.
+    # If user does not exist, create user and potentially company.
     email_domain = user_data.email.split("@")[1]
 
     existing_company_result = await db.execute(

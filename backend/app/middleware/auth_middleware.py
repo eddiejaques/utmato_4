@@ -5,11 +5,13 @@ from starlette.requests import Request
 from starlette.responses import Response
 from fastapi_clerk_auth import ClerkConfig, ClerkHTTPBearer
 from sqlalchemy import text
+from sqlalchemy.sql import select
 
 from app.core.config import settings
 from app.db.database import SessionLocal
 from app.services.user_service import get_user_by_clerk_id
 from app.models.user import User  # For type hinting if needed
+from app.models.company import Company
 
 logger = logging.getLogger(__name__)
 
@@ -50,13 +52,22 @@ class AuthMiddleware(BaseHTTPMiddleware):
                         if clerk_id:
                             # get_user_by_clerk_id is async and uses the session
                             user = await get_user_by_clerk_id(db_session, clerk_id)
-                            if user and user.company:
+                            if user:
                                 request.state.user = user
-                                request.state.company = user.company
-                                # Set company_id for RLS within the transaction
-                                await db_session.execute(
-                                    text(f"SET app.current_company_id = '{user.company.id}'")
-                                )
+                                company = user.company
+                                # If relationship is not loaded, but the FK exists, fetch it directly
+                                if not company and user.company_id:
+                                    company_result = await db_session.execute(
+                                        select(Company).filter(Company.id == user.company_id)
+                                    )
+                                    company = company_result.scalars().first()
+
+                                if company:
+                                    request.state.company = company
+                                    # Set company_id for RLS within the transaction
+                                    await db_session.execute(
+                                        text(f"SET app.current_company_id = '{company.id}'")
+                                    )
 
                 response = await call_next(request)
             except Exception as e:
