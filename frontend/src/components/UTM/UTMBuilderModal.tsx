@@ -17,10 +17,9 @@ import {
 import { UTMParameterInput } from './UTMParameterInput';
 import { URLPreview } from './URLPreview';
 import { UTMLinkCreate } from '@/types/utm';
-import { UUID } from 'crypto';
 
 interface UTMBuilderModalProps {
-    campaignId: UUID;
+    campaignId: string;
 }
 
 export function UTMBuilderModal({ campaignId }: UTMBuilderModalProps) {

@@ -1,6 +1,5 @@
 import { post, get } from './api';
 import { URLValidationRequest, URLValidationResponse, UTMLinkCreate, UTMLink } from '@/types/utm';
-import { UUID } from 'crypto';
 
 export const validateUrl = async (
   data: URLValidationRequest,
@@ -17,7 +16,7 @@ export const generateUTMLink = async (
 };
 
 export const fetchUTMLinksByCampaign = async (
-    campaignId: UUID,
+    campaignId: string,
     token: string | null
 ): Promise<UTMLink[]> => {
     return await get<UTMLink[]>(`/utm/campaign/${campaignId}/links`, token);

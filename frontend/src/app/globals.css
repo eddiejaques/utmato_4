@@ -1,5 +1,7 @@
+@import "../styles/design-tokens.css";
 @import "tailwindcss";
 @import "tw-animate-css";
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -119,4 +121,30 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Base Typography Styles */
+body {
+  font-family: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+}
+
+p, span, li, label {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Global Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
