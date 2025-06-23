@@ -14,7 +14,8 @@ export const searchApi = {
     token: string | null
   ): Promise<SearchResults> => {
     const params = { query, ...filters };
-    return await api.get('/search', { params }, token);
+    const searchParams = new URLSearchParams(params).toString();
+    return await api.get(`/search?${searchParams}`, token);
   },
   reverseUTMLookup: async (url: string, token: string | null): Promise<Campaign> => {
     return await api.post('/search/reverse-lookup', { url }, token);

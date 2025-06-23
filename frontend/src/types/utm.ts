@@ -1,5 +1,3 @@
-import { UUID } from "crypto";
-
 export interface URLValidationRequest {
     url: string;
 }
@@ -19,12 +17,12 @@ export interface UTMLinkBase {
 }
 
 export interface UTMLinkCreate extends UTMLinkBase {
-    campaign_id: UUID;
+    campaign_id: string;
 }
 
 export interface UTMLink extends UTMLinkBase {
-    id: UUID;
-    campaign_id: UUID;
+    id: string;
+    campaign_id: string;
     utm_campaign: string;
     generated_url: string;
     click_count: number;

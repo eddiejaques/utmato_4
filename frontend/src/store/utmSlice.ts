@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import * as utmApi from '@/api/utm';
 import { UTMLink, UTMLinkCreate, URLValidationRequest, URLValidationResponse } from '@/types/utm';
-import { UUID } from 'crypto';
 
 interface UTMState {
   destinationUrl: string;
@@ -60,7 +59,7 @@ export const generateUTMLink = createAsyncThunk<UTMLink, UTMLinkCreate, ThunkApi
     }
   );
 
-export const fetchUTMLinksByCampaign = createAsyncThunk<UTMLink[], UUID, ThunkApiConfig>(
+export const fetchUTMLinksByCampaign = createAsyncThunk<UTMLink[], string, ThunkApiConfig>(
     'utm/fetchUTMLinksByCampaign',
     async (campaignId, thunkAPI) => {
         const token = thunkAPI.getState().auth.token;

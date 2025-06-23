@@ -5,7 +5,7 @@ from sqlalchemy import func, or_
 from app.models.campaign import Campaign
 from app.models.utm_link import UTMLink
 from app.schemas.search import ReverseUTMLookupResponse
-from app.services.campaign_service import get_campaign_by_id
+from app.services.campaign_service import get_campaign
 
 async def search_campaigns_and_utms(db: Session, company_id: int, query: str):
     search_query = func.to_tsquery('english', query)
@@ -64,6 +64,6 @@ async def reverse_utm_lookup(db: Session, company_id: int, url: str) -> ReverseU
     if not utm_link:
         return ReverseUTMLookupResponse()
 
-    campaign = await get_campaign_by_id(db, utm_link.campaign_id, company_id)
+    campaign = await get_campaign(db, utm_link.campaign_id, company_id)
 
     return ReverseUTMLookupResponse(utm_link=utm_link, campaign=campaign) 
