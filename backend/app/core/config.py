@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     CLERK_SECRET_KEY: str
     CLERK_WEBHOOK_SECRET: str
     CLERK_ISSUER_URL: str
+    CLERK_JWKS_URL: str
 
     class Config:
         env_file = ".env"

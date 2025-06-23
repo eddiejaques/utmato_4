@@ -57,6 +57,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
             return JSONResponse(status_code=401, content={"detail": "Authorization header missing or invalid"})
 
         token = auth_header.split(" ")[1]
+        logger.debug(f"Raw JWT received: {token}")
 
         try:
             jwks = await self.get_jwks()
