@@ -45,6 +45,34 @@ Search & Discovery (MVP)
 [ ] As a user, I can paste a UTM URL and instantly see its associated campaign details
 [ ] I can view a chronological list of all my campaigns
 [ ] Basic filtering by campaign creation date
+Team Management (MVP) – Domain Ownership & Manager Role
+[ ] As the first user signing up with a new company domain, I am automatically assigned the "Manager" role for that domain.
+
+Team Management (MVP) – Inviting Team Members
+[ ] As a Manager, I can invite new users to join my company domain by entering their email addresses.
+[ ] As a Manager, I can specify the role (Team Member or Viewer) for each invitee during the invitation process.
+
+Team Management (MVP) – Invitation Acceptance & Onboarding
+[ ] As an invited user, I receive an email with an invitation to join the company domain.
+[ ] As an invited user, I can accept or reject the invitation by clicking the respective button in the email.
+[ ] As an invited user, after clicking "Accept," I am prompted to set a password and complete my account setup.
+[ ] As an invited user, if I reject the invitation, my invite is invalidated and I cannot access the platform.
+
+Team Management (MVP) – User Roles & Permissions
+[ ] As a Manager, I can view a list of all users in my company domain, including their roles and statuses (active, pending, etc.).
+[ ] As a Manager, I can change the role of an existing user (e.g., from Viewer to Team Member).
+[ ] As a Manager, I can remove users from my company domain, revoking their access.
+
+Team Management (MVP) – Access Management UI
+[ ] As a Manager, I have access to a "Settings" page with an "Access Management" section.
+[ ] In the "Access Management" section, I can add new users, change user roles, and remove users.
+
+Team Management (MVP) – User Self-Service
+[ ] As a user, I can view my own profile and see my assigned role and company domain.
+[ ] As a user, I can delete campaigns that I have created.
+[ ] As a user, I can delete UTM links that I have created.
+[ ] As a manager, I can delete everything.
+
 Post-MVP Features (Future Roadmap)
 [ ] Team member invitations and collaboration
 [ ] Role-based permissions (Manager, Team Member, Viewer)

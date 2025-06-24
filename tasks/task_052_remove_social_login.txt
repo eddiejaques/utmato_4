@@ -1,0 +1,25 @@
+Title: Remove Social Login from Clerk Authentication
+
+Task:
+Remove or disable all social login options (e.g., Google, GitHub, etc.) from the authentication flow using Clerk, ensuring only email/password login is available.
+
+Context:
+- Frontend:
+  - Update Clerk UI components (SignIn, SignUp) to hide or disable social login buttons.
+  - Ensure the signup and login flows only present email/password options to users.
+  - Update any custom UI or documentation to reflect this change.
+  - Test that no social login buttons are visible and that email/password login works as expected.
+
+- Backend:
+  - No backend changes are required unless you have custom logic for social login callbacks or user provisioning.
+  - Remove or disable any webhook/event handling specific to social providers if present.
+  - Test that user creation and authentication via social providers is not possible.
+
+Verification Steps:
+1. Attempt to sign up and sign in using social login options—verify they are not available.
+2. Confirm that email/password authentication works as expected.
+3. Review Clerk dashboard to ensure all social providers are disabled.
+4. Run frontend tests to verify UI changes.
+
+Dependencies:
+- tasks/task_045.txt (if any authentication logic is shared or affected) 
