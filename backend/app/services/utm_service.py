@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 import validators
 from pydantic import HttpUrl, ValidationError
 from typing import Optional, Tuple
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
 from fastapi import HTTPException, status
 import uuid
@@ -184,8 +184,10 @@ async def get_utm_links_for_campaign(db: Session, *, campaign_id: uuid.UUID, use
             detail="You do not have permission to view links for this campaign.",
         )
 
-    stmt = select(UTMLink).where(UTMLink.campaign_id == campaign_id)
+    # Use selectinload for UTM link relationships to avoid N+1
+    stmt = select(UTMLink).options(selectinload(UTMLink.campaign)).where(UTMLink.campaign_id == campaign_id)
     result = await db.execute(stmt)
     utm_links = result.scalars().all()
-    
+
+    # To analyze performance, run EXPLAIN ANALYZE on this query in psql or your DB tool.
     return utm_links 

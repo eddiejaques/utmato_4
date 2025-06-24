@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 import uuid
 from typing import List, Optional
 
@@ -21,8 +22,9 @@ async def get_campaign(db: Session, *, campaign_id: uuid.UUID, company_id: uuid.
 
 async def get_campaigns(db: Session, *, company_id: uuid.UUID, skip: int = 0, limit: int = 100) -> List[Campaign]:
     result = await db.execute(
-        select(Campaign).filter(Campaign.company_id == company_id).offset(skip).limit(limit)
+        select(Campaign).options(selectinload(Campaign.utm_links)).filter(Campaign.company_id == company_id).offset(skip).limit(limit)
     )
+    # To analyze performance, run EXPLAIN ANALYZE on this query in psql or your DB tool.
     return result.scalars().all()
 
 async def update_campaign(db: Session, *, db_campaign: Campaign, campaign_in: CampaignUpdate) -> Campaign:
