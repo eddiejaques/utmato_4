@@ -1,0 +1,11 @@
+Step 21: Add Minimalistic Logout Button to Header
+
+Task: Implement a minimal, icon-only logout button in the header, positioned on the right, visible only to logged-in users. The button should use a subtle icon (e.g., LogOut from lucide-react), be accessible (aria-label), and styled with Shadcn UI and Tailwind to avoid distraction. Ensure it is only rendered when the user is authenticated (using Clerk's <SignedIn> component). The button should trigger signOut from Clerk when clicked.
+
+Files:
+- src/components/Auth/LogoutButton.tsx: Create a new component for the logout button using Shadcn UI's Button, lucide-react's LogOut icon, and Clerk's useClerk hook. Style with variant="ghost", size="icon", and muted color. Add aria-label for accessibility.
+- src/components/organisms/Header.tsx: Import and place <LogoutButton /> inside a <SignedIn> wrapper, aligned to the right of the header using flex utilities. Ensure the button is not visible to signed-out users.
+
+Step Dependencies: Section 7, Step 20
+
+User Instructions: Log in and verify the logout button appears in the header, is subtle, and logs you out when clicked. Confirm it is not visible when logged out. Test keyboard accessibility and screen reader label. Optionally, add a test file to check button rendering and sign-out behavior. 
