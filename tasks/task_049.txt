@@ -1,0 +1,8 @@
+Step 3: Implement Features/Value Proposition Section (Landing Page)
+
+Task: Build the Features/Value Proposition section for the landing page, focusing on "Why" and "What" Utmato offers. Use existing molecules/organisms and design tokens to present the application's core benefits and differentiators. Include supporting sign-up CTA(s) as appropriate. Ensure the section is visually consistent, responsive, and accessible.
+Files:
+- src/app/landing/FeaturesSection.tsx: Features/Value Proposition section component
+- (Use existing molecules/organisms from src/components/molecules, src/components/organisms as needed)
+Step Dependencies: Section 8, Step 1 (Landing Page Epic), Section 7, Step 3 (Atomic/Molecular/Organism UI)
+User Instructions: Implement the Features/Value Proposition section using only existing design tokens and components. Focus on clarity and SEO-friendly content. Test for responsiveness and accessibility. Ensure at least one CTA links to /sign-up/. 

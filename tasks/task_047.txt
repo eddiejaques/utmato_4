@@ -1,0 +1,11 @@
+Section 8: Landing Page (SEO-Optimized)
+Step 1: Epic - Build SEO-Optimized Landing Page for Utmato
+
+Task: Create a modular, SEO-optimized landing page for Utmato using existing atomic/molecular/organism components and design tokens. The landing page should focus on the application's core value proposition ("Why" and "What"), feature multiple sign-up CTAs (linking to /sign-up/), and strictly follow the established design system. Technical SEO (meta tags, Open Graph, semantic HTML) must be included. Visuals should use existing assets or simple Utmato branding. The work is to be split into subtasks for HeroSection, Features/Value Proposition, SEO, and page assembly.
+Files:
+- src/app/landing/HeroSection.tsx: Hero section organism (headline, subheadline, main CTA, branding)
+- src/app/landing/FeaturesSection.tsx: Features/Value Proposition section
+- src/app/landing/SEO.tsx: SEO meta tags, Open Graph, semantic HTML
+- src/app/landing/page.tsx: Landing page assembly, multiple CTAs, full responsiveness/accessibility
+Step Dependencies: Section 7, Step 1 (Design System), Section 7, Step 3 (Atomic/Molecular/Organism UI)
+User Instructions: Complete each subtask in order. Use only existing design tokens, components, and assets. Ensure the landing page is visually consistent, SEO-optimized, and fully responsive. Verify all CTAs link to /sign-up/. Test for accessibility and SEO best practices. 
