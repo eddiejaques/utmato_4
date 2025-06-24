@@ -1,5 +1,5 @@
 from urllib.parse import urlparse, parse_qs
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import func, or_
 
 from app.models.campaign import Campaign
@@ -10,18 +10,20 @@ from app.services.campaign_service import get_campaign
 async def search_campaigns_and_utms(db: Session, company_id: int, query: str):
     search_query = func.to_tsquery('english', query)
 
+    # Use selectinload for campaign relationships to avoid N+1
     campaigns_tsvector = func.to_tsvector('english', func.coalesce(Campaign.name, '') + ' ' + func.coalesce(Campaign.demographics, '') + ' ' + func.coalesce(Campaign.interests, ''))
-    campaigns = db.query(Campaign).filter(
+    campaigns = db.query(Campaign).options(selectinload(Campaign.utm_links)).filter(
         Campaign.company_id == company_id,
         campaigns_tsvector.match(search_query)
     ).all()
 
     utm_links_tsvector = func.to_tsvector('english', func.coalesce(UTMLink.source, '') + ' ' + func.coalesce(UTMLink.medium, '') + ' ' + func.coalesce(UTMLink.content, ''))
-    utm_links = db.query(UTMLink).join(Campaign).filter(
+    utm_links = db.query(UTMLink).join(Campaign).options(selectinload(UTMLink.campaign)).filter(
         Campaign.company_id == company_id,
         utm_links_tsvector.match(search_query)
     ).all()
 
+    # To analyze performance, run EXPLAIN ANALYZE on these queries in psql or your DB tool.
     return {"campaigns": campaigns, "utm_links": utm_links}
 
 async def reverse_utm_lookup(db: Session, company_id: int, url: str) -> ReverseUTMLookupResponse:
