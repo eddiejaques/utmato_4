@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 
@@ -22,6 +22,8 @@ async def generate_utm_link(
     """
     Generate a single UTM link.
     """
+    if not link_in.destination_url or not link_in.utm_source or not link_in.utm_medium:
+        raise HTTPException(status_code=422, detail="Missing required UTM parameters.")
     utm_link = await utm_service.generate_single_utm_link(db=db, link_data=link_in, user=current_user)
     return utm_link
 
