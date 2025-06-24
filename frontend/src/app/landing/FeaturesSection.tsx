@@ -49,7 +49,7 @@ export function FeaturesSection() {
       className="w-full max-w-5xl mx-auto py-16 px-4 md:py-24 md:px-0"
       aria-label="Utmato Features"
     >
-      <h2 className="font-sans font-bold text-2xl md:text-4xl text-center mb-10 text-primary-foreground dark:text-neutral-100">
+      <h2 className="font-sans font-bold text-2xl md:text-4xl text-center mb-10 text-neutral-900 dark:text-neutral-100">
         Why Utmato? Core Benefits
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
@@ -59,7 +59,7 @@ export function FeaturesSection() {
             className="flex flex-col items-center text-center p-6 bg-white dark:bg-neutral-900 rounded-lg shadow-md h-full"
           >
             <div className="mb-4">{feature.icon}</div>
-            <h3 className="font-sans font-semibold text-xl mb-2 text-primary-foreground dark:text-neutral-100">
+            <h3 className="font-sans font-semibold text-xl mb-2 text-neutral-900 dark:text-neutral-100">
               {feature.title}
             </h3>
             <p className="font-sans text-base text-neutral-900 dark:text-neutral-100 mb-2">
