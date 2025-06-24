@@ -1,0 +1,8 @@
+Step 4: Implement SEO Meta Tags and Semantic HTML (Landing Page)
+
+Task: Add technical SEO enhancements to the landing page, including meta tags (title, description, keywords), Open Graph tags, and semantic HTML structure. Use keywords such as UTM, Campaigns, Marketing, Performance Marketing, UTM Builder. Ensure the landing page is optimized for search engines and social sharing. Do not introduce new design tokens or visual elements.
+Files:
+- src/app/landing/SEO.tsx: SEO component for meta tags and Open Graph
+- src/app/landing/page.tsx: Integrate SEO component and ensure semantic HTML
+Step Dependencies: Section 8, Step 1 (Landing Page Epic)
+User Instructions: Implement the SEO component and integrate it into the landing page. Verify meta tags and Open Graph data render correctly. Use semantic HTML for all landing page sections. Test with SEO and social sharing tools. 

@@ -1,0 +1,8 @@
+Step 2: Implement HeroSection Organism (Landing Page)
+
+Task: Build the HeroSection organism for the landing page using existing atomic/molecular components and design tokens. The HeroSection should include a prominent headline, subheadline, main sign-up CTA (linking to /sign-up/), and Utmato branding (logo or placeholder). Ensure full responsiveness and accessibility. Use only established design system elements and avoid introducing new visual styles.
+Files:
+- src/app/landing/HeroSection.tsx: HeroSection organism component
+- (Use existing atoms/molecules from src/components/atoms, src/components/molecules as needed)
+Step Dependencies: Section 8, Step 1 (Landing Page Epic), Section 7, Step 3 (Atomic/Molecular/Organism UI)
+User Instructions: Implement the HeroSection as a functional, responsive, and accessible organism. Use only existing design tokens and components. Test for correct rendering on all breakpoints and verify the CTA links to /sign-up/. 

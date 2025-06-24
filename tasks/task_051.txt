@@ -1,0 +1,10 @@
+Step 5: Assemble Landing Page (Page Assembly)
+
+Task: Assemble the landing page by integrating the HeroSection, FeaturesSection, and SEO components. Ensure multiple sign-up CTAs are present (hero, footer, etc.), and the page is fully responsive and accessible. Use only existing design tokens and components. The final page should be visually consistent, SEO-optimized, and link all CTAs to /sign-up/.
+Files:
+- src/app/landing/page.tsx: Landing page assembly
+- src/app/landing/HeroSection.tsx: Imported HeroSection
+- src/app/landing/FeaturesSection.tsx: Imported FeaturesSection
+- src/app/landing/SEO.tsx: Imported SEO component
+Step Dependencies: Section 8, Steps 2–4 (HeroSection, FeaturesSection, SEO)
+User Instructions: Assemble the landing page using the specified components. Test for correct layout, responsiveness, accessibility, and SEO. Verify all CTAs link to /sign-up/. 
