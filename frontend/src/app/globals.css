@@ -169,3 +169,17 @@ p, span, li, label {
   outline: 2px solid var(--color-primary, #000);
   outline-offset: 2px;
 }
+
+/* --- Clerk Prebuilt UI Centering Workaround (robust) ---
+   This forces any Clerk card in a .clerk-container-center flex container to be centered horizontally. */
+.clerk-container-center > * {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* --- Clerk Prebuilt UI Centering Workaround (legacy, can be removed if not needed) ---
+.cl-internal-1fsg6zy {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+*/
