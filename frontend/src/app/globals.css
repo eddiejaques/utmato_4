@@ -148,3 +148,24 @@ p, span, li, label {
 *, *::before, *::after {
   box-sizing: border-box;
 }
+
+/* Skip to content link */
+.skip-to-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--color-primary, #000);
+  color: var(--color-primary-foreground, #fff);
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+  transform: translateY(-100%);
+  transition: transform 0.2s;
+}
+.skip-to-content:focus {
+  transform: translateY(0);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary, #000);
+  outline-offset: 2px;
+}

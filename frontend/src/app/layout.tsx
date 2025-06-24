@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google"; // Removed due to Turbopack font loader issue
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Providers } from "./providers";
 import { UserSync } from "@/components/Auth/UserSync";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] }); // Removed
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,15 +18,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <Providers>
-            <UserSync />
-            {children}
-          </Providers>
-        </body>
-      </html>
-    </ClerkProvider>
+    <>
+      <a href="#main-content" className="skip-to-content">Skip to main content</a>
+      <ClerkProvider>
+        <html lang="en">
+          <head>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" />
+          </head>
+          <body className="font-sans"> {/* Use Tailwind's font-sans which maps to Inter if configured, or add inline style if needed */}
+            <Providers>
+              <UserSync />
+              <main id="main-content">
+                {children}
+              </main>
+            </Providers>
+          </body>
+        </html>
+      </ClerkProvider>
+    </>
   );
 }
