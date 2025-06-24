@@ -183,3 +183,8 @@ p, span, li, label {
   margin-right: auto !important;
 }
 */
+
+/* --- Clerk: Hide the 'or' separator in SignIn/SignUp widgets --- */
+.cl-socialButtonsDivider, .cl-signIn-start__divider, .cl-signUp-start__divider {
+  display: none !important;
+}

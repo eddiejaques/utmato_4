@@ -1,5 +1,9 @@
 import { SignUp } from "@clerk/nextjs";
 
 export default function Page() {
-  return <SignUp forceRedirectUrl="/dashboard" />;
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-neutral-100 dark:bg-neutral-900 px-4 clerk-container-center">
+      <SignUp forceRedirectUrl="/dashboard" appearance={{ elements: { socialButtons: { display: 'none' } } }} />
+    </div>
+  );
 } 
