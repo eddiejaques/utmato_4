@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 from typing import List
@@ -16,11 +16,14 @@ async def create_campaign(
     *,
     db: AsyncSession = Depends(get_db),
     current_company: Company = Depends(get_current_company),
-    campaign_in: CampaignCreate
+    campaign_in: CampaignCreate,
+    request: Request
 ):
     """
     Create new campaign.
     """
+    if not campaign_in.name:
+        raise HTTPException(status_code=422, detail="Campaign name is required.")
     campaign = await campaign_service.create_campaign(db=db, campaign_in=campaign_in, company_id=current_company.id)
     return campaign
 
