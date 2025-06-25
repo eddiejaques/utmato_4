@@ -1,0 +1,27 @@
+Step 4: Implement Database Migrations
+
+Task: Create Alembic migration scripts to generate all team management tables and relationships. Enable row-level security (RLS) for company-scoped data isolation. Add indexes for performance.
+Files:
+- backend/migrations/versions/xxxxxxxxxxxx_team_management_models.py: Migration for new tables.
+- backend/migrations/versions/xxxxxxxxxxxx_team_management_rls.py: Migration for RLS policies.
+Step Dependencies: Section 2, Step 1
+User Instructions: Generate and apply migrations. Verify tables and RLS policies are correctly created in the database.
+
+User Stories Covered:
+- All stories requiring secure, isolated, and performant data storage
+
+Acceptance Criteria:
+- All tables and indexes created
+- RLS policies enforce company isolation
+
+Edge Cases:
+- Migration failures, RLS misconfiguration
+
+Test Data/Mocking:
+- Use migration dry runs and test DBs
+
+Documentation:
+- Migration scripts and comments
+
+Retrospective:
+- Note any migration or RLS pain points 
