@@ -50,4 +50,18 @@ def validate_url_endpoint(
     Validates a destination URL.
     """
     validation_result = utm_service.validate_url(str(request.url))
-    return URLValidationResponse(**validation_result) 
+    return URLValidationResponse(**validation_result)
+
+
+@router.delete("/link/{utm_link_id}", response_model=UTMLinkResponse)
+async def delete_utm_link(
+    *,
+    db: AsyncSession = Depends(get_db),
+    utm_link_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Delete a UTM link by id (user self-service).
+    """
+    utm_link = await utm_service.delete_utm_link(db=db, utm_link_id=utm_link_id, user=current_user)
+    return utm_link 

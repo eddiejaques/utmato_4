@@ -23,11 +23,11 @@ def upgrade() -> None:
     # B-tree index for utm_links.generated_url
     op.create_index('idx_utm_links_generated_url', 'utm_links', ['generated_url'])
     # GIN index for full-text search on campaigns (name, demographics, interests)
-    op.execute("""
-        CREATE INDEX idx_campaigns_fulltext_gin ON campaigns USING GIN (
-            to_tsvector('english', coalesce(name, '') || ' ' || coalesce(demographics, '') || ' ' || coalesce(interests, ''))
-        )
-    """)
+     # op.execute("""
+     #     CREATE INDEX idx_campaigns_fulltext_gin ON campaigns USING GIN (
+     #         to_tsvector('english', coalesce(name, '') || ' ' || coalesce(demographics, '') || ' ' || coalesce(interests, ''))
+     #     )
+     # """)
     # GIN index for full-text search on utm_links (source, medium, content)
     op.execute("""
         CREATE INDEX idx_utm_links_fulltext_gin ON utm_links USING GIN (

@@ -10,4 +10,10 @@ class CampaignStatus(str, enum.Enum):
     ACTIVE = "active"
     PAUSED = "paused"
     COMPLETED = "completed"
-    ARCHIVED = "archived" 
+    ARCHIVED = "archived"
+
+class InviteStatus(str, enum.Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    EXPIRED = "expired" 

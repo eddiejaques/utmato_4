@@ -13,6 +13,8 @@ class Campaign(Base):
     company_id = Column(UUID(as_uuid=True), ForeignKey("companies.id"), nullable=False)
     status = Column(Enum(CampaignStatus), default=CampaignStatus.DRAFT, nullable=False)
     budget_info = Column(JSON, nullable=True)
+    demographics = Column(String, nullable=True)
+    interests = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

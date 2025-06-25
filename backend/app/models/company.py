@@ -12,4 +12,6 @@ class Company(Base):
     settings = Column(JSON, nullable=True)
 
     users = relationship("User", back_populates="company")
-    campaigns = relationship("Campaign", back_populates="company") 
+    campaigns = relationship("Campaign", back_populates="company")
+    invitations = relationship("Invitation", back_populates="company")
+    team_memberships = relationship("TeamMembership", back_populates="company") 

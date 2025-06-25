@@ -191,3 +191,19 @@ async def get_utm_links_for_campaign(db: Session, *, campaign_id: uuid.UUID, use
 
     # To analyze performance, run EXPLAIN ANALYZE on this query in psql or your DB tool.
     return utm_links 
+
+async def delete_utm_link(db: Session, *, utm_link_id: uuid.UUID, user: CurrentUser) -> UTMLink:
+    stmt = select(UTMLink).where(UTMLink.id == utm_link_id)
+    result = await db.execute(stmt)
+    utm_link = result.scalars().first()
+    if not utm_link:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="UTM link not found.")
+    # Check campaign ownership
+    stmt = select(Campaign).where(Campaign.id == utm_link.campaign_id)
+    result = await db.execute(stmt)
+    campaign = result.scalars().first()
+    if not campaign or campaign.company_id != user.company_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have permission to delete this UTM link.")
+    await db.delete(utm_link)
+    await db.commit()
+    return utm_link 
