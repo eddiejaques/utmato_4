@@ -1,9 +1,9 @@
 import enum
 
 class UserRole(str, enum.Enum):
-    MANAGER = "manager"
-    MEMBER = "member"
-    VIEWER = "viewer"
+    MANAGER = "MANAGER"
+    MEMBER = "MEMBER"
+    VIEWER = "VIEWER"
 
 class CampaignStatus(str, enum.Enum):
     DRAFT = "draft"
