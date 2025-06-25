@@ -1,0 +1,72 @@
+
+---
+# Technical Components & Stack (Frontend)
+
+## Framework & Core Libraries
+- **Next.js (App Router)**: File-based routing, SSR/SSG, React Server Components, API routes.
+- **React 19**: Functional components, hooks, and declarative UI.
+- **TypeScript**: Type safety across all code.
+
+## UI & Design System
+- **Shadcn UI**: Customizable UI primitives.
+- **Radix UI**: Accessible, unstyled UI primitives (Dialog, Dropdown, Select, Label, etc.).
+- **Tailwind CSS**: Utility-first CSS framework, custom theme in `tailwind.config.js`.
+- **Design Tokens**: Defined in `src/styles/design-tokens.css` and Tailwind config for color, typography, spacing, etc.
+- **Geist Font**: Used for sans and mono typography.
+
+## Component Architecture
+- **Atoms**: Smallest UI elements (Button, Input, Checkbox, Badge, etc.) in `components/atoms`.
+- **Molecules**: Composed UI elements (FormGroup, SearchBox, CampaignCard, etc.) in `components/molecules`.
+- **Organisms**: High-level containers (Header, Sidebar, CampaignListContainer, UTMBuilderForm) in `components/organisms`.
+- **Feature Folders**: Auth, Campaigns, UTM, Search, each with their own components.
+- **UI Primitives**: Shared UI (Button, Card, Dialog, Dropdown, Form, Input, Label, Select, Table) in `components/ui`.
+
+## State Management
+- **Redux Toolkit**: Slices for auth, campaigns, search, UTM in `store/`.
+- **React-Redux**: For connecting state to components.
+
+## Forms & Validation
+- **react-hook-form**: Declarative form state management.
+- **zod**: Schema validation and type inference.
+- **@hookform/resolvers**: Integrates zod with react-hook-form.
+
+## API Integration
+- **API Layer**: REST API abstraction in `src/api/` (auth, campaigns, search, utm).
+- **Async Thunks**: Used in Redux slices for async API calls.
+
+## Authentication
+- **Clerk**: User authentication and session management (`@clerk/nextjs`).
+- **Auth Components**: LogoutButton, UserSync in `components/Auth`.
+
+## Utilities & Helpers
+- **Clipboard, Utility Functions**: In `src/lib/` and `src/utils/`.
+- **Accessibility**: a11y helpers in `utils/a11y.ts`.
+
+## Testing
+- **Jest/React Testing Library**: Test files alongside components (e.g., `*.test.tsx`).
+- **Storybook**: Component-driven development and visual testing (`*.stories.tsx`).
+
+## Animations & Icons
+- **framer-motion**: Animations.
+- **lucide-react**: Icon library.
+- **tw-animate-css**: Tailwind plugin for animation utilities.
+
+## Project Structure
+- `src/app/`: Routing, pages, layouts, providers.
+- `src/components/`: UI components (atoms, molecules, organisms, feature folders, ui primitives).
+- `src/store/`: Redux slices and state logic.
+- `src/api/`: API abstraction.
+- `src/types/`: TypeScript types and interfaces.
+- `src/styles/`: Global styles and design tokens.
+- `src/lib/`: Utility libraries.
+
+## Design System Foundations
+- **Color, Typography, Spacing**: All tokens available as CSS variables and Tailwind classes.
+- **Consistent 4px/8px grid**: For spacing and layout.
+- **Accessible, mobile-first, responsive**: All components and layouts.
+
+---
+
+*All new UX and UI features should leverage these technical components and patterns for consistency, maintainability, and scalability.* 
+
+

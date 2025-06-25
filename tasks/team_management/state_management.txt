@@ -1,0 +1,7 @@
+## State Management
+- **Redux Toolkit**: Centralized state management using slices for each domain (auth, campaigns, search, utm) located in `src/store/`.
+- **React-Redux**: Connects Redux state to React components using hooks (`useSelector`, `useDispatch`).
+- **Slice Structure**: Each slice (e.g., `authSlice.ts`, `campaignSlice.ts`, `searchSlice.ts`, `utmSlice.ts`) manages its own state, actions, and async thunks for API calls.
+- **Store Composition**: All slices are combined in `store/index.ts` to create the root store.
+- **Usage Pattern**: Components subscribe to relevant state and dispatch actions for updates, ensuring a single source of truth and predictable state transitions.
+- **Async Logic**: API calls and side effects are handled via async thunks within each slice, keeping UI logic clean and declarative. 
