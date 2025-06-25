@@ -1,0 +1,35 @@
+Step 2: State Management Setup
+
+Task: Set up Redux Toolkit slices for team management (auth, team, invites, roles) in frontend/src/store/. Ensure state shape, actions, and async thunks match the workflows in state_management.txt and support all user stories (invitation, onboarding, role changes, removal, self-service).
+Files:
+- frontend/src/store/authSlice.ts: Auth state and actions.
+- frontend/src/store/teamSlice.ts: Team member and invite state/actions.
+- frontend/src/store/userSlice.ts: User profile and role state/actions.
+- frontend/src/store/index.ts: Combine slices into root store.
+Step Dependencies: Section 1, Step 1
+User Instructions: Implement and test Redux slices for all team management flows. Ensure async thunks handle API calls and state transitions as described in state_management.txt.
+
+User Stories Covered:
+- All user stories involving state transitions (invitation, onboarding, role changes, removal, self-service)
+
+Acceptance Criteria:
+- Redux slices cover all required state and async flows
+- Async thunks handle API calls and error states
+
+Edge Cases:
+- API failures, network errors, invalid state transitions
+
+Test Data/Mocking:
+- Use mock API responses for isolated slice testing
+
+UX/UI Review:
+- State flows match UX requirements in ux design.txt
+
+Accessibility/Responsiveness:
+- State changes reflected in UI with accessible feedback
+
+Documentation:
+- Inline comments and slice documentation
+
+Retrospective:
+- Note any state management pain points for future refactor 

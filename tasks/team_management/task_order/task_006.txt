@@ -1,0 +1,51 @@
+Step 6: Access Management UI & Workflows
+
+Task: Implement frontend UI for all team management flows, following UX in ux design.txt and technical stack in ux_frontend.txt. Features:
+- Settings > Access Management page
+- Invite Team Member modal (bulk email, role selection)
+- Pending invites list (resend/cancel)
+- User list (role change, remove, status badges)
+- Profile page (view role/domain, delete own campaigns/UTM links)
+- Confirmation dialogs, toasts, error/success feedback
+Files:
+- frontend/src/app/settings/team.tsx: Team management page.
+- frontend/src/components/Team/InviteUserForm.tsx: Invite form/modal.
+- frontend/src/components/Team/TeamMemberList.tsx: User list table.
+- frontend/src/components/Team/PendingInvites.tsx: Pending invites list.
+- frontend/src/components/Auth/UserProfile.tsx: Profile page.
+- frontend/src/components/Campaigns/CampaignList.tsx: Campaign deletion.
+- frontend/src/components/UTM/UTMLinkList.tsx: UTM link deletion.
+- frontend/src/store/teamSlice.ts: Team state/actions.
+- frontend/src/store/userSlice.ts: User state/actions.
+Step Dependencies: Section 3, Step 1
+User Instructions: Implement and test all UI components. Ensure flows match UX design and user stories. Test all edge cases (invite, accept, reject, role change, remove, self-service).
+
+User Stories Covered:
+- All user stories involving UI/UX for team management
+
+Acceptance Criteria:
+- UI matches UX design.txt and ux_frontend.txt
+- All user flows are accessible and responsive
+- All edge cases handled in UI
+
+Edge Cases:
+- Invalid input, network/API errors, permission errors, empty states
+
+Test Data/Mocking:
+- Use mock API responses and test users for UI testing
+
+UX/UI Review:
+- Review with design/UX team after each major UI step
+
+Accessibility/Responsiveness:
+- Keyboard navigation, ARIA labels, color contrast, mobile layout
+
+Security & Permissions:
+- UI enforces role-based access and hides unauthorized actions
+
+Documentation:
+- Storybook or similar for UI components
+- Inline component documentation
+
+Retrospective:
+- Gather user feedback and review UI/UX pain points 

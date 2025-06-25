@@ -1,0 +1,26 @@
+Step 1: Review and Align Architecture
+
+Task: Review the architecture for Team Management as described in architecture-team-management.txt. Ensure all planned features (domain ownership, invitations, onboarding, roles, access management, self-service) are mapped to clear API, service, and database layers. Confirm folder and file structure for both frontend and backend matches the architecture diagram.
+Files:
+- architecture-team-management.txt: Reference for architecture.
+- backend/app/api/: API route files for users, invites, roles.
+- backend/app/services/: Service logic for user, invite, role management.
+- backend/app/models/: ORM models for users, companies, invites, roles.
+- backend/app/schemas/: Pydantic schemas for all request/response bodies.
+- frontend/src/api/: API abstraction for team management endpoints.
+- frontend/src/store/: Redux slices for team, user, invite state.
+Step Dependencies: None
+User Instructions: Review the architecture document and ensure all technical and UX requirements are mapped to the codebase structure before implementation.
+
+User Stories Covered:
+- All user stories in user_stories.txt (domain ownership, invitations, onboarding, roles, access management, self-service)
+
+Acceptance Criteria:
+- Architecture diagram and folder structure reviewed and confirmed
+- All user stories mapped to technical layers
+
+Documentation:
+- Update architecture documentation with any clarifications
+
+Retrospective:
+- Capture any gaps or ambiguities in architecture for future improvement 

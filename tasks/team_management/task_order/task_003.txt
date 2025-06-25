@@ -1,0 +1,32 @@
+Step 3: Define Database Models for Team Management
+
+Task: Implement SQLAlchemy models for Company, User, Invitation, Role, and TeamMembership. Define relationships, UUID primary keys, foreign keys, and status fields. Ensure models support all user stories (domain ownership, invitations, onboarding, roles, removal, status).
+Files:
+- backend/app/models/company.py: Company model.
+- backend/app/models/user.py: User model (with role, status, company_id).
+- backend/app/models/invitation.py: Invitation model (email, role, status, token, company_id).
+- backend/app/models/role.py: Role model (Manager, Team Member, Viewer).
+- backend/app/models/team_membership.py: TeamMembership model (user_id, company_id, role).
+- backend/app/db/base.py: Import all models for Alembic.
+- backend/app/schemas/enums.py: UserRole, InviteStatus enums.
+Step Dependencies: Section 1, Step 1
+User Instructions: Review and implement all models. Ensure relationships and constraints match the architecture and user stories.
+
+User Stories Covered:
+- All stories requiring persistent user, company, invite, and role data
+
+Acceptance Criteria:
+- Models match user stories and architecture
+- Relationships and constraints are correct
+
+Edge Cases:
+- Duplicate users, invalid foreign keys, orphaned records
+
+Test Data/Mocking:
+- Use test database and fixtures for model validation
+
+Documentation:
+- Docstrings for all models and fields
+
+Retrospective:
+- Capture any schema changes needed for future features 

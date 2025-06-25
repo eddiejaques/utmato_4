@@ -1,0 +1,238 @@
+Team Management (MVP) – Architecture Overview
+
+Legend:
+|---| : Data/API flow
+[ ] : UI Component or Page
+( ) : Backend Service or Logic
+{ } : Database/Table
+
+
+1. Domain Ownership & Manager Role
+
+[Sign Up Page]
+   |
+   v
+(Auth API) ---> (User Service) ---> {users} {companies}
+   |
+   v
+[Dashboard]
+
+- On first signup with a domain, User Service checks {companies} for domain, assigns 'Manager' if new.
+
+
+2. Inviting Team Members
+
+[Access Management UI]
+   |
+   v
+(Invite API) ---> (User Service) ---> {invites} {users}
+   |
+   v
+[Invite Sent Confirmation]
+
+- Manager enters email/role, Invite API creates invite in {invites}, sends email.
+
+
+3. Invitation Acceptance & Onboarding
+
+[Email Invite Link]
+   |
+   v
+[Accept/Reject Page]
+   |
+   v
+(Acceptance API) ---> (User Service) ---> {users} {invites}
+   |
+   v
+[Set Password Page]
+   |
+   v
+(Auth API) ---> (User Service) ---> {users}
+   |
+   v
+[Dashboard]
+
+- Accept: Invite marked used, user sets password, account activated.
+- Reject: Invite marked invalid.
+
+
+4. User Roles & Permissions
+
+[Access Management UI]
+   |
+   v
+(User API) ---> (User Service) ---> {users}
+   |
+   v
+[User List/Role Change/Remove]
+
+- Manager can view, change, or remove users. Changes reflected in {users}.
+
+
+5. Access Management UI
+
+[Settings Page]
+   |
+   v
+[Access Management UI]
+   |
+   v
+(User/Invite APIs)
+
+- Central place for all user/invite management actions.
+
+
+6. User Self-Service
+
+[Profile Page]
+   |
+   v
+(User API) ---> (User Service) ---> {users}
+
+[Campaigns/UTM Links UI]
+   |
+   v
+(Campaign/UTM APIs) ---> (Campaign/UTM Service) ---> {campaigns} {utm_links}
+
+- Users can view their info, delete their campaigns/UTM links.
+
+
+---
+
+System Diagram (High-Level)
+
+[Frontend]
+  |
+  |---[Sign Up]---|
+  |---[Dashboard]---|
+  |---[Settings/Access Management]---|
+  |---[Profile]---|
+  |---[Campaigns/UTM Links]---|
+  |
+  v
+[API Layer]
+  |
+  |---(Auth API)
+  |---(User API)
+  |---(Invite API)
+  |---(Campaign API)
+  |---(UTM API)
+  |
+  v
+[Backend Services]
+  |
+  |---(User Service)
+  |---(Invite Service)
+  |---(Campaign Service)
+  |---(UTM Service)
+  |
+  v
+[Database]
+  |
+  |---{users}
+  |---{companies}
+  |---{invites}
+  |---{campaigns}
+  |---{utm_links}
+
+---
+
+## Team Management (MVP) – Folder-Level Architecture (Mermaid)
+
+```mermaid
+flowchart TD
+    %% FRONTEND
+    subgraph Frontend [frontend/src]
+        direction LR
+        FE_App[app/]
+        FE_Components[components/]
+        FE_Store[store/]
+        FE_Api[api/]
+        FE_Types[types/]
+        FE_Utils[utils/]
+        FE_Styles[styles/]
+        FE_Lib[lib/]
+    end
+
+    subgraph FE_Components_Folders [components/]
+        direction LR
+        FE_Atoms[atoms/]
+        FE_Molecules[molecules/]
+        FE_Organisms[organisms/]
+        FE_Auth[Auth/]
+        FE_UTM[UTM/]
+        FE_Search[Search/]
+        FE_Campaigns[Campaigns/]
+        FE_UI[ui/]
+    end
+
+    FE_Components --> FE_Components_Folders
+
+    %% BACKEND
+    subgraph Backend [backend/app]
+        direction LR
+        BE_Api[api/]
+        BE_Services[services/]
+        BE_Models[models/]
+        BE_Schemas[schemas/]
+        BE_Db[db/]
+        BE_Middleware[middleware/]
+        BE_Core[core/]
+        BE_Utils[utils/]
+        BE_Dependencies[dependencies/]
+    end
+
+    subgraph BE_Api_Files [api/]
+        direction TB
+        BE_Api_Users[users.py]
+        BE_Api_Campaigns[campaigns.py]
+        BE_Api_UTM[utm.py]
+        BE_Api_Search[search.py]
+        BE_Api_Webhooks[webhooks.py]
+    end
+
+    BE_Api --> BE_Api_Files
+
+    subgraph BE_Services_Files [services/]
+        direction TB
+        BE_Svc_User[user_service.py]
+        BE_Svc_Campaign[campaign_service.py]
+        BE_Svc_UTM[utm_service.py]
+        BE_Svc_Search[search_service.py]
+    end
+
+    BE_Services --> BE_Services_Files
+
+    subgraph BE_Models_Files [models/]
+        direction TB
+        BE_Model_User[user.py]
+        BE_Model_Company[company.py]
+        BE_Model_UTMLink[utm_link.py]
+        BE_Model_Campaign[campaign.py]
+    end
+
+    BE_Models --> BE_Models_Files
+
+    subgraph BE_Schemas_Files [schemas/]
+        direction TB
+        BE_Schema_User[user.py]
+        BE_Schema_Campaign[campaign.py]
+        BE_Schema_UTM[utm.py]
+        BE_Schema_Search[search.py]
+        BE_Schema_Clerk[clerk.py]
+        BE_Schema_Enums[enums.py]
+    end
+
+    BE_Schemas --> BE_Schemas_Files
+
+    %% DATA FLOW (simplified)
+    FE_App -- "API Calls" --> BE_Api
+    FE_Store -- "State/Actions" --> FE_App
+    FE_Api -- "API Layer" --> BE_Api
+    BE_Api_Files -- "Routes" --> BE_Services_Files
+    BE_Services_Files -- "Business Logic" --> BE_Models_Files
+    BE_Services_Files -- "Validation" --> BE_Schemas_Files
+    BE_Models_Files -- "DB Access" --> BE_Db
+```
+
+This architecture ensures clear separation of concerns, atomic user flows, and testable endpoints for each Team Management (MVP) feature. 

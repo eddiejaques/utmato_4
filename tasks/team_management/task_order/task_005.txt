@@ -1,0 +1,52 @@
+Step 5: Implement Team Management API Endpoints
+
+Task: Develop FastAPI endpoints for:
+- Domain ownership & manager assignment on signup
+- Inviting team members (with role selection)
+- Accepting/rejecting invitations
+- Onboarding (set password, complete profile)
+- Listing users, changing roles, removing users
+- Access management UI support (list, add, change, remove)
+- User self-service (profile, delete own campaigns/UTM links)
+Files:
+- backend/app/api/users.py: User management endpoints.
+- backend/app/api/invitations.py: Invitation endpoints.
+- backend/app/api/roles.py: Role management endpoints.
+- backend/app/services/user_service.py: User business logic.
+- backend/app/services/invitation_service.py: Invitation logic.
+- backend/app/services/role_service.py: Role logic.
+- backend/app/schemas/user.py: User schemas.
+- backend/app/schemas/invitation.py: Invitation schemas.
+- backend/app/schemas/role.py: Role schemas.
+Step Dependencies: Section 2, Step 2
+User Instructions: Implement and test all endpoints. Ensure endpoints match user stories and architecture. Test with API client for all flows (invite, accept, reject, list, change, remove).
+
+User Stories Covered:
+- All user stories in user_stories.txt (see each endpoint for mapping)
+
+Acceptance Criteria:
+- Endpoints return correct status codes and error messages
+- Role-based access is enforced
+- Invitations cannot be reused
+- All business logic matches user stories
+
+Edge Cases:
+- Duplicate invites, expired/invalid tokens, unauthorized access, invalid role changes
+
+Test Data/Mocking:
+- Use mock users, companies, and invites for endpoint testing
+- Simulate invite acceptance/rejection flows
+
+API Contract:
+- OpenAPI/Swagger docs updated and validated
+
+Security & Permissions:
+- RBAC enforced for all endpoints
+- RLS policies tested
+
+Documentation:
+- Inline docstrings and OpenAPI docs
+- Update project API documentation
+
+Retrospective:
+- Capture feedback from endpoint testing and integration 

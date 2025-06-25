@@ -1,0 +1,112 @@
+# UX Design: Team Management MVP Workflows
+
+## Overview
+This document outlines the user workflows and UX design considerations for all Team Management MVP user stories, as described in context.txt. The focus is on clear, intuitive, and efficient user experiences for Managers and Team Members.
+
+---
+
+## 1. First User Signup & Domain Ownership
+### Workflow
+1. User lands on the sign-up page.
+2. Enters email and password.
+3. Enters company domain (auto-suggested from email if possible).
+4. Submits form.
+5. System assigns "Manager" role and creates new company domain.
+6. User is redirected to the dashboard with a welcome message and onboarding tips.
+
+### UX Design
+- Minimal form fields, clear validation.
+- Progress indicator for multi-step signup.
+- Success state with next steps (e.g., "Invite your team").
+
+---
+
+## 2. Inviting Team Members
+### Workflow
+1. Manager navigates to "Settings" > "Access Management".
+2. Clicks "Invite Team Member" button.
+3. Enters one or more email addresses.
+4. Selects role for each invitee (Team Member or Viewer).
+5. Sends invitations.
+6. System displays pending invites with status ("Pending Acceptance").
+
+### UX Design
+- Modal or slide-out panel for inviting users.
+- Bulk email entry with validation and error feedback.
+- Role selection dropdown per invitee.
+- Confirmation toast/snackbar on successful invite.
+- List of pending invites with resend/cancel options.
+
+---
+
+## 3. Invitation Acceptance & Onboarding
+### Workflow
+1. Invited user receives email with invite link.
+2. Clicks link, lands on acceptance page.
+3. Can accept or reject invitation.
+4. On acceptance: prompted to set password and complete profile.
+5. On rejection: shown confirmation and contact info for support.
+6. On acceptance, redirected to dashboard with onboarding tips.
+
+### UX Design
+- Branded, mobile-friendly email template.
+- Clear call-to-action buttons (Accept/Reject).
+- Friendly onboarding flow after acceptance.
+- Error handling for expired/invalid invites.
+
+---
+
+## 4. Managing Users & Roles
+### Workflow
+1. Manager opens "Access Management" in Settings.
+2. Sees list of all users (name, email, role, status).
+3. Can change role via dropdown (with confirmation dialog).
+4. Can remove user (with confirmation dialog).
+5. Changes reflected instantly in UI.
+
+### UX Design
+- Table or list view with sortable columns.
+- Inline role editing (dropdown/select).
+- Remove action with confirmation modal.
+- Status badges (Active, Pending, etc.).
+- Empty state illustration if no users.
+
+---
+
+## 5. User Self-Service
+### Workflow
+1. User clicks profile/avatar menu.
+2. Selects "My Profile".
+3. Views profile info: name, email, role, company domain.
+4. Can see assigned role and domain (read-only).
+5. Can delete own campaigns and UTM links from respective pages.
+
+### UX Design
+- Profile page with clear, non-editable fields for role/domain.
+- Action buttons for campaign/UTM link deletion (with confirmation).
+- Success/error feedback for all actions.
+
+---
+
+## 6. Access Management UI
+### Workflow
+1. Manager accesses "Settings" > "Access Management".
+2. Can add users, change roles, remove users from a single interface.
+3. All actions provide instant feedback and update the user list.
+
+### UX Design
+- Unified, responsive settings page.
+- Sectioned layout: Invite, User List, Role Management.
+- Consistent button styles and color coding for roles/actions.
+- Accessibility: keyboard navigation, ARIA labels, high contrast.
+
+---
+
+## General UX Principles
+- Mobile-first, responsive layouts for all flows.
+- Clear error and success states.
+- Loading spinners for async actions.
+- Empty states with guidance for new users.
+- Consistent use of modals for critical actions (invite, remove, change role).
+- Visual hierarchy: headings, badges, and color cues for roles/status.
+- Accessibility: semantic HTML, keyboard support, screen reader labels. 

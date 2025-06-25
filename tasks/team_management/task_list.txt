@@ -1,0 +1,303 @@
+MANUS-
+Team Management - Comprehensive Task Plan (Enriched)
+This document outlines a highly-detailed, step-wise task plan for developing the Team Management features, integrating feedback for enhanced granularity and comprehensiveness, based on the technical specification and user stories.
+
+Section 1: Team Management Core Architecture & State Management
+Step 1: Review and Align Architecture
+
+Task: Review the architecture for Team Management as described in architecture-team-management.txt. Ensure all planned features (domain ownership, invitations, onboarding, roles, access management, self-service) are mapped to clear API, service, and database layers. Confirm folder and file structure for both frontend and backend matches the architecture diagram.
+Files:
+- architecture-team-management.txt: Reference for architecture.
+- backend/app/api/: API route files for users, invites, roles.
+- backend/app/services/: Service logic for user, invite, role management.
+- backend/app/models/: ORM models for users, companies, invites, roles.
+- backend/app/schemas/: Pydantic schemas for all request/response bodies.
+- frontend/src/api/: API abstraction for team management endpoints.
+- frontend/src/store/: Redux slices for team, user, invite state.
+Step Dependencies: None
+User Instructions: Review the architecture document and ensure all technical and UX requirements are mapped to the codebase structure before implementation.
+
+User Stories Covered:
+- All user stories in user_stories.txt (domain ownership, invitations, onboarding, roles, access management, self-service)
+
+Acceptance Criteria:
+- Architecture diagram and folder structure reviewed and confirmed
+- All user stories mapped to technical layers
+
+Documentation:
+- Update architecture documentation with any clarifications
+
+Retrospective:
+- Capture any gaps or ambiguities in architecture for future improvement
+
+Step 2: State Management Setup
+
+Task: Set up Redux Toolkit slices for team management (auth, team, invites, roles) in frontend/src/store/. Ensure state shape, actions, and async thunks match the workflows in state_management.txt and support all user stories (invitation, onboarding, role changes, removal, self-service).
+Files:
+- frontend/src/store/authSlice.ts: Auth state and actions.
+- frontend/src/store/teamSlice.ts: Team member and invite state/actions.
+- frontend/src/store/userSlice.ts: User profile and role state/actions.
+- frontend/src/store/index.ts: Combine slices into root store.
+Step Dependencies: Section 1, Step 1
+User Instructions: Implement and test Redux slices for all team management flows. Ensure async thunks handle API calls and state transitions as described in state_management.txt.
+
+User Stories Covered:
+- All user stories involving state transitions (invitation, onboarding, role changes, removal, self-service)
+
+Acceptance Criteria:
+- Redux slices cover all required state and async flows
+- Async thunks handle API calls and error states
+
+Edge Cases:
+- API failures, network errors, invalid state transitions
+
+Test Data/Mocking:
+- Use mock API responses for isolated slice testing
+
+UX/UI Review:
+- State flows match UX requirements in ux design.txt
+
+Accessibility/Responsiveness:
+- State changes reflected in UI with accessible feedback
+
+Documentation:
+- Inline comments and slice documentation
+
+Retrospective:
+- Note any state management pain points for future refactor
+
+Section 2: Backend API & Database Implementation
+Step 1: Define Database Models for Team Management
+
+Task: Implement SQLAlchemy models for Company, User, Invitation, Role, and TeamMembership. Define relationships, UUID primary keys, foreign keys, and status fields. Ensure models support all user stories (domain ownership, invitations, onboarding, roles, removal, status).
+Files:
+- backend/app/models/company.py: Company model.
+- backend/app/models/user.py: User model (with role, status, company_id).
+- backend/app/models/invitation.py: Invitation model (email, role, status, token, company_id).
+- backend/app/models/role.py: Role model (Manager, Team Member, Viewer).
+- backend/app/models/team_membership.py: TeamMembership model (user_id, company_id, role).
+- backend/app/db/base.py: Import all models for Alembic.
+- backend/app/schemas/enums.py: UserRole, InviteStatus enums.
+Step Dependencies: Section 1, Step 1
+User Instructions: Review and implement all models. Ensure relationships and constraints match the architecture and user stories.
+
+User Stories Covered:
+- All stories requiring persistent user, company, invite, and role data
+
+Acceptance Criteria:
+- Models match user stories and architecture
+- Relationships and constraints are correct
+
+Edge Cases:
+- Duplicate users, invalid foreign keys, orphaned records
+
+Test Data/Mocking:
+- Use test database and fixtures for model validation
+
+Documentation:
+- Docstrings for all models and fields
+
+Retrospective:
+- Capture any schema changes needed for future features
+
+Step 2: Implement Database Migrations
+
+Task: Create Alembic migration scripts to generate all team management tables and relationships. Enable row-level security (RLS) for company-scoped data isolation. Add indexes for performance.
+Files:
+- backend/migrations/versions/xxxxxxxxxxxx_team_management_models.py: Migration for new tables.
+- backend/migrations/versions/xxxxxxxxxxxx_team_management_rls.py: Migration for RLS policies.
+Step Dependencies: Section 2, Step 1
+User Instructions: Generate and apply migrations. Verify tables and RLS policies are correctly created in the database.
+
+User Stories Covered:
+- All stories requiring secure, isolated, and performant data storage
+
+Acceptance Criteria:
+- All tables and indexes created
+- RLS policies enforce company isolation
+
+Edge Cases:
+- Migration failures, RLS misconfiguration
+
+Test Data/Mocking:
+- Use migration dry runs and test DBs
+
+Documentation:
+- Migration scripts and comments
+
+Retrospective:
+- Note any migration or RLS pain points
+
+Section 3: Backend API Endpoints & Business Logic
+Step 1: Implement Team Management API Endpoints
+
+Task: Develop FastAPI endpoints for:
+- Domain ownership & manager assignment on signup
+- Inviting team members (with role selection)
+- Accepting/rejecting invitations
+- Onboarding (set password, complete profile)
+- Listing users, changing roles, removing users
+- Access management UI support (list, add, change, remove)
+- User self-service (profile, delete own campaigns/UTM links)
+Files:
+- backend/app/api/users.py: User management endpoints.
+- backend/app/api/invitations.py: Invitation endpoints.
+- backend/app/api/roles.py: Role management endpoints.
+- backend/app/services/user_service.py: User business logic.
+- backend/app/services/invitation_service.py: Invitation logic.
+- backend/app/services/role_service.py: Role logic.
+- backend/app/schemas/user.py: User schemas.
+- backend/app/schemas/invitation.py: Invitation schemas.
+- backend/app/schemas/role.py: Role schemas.
+Step Dependencies: Section 2, Step 2
+User Instructions: Implement and test all endpoints. Ensure endpoints match user stories and architecture. Test with API client for all flows (invite, accept, reject, list, change, remove).
+
+User Stories Covered:
+- All user stories in user_stories.txt (see each endpoint for mapping)
+
+Acceptance Criteria:
+- Endpoints return correct status codes and error messages
+- Role-based access is enforced
+- Invitations cannot be reused
+- All business logic matches user stories
+
+Edge Cases:
+- Duplicate invites, expired/invalid tokens, unauthorized access, invalid role changes
+
+Test Data/Mocking:
+- Use mock users, companies, and invites for endpoint testing
+- Simulate invite acceptance/rejection flows
+
+API Contract:
+- OpenAPI/Swagger docs updated and validated
+
+Security & Permissions:
+- RBAC enforced for all endpoints
+- RLS policies tested
+
+Documentation:
+- Inline docstrings and OpenAPI docs
+- Update project API documentation
+
+Retrospective:
+- Capture feedback from endpoint testing and integration
+
+Section 4: Frontend UI & UX Implementation
+Step 1: Access Management UI & Workflows
+
+Task: Implement frontend UI for all team management flows, following UX in ux design.txt and technical stack in ux_frontend.txt. Features:
+- Settings > Access Management page
+- Invite Team Member modal (bulk email, role selection)
+- Pending invites list (resend/cancel)
+- User list (role change, remove, status badges)
+- Profile page (view role/domain, delete own campaigns/UTM links)
+- Confirmation dialogs, toasts, error/success feedback
+Files:
+- frontend/src/app/settings/team.tsx: Team management page.
+- frontend/src/components/Team/InviteUserForm.tsx: Invite form/modal.
+- frontend/src/components/Team/TeamMemberList.tsx: User list table.
+- frontend/src/components/Team/PendingInvites.tsx: Pending invites list.
+- frontend/src/components/Auth/UserProfile.tsx: Profile page.
+- frontend/src/components/Campaigns/CampaignList.tsx: Campaign deletion.
+- frontend/src/components/UTM/UTMLinkList.tsx: UTM link deletion.
+- frontend/src/store/teamSlice.ts: Team state/actions.
+- frontend/src/store/userSlice.ts: User state/actions.
+Step Dependencies: Section 3, Step 1
+User Instructions: Implement and test all UI components. Ensure flows match UX design and user stories. Test all edge cases (invite, accept, reject, role change, remove, self-service).
+
+User Stories Covered:
+- All user stories involving UI/UX for team management
+
+Acceptance Criteria:
+- UI matches UX design.txt and ux_frontend.txt
+- All user flows are accessible and responsive
+- All edge cases handled in UI
+
+Edge Cases:
+- Invalid input, network/API errors, permission errors, empty states
+
+Test Data/Mocking:
+- Use mock API responses and test users for UI testing
+
+UX/UI Review:
+- Review with design/UX team after each major UI step
+
+Accessibility/Responsiveness:
+- Keyboard navigation, ARIA labels, color contrast, mobile layout
+
+Security & Permissions:
+- UI enforces role-based access and hides unauthorized actions
+
+Documentation:
+- Storybook or similar for UI components
+- Inline component documentation
+
+Retrospective:
+- Gather user feedback and review UI/UX pain points
+
+Section 5: Testing & Validation
+Step 1: Backend Unit and Integration Tests
+
+Task: Write pytest unit and integration tests for all team management endpoints and business logic. Cover all user stories, edge cases, and error conditions.
+Files:
+- backend/tests/unit/test_user_service.py
+- backend/tests/unit/test_invitation_service.py
+- backend/tests/unit/test_role_service.py
+- backend/tests/integration/test_api_users.py
+- backend/tests/integration/test_api_invitations.py
+- backend/tests/integration/test_api_roles.py
+Step Dependencies: Section 3, Step 1
+User Instructions: Run pytest. Ensure all tests pass and cover all logical flows and edge cases.
+
+User Stories Covered:
+- All user stories requiring backend validation
+
+Acceptance Criteria:
+- 100% test coverage for all endpoints and logic
+- All edge cases and error conditions tested
+
+Test Data/Mocking:
+- Use fixtures and mock data for isolated tests
+
+Documentation:
+- Test case documentation and inline comments
+
+Retrospective:
+- Review test coverage and identify gaps
+
+Step 2: Frontend Unit and Integration Tests
+
+Task: Write Jest/React Testing Library tests for all team management UI components and Redux slices. Cover all user stories and edge cases.
+Files:
+- frontend/src/components/Team/InviteUserForm.test.tsx
+- frontend/src/components/Team/TeamMemberList.test.tsx
+- frontend/src/components/Team/PendingInvites.test.tsx
+- frontend/src/components/Auth/UserProfile.test.tsx
+- frontend/src/store/teamSlice.test.ts
+- frontend/src/store/userSlice.test.ts
+Step Dependencies: Section 4, Step 1
+User Instructions: Run npm test. Ensure all tests pass and cover all UI flows and state logic.
+
+User Stories Covered:
+- All user stories requiring frontend validation
+
+Acceptance Criteria:
+- 100% test coverage for all UI flows and state logic
+- All edge cases and error conditions tested
+
+Test Data/Mocking:
+- Use MSW or similar for API mocking
+
+UX/UI Review:
+- Review test results with design/UX team
+
+Accessibility/Responsiveness:
+- Automated accessibility tests (axe, Lighthouse)
+
+Documentation:
+- Test case documentation and inline comments
+
+Retrospective:
+- Review test coverage and identify gaps
+
+</rewritten_file> 

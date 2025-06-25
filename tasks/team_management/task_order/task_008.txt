@@ -1,0 +1,34 @@
+Step 8: Frontend Unit and Integration Tests
+
+Task: Write Jest/React Testing Library tests for all team management UI components and Redux slices. Cover all user stories and edge cases.
+Files:
+- frontend/src/components/Team/InviteUserForm.test.tsx
+- frontend/src/components/Team/TeamMemberList.test.tsx
+- frontend/src/components/Team/PendingInvites.test.tsx
+- frontend/src/components/Auth/UserProfile.test.tsx
+- frontend/src/store/teamSlice.test.ts
+- frontend/src/store/userSlice.test.ts
+Step Dependencies: Section 4, Step 1
+User Instructions: Run npm test. Ensure all tests pass and cover all UI flows and state logic.
+
+User Stories Covered:
+- All user stories requiring frontend validation
+
+Acceptance Criteria:
+- 100% test coverage for all UI flows and state logic
+- All edge cases and error conditions tested
+
+Test Data/Mocking:
+- Use MSW or similar for API mocking
+
+UX/UI Review:
+- Review test results with design/UX team
+
+Accessibility/Responsiveness:
+- Automated accessibility tests (axe, Lighthouse)
+
+Documentation:
+- Test case documentation and inline comments
+
+Retrospective:
+- Review test coverage and identify gaps 
