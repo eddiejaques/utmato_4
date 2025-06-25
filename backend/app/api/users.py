@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies.db import get_db
-from app.schemas.user import UserSyncRequest, UserSyncResponse
+from app.dependencies.auth import get_current_user
+from app.schemas.user import UserSyncRequest, UserSyncResponse, CurrentUser
 from app.services import user_service
 
 router = APIRouter()
@@ -30,4 +31,15 @@ async def sync_user_endpoint(
     return UserSyncResponse(
         user=user,
         company=company
-    ) 
+    )
+
+@router.get(
+    "/profile",
+    response_model=CurrentUser,
+    status_code=status.HTTP_200_OK,
+)
+def get_profile(current_user: CurrentUser = Depends(get_current_user)):
+    """
+    Returns the current authenticated user's profile.
+    """
+    return current_user 

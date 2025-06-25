@@ -10,7 +10,9 @@ export interface User {
 export interface TeamMember {
   id: string;
   name: string;
+  email: string;
   role: string;
+  status: string;
 }
 
 export interface Invite {

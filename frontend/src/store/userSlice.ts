@@ -14,13 +14,16 @@ const initialState: UserState = {
   error: null,
 };
 
-export const fetchUserProfileThunk = createAsyncThunk('user/fetchProfile', async (_, { rejectWithValue }) => {
-  try {
-    return await fetchUserProfile();
-  } catch (err: any) {
-    return rejectWithValue(err.message);
+export const fetchUserProfileThunk = createAsyncThunk<User, string | undefined, { rejectValue: string }>(
+  'user/fetchProfile',
+  async (token, thunkAPI) => {
+    try {
+      return await fetchUserProfile(token);
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
   }
-});
+);
 
 export const updateUserProfileThunk = createAsyncThunk('user/updateProfile', async (profile: Partial<User>, { rejectWithValue }) => {
   try {
