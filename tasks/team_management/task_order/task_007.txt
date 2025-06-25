@@ -1,0 +1,28 @@
+Step 7: Backend Unit and Integration Tests
+
+Task: Write pytest unit and integration tests for all team management endpoints and business logic. Cover all user stories, edge cases, and error conditions.
+Files:
+- backend/tests/unit/test_user_service.py
+- backend/tests/unit/test_invitation_service.py
+- backend/tests/unit/test_role_service.py
+- backend/tests/integration/test_api_users.py
+- backend/tests/integration/test_api_invitations.py
+- backend/tests/integration/test_api_roles.py
+Step Dependencies: Section 3, Step 1
+User Instructions: Run pytest. Ensure all tests pass and cover all logical flows and edge cases.
+
+User Stories Covered:
+- All user stories requiring backend validation
+
+Acceptance Criteria:
+- 100% test coverage for all endpoints and logic
+- All edge cases and error conditions tested
+
+Test Data/Mocking:
+- Use fixtures and mock data for isolated tests
+
+Documentation:
+- Test case documentation and inline comments
+
+Retrospective:
+- Review test coverage and identify gaps 
