@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { inviteUser } from '@/api/team';
 import { Button } from '@/components/ui/button';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface InviteFormState {
   emails: string;
@@ -12,6 +14,8 @@ interface InviteFormState {
 
 export function InviteUserForm() {
   const [form, setForm] = useState<InviteFormState>({ emails: '', role: 'Team Member' });
+  const company = useSelector((state: RootState) => state.auth.company);
+  const token = useSelector((state: RootState) => state.auth.token);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setForm({ ...form, [e.target.name]: e.target.value, error: undefined, success: undefined });
@@ -20,12 +24,18 @@ export function InviteUserForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setForm((f) => ({ ...f, error: undefined, success: undefined }));
-    // Basic validation: require at least one email
     if (!form.emails.trim()) {
       setForm((f) => ({ ...f, error: 'Please enter at least one email address.' }));
       return;
     }
-    // Split, trim, dedupe emails
+    if (!company?.id) {
+      setForm((f) => ({ ...f, error: 'Company context is missing.' }));
+      return;
+    }
+    if (!token) {
+      setForm((f) => ({ ...f, error: 'Authentication token is missing.' }));
+      return;
+    }
     const emails = Array.from(new Set(form.emails.split(',').map((em) => em.trim()).filter(Boolean)));
     if (emails.length === 0) {
       setForm((f) => ({ ...f, error: 'Please enter at least one valid email address.' }));
@@ -33,9 +43,15 @@ export function InviteUserForm() {
     }
     setForm((f) => ({ ...f, loading: true }));
     let errorCount = 0;
+    // Map UI role to backend enum
+    const roleMap: Record<string, string> = {
+      'Team Member': 'MEMBER',
+      'Viewer': 'VIEWER',
+    };
+    const backendRole = roleMap[form.role] || form.role;
     for (const email of emails) {
       try {
-        await inviteUser({ email, role: form.role });
+        await inviteUser({ email, role: backendRole, company_id: company.id }, token);
       } catch (err: any) {
         errorCount++;
       }

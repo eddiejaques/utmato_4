@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTeam, rejectInvite } from '@/api/team';
+import { fetchPendingInvites, rejectInvite } from '@/api/team';
 import { Button } from '@/components/ui/button';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface PendingInvite {
   id: string;
@@ -10,6 +12,8 @@ interface PendingInvite {
 }
 
 export function PendingInvites() {
+  const token = useSelector((state: RootState) => state.auth.token);
+  const company = useSelector((state: RootState) => state.auth.company);
   const [invites, setInvites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,8 +24,18 @@ export function PendingInvites() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchTeam();
-      setInvites(data.invites || []);
+      if (!company?.id) {
+        setError('Company context is missing.');
+        setInvites([]);
+        return;
+      }
+      if (!token) {
+        setError('Authentication token is missing.');
+        setInvites([]);
+        return;
+      }
+      const data = await fetchPendingInvites(company.id, token);
+      setInvites(data || []);
     } catch (err: any) {
       setError('Failed to load invites');
     } finally {

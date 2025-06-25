@@ -1,24 +1,24 @@
 import { TeamMember, Invite } from '@/types/user';
 import { api } from './api';
 
-export async function fetchTeam(): Promise<{ members: TeamMember[]; invites: Invite[] }> {
+export async function fetchTeam(token?: string | null): Promise<{ members: TeamMember[]; invites: Invite[] }> {
   // TODO: Replace '/team' with actual endpoint
-  return api.get<{ members: TeamMember[]; invites: Invite[] }>('/team');
+  return api.get<{ members: TeamMember[]; invites: Invite[] }>('/team', token);
 }
 
-export async function inviteUser(payload: { email: string; role: string }): Promise<Invite> {
-  // TODO: Replace '/team/invite' with actual endpoint
-  return api.post<Invite>('/team/invite', payload);
+export async function inviteUser(payload: { email: string; role: string; company_id: string }, token: string): Promise<Invite> {
+  // Updated to correct endpoint and payload
+  return api.post<Invite>('/invitations/invite', payload, token);
 }
 
 export async function acceptInvite(inviteId: string): Promise<TeamMember> {
-  // TODO: Replace `/team/invite/${inviteId}/accept` with actual endpoint
-  return api.post<TeamMember>(`/team/invite/${inviteId}/accept`, {});
+  // Updated to correct endpoint
+  return api.post<TeamMember>(`/invitations/accept`, { token: inviteId });
 }
 
 export async function rejectInvite(inviteId: string): Promise<string> {
-  // TODO: Replace `/team/invite/${inviteId}/reject` with actual endpoint
-  await api.post(`/team/invite/${inviteId}/reject`, {});
+  // Updated to correct endpoint
+  await api.post(`/invitations/reject`, { token: inviteId });
   return inviteId;
 }
 
@@ -32,4 +32,8 @@ export async function updateUserRole(payload: { userId: string; role: string }):
   // TODO: Replace `/team/member/${payload.userId}/role` with actual endpoint
   await api.put(`/team/member/${payload.userId}/role`, { role: payload.role });
   return payload;
+}
+
+export async function fetchPendingInvites(companyId: string, token: string): Promise<Invite[]> {
+  return api.get<Invite[]>(`/invitations/list/${companyId}`, token);
 } 

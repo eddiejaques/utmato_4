@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@clerk/nextjs';
 import { InviteUserForm } from '@/components/Team/InviteUserForm';
+import { PendingInvites } from '@/components/Team/PendingInvites';
 
 export default function UserProfilePage() {
   const dispatch = useDispatch();
@@ -28,7 +29,6 @@ export default function UserProfilePage() {
     const fetchProfile = async () => {
       const token = await getToken();
       dispatch(fetchUserProfileThunk(token ?? undefined) as any);
-      dispatch(fetchCampaigns() as any);
     };
     fetchProfile();
   }, [dispatch, getToken]);
@@ -66,8 +66,7 @@ export default function UserProfilePage() {
         <div className="mb-8">
           <div className="font-semibold mb-2">Pending Invitations</div>
           <div className="border rounded p-4 bg-muted/50">
-            {/* <PendingInvites /> */}
-            <div className="text-muted-foreground">[PendingInvites placeholder]</div>
+            <PendingInvites />
           </div>
         </div>
         {/* Team Member List */}

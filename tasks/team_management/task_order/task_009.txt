@@ -1,0 +1,37 @@
+Step 9: Implement Email Sending for Invitations (Resend)
+
+Task: Integrate Resend (https://resend.com), a cost-effective third-party email utility, to send invitation emails automatically when a user is invited via /api/v1/invitations/invite. Ensure the invitee receives an email with the invitation link and token.
+
+Files:
+- backend/app/services/invitation_service.py (add Resend email sending logic)
+- backend/app/utils/email_utils.py (new utility for sending emails via Resend)
+- backend/app/api/invitations.py (update to call email utility after invitation creation)
+- backend/requirements.txt (add 'resend' or relevant HTTP client dependency)
+- backend/.env (add RESEND_API_KEY and any other required secrets)
+
+Step Dependencies: Step 7 (Invitation API), Step 8 (Frontend tests)
+
+User Instructions:
+- Sign up for a Resend account and obtain an API key.
+- Implement a utility function to send emails using the Resend API (see https://resend.com/docs/api-reference/emails/send-email).
+- Update the invitation creation flow to trigger an email after DB commit.
+- Ensure the email contains the invitation link and token.
+- Add error handling for email delivery failures (log errors, surface to API response if critical).
+- Document configuration steps for Resend setup in README.
+
+User Stories Covered:
+- As a manager, I want invited users to receive an email so they can join the team.
+
+Acceptance Criteria:
+- Invitation emails are sent to the invitee's address upon invite creation via Resend
+- Email contains a working invitation link/token
+- Errors in email delivery are logged and surfaced to the API response if critical
+- Resend provider configuration is documented
+
+Test Data/Mocking:
+- Use Resend's test mode or a sandbox for development
+- Mock email sending in unit/integration tests
+
+Retrospective:
+- Review email deliverability and Resend cost
+- Consider switching providers if deliverability or cost is unsatisfactory 
