@@ -23,6 +23,7 @@ from app.dependencies.auth import get_current_user
 from app.models.company import Company
 from app.schemas.user import CurrentUser
 from sqlalchemy.future import select
+from app.api import invitations
 
 app = FastAPI()
 
@@ -48,6 +49,7 @@ app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 app.include_router(campaigns.router, prefix="/api/v1/campaigns", tags=["campaigns"])
 app.include_router(utm.router, prefix="/api/v1/utm", tags=["utm"])
 app.include_router(search.router, prefix="/api/v1/search", tags=["search"])
+app.include_router(invitations.router, prefix="/api/v1/invitations", tags=["invitations"])
 
 @app.get("/")
 def read_root():

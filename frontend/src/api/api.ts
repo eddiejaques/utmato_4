@@ -20,6 +20,7 @@ async function request<T>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+    credentials: 'include',
   };
 
   let url = `${API_BASE_URL}${endpoint}`;

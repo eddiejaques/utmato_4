@@ -1,4 +1,4 @@
-import { post, get } from './api';
+import { post, get, del } from './api';
 import { URLValidationRequest, URLValidationResponse, UTMLinkCreate, UTMLink } from '@/types/utm';
 
 export const validateUrl = async (
@@ -20,4 +20,11 @@ export const fetchUTMLinksByCampaign = async (
     token: string | null
 ): Promise<UTMLink[]> => {
     return await get<UTMLink[]>(`/utm/campaign/${campaignId}/links`, token);
-} 
+}
+
+export const deleteUTMLink = async (
+    utmLinkId: string,
+    token: string | null
+): Promise<void> => {
+    return await del(`/utm/link/${utmLinkId}`, token);
+}; 

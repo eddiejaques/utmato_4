@@ -16,4 +16,5 @@ class User(Base):
     company_id = Column(UUID(as_uuid=True), ForeignKey("companies.id"), nullable=False)
     role = Column(Enum(UserRole), nullable=False, default=UserRole.MANAGER)
 
-    company = relationship("Company", back_populates="users") 
+    company = relationship("Company", back_populates="users")
+    team_memberships = relationship("TeamMembership", back_populates="user") 

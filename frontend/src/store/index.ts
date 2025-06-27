@@ -3,6 +3,8 @@ import authReducer from './authSlice';
 import campaignReducer from './campaignSlice';
 import utmReducer from './utmSlice';
 import searchReducer from './searchSlice';
+import teamReducer from './teamSlice';
+import userReducer from './userSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
     campaigns: campaignReducer,
     utm: utmReducer,
     search: searchReducer,
+    team: teamReducer,
+    user: userReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

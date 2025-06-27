@@ -43,7 +43,7 @@ async def handle_user_created(db: AsyncSession, user_data: ClerkUserData) -> Non
         last_name=user_data.last_name,
         image_url=user_data.image_url,
         company_id=company.id,
-        role="manager",  # Set the default role
+        role="MANAGER",  # Set the default role
     )
     db.add(new_user)
     await db.commit()
@@ -140,7 +140,7 @@ async def find_or_create_user_with_company(
         first_name=user_data.first_name,
         last_name=user_data.last_name,
         company_id=company.id,
-        role=UserRole.MANAGER,
+        role="MANAGER",
     )
     db.add(new_user)
 

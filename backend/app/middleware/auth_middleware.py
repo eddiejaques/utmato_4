@@ -17,7 +17,11 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 
 # Paths that DO NOT require authentication.
-AUTH_BYPASS_PATHS = ["/", "/docs", "/openapi.json", "/redoc", "/api/v1/webhooks/clerk", "/api/v1/utm/validate-url"]
+AUTH_BYPASS_PATHS = [
+    "/", "/docs", "/openapi.json", "/redoc",
+    "/api/v1/webhooks/clerk", "/api/v1/utm/validate-url",
+    "/api/v1/invitations/accept", "/api/v1/invitations/reject"
+]
 
 class AuthMiddleware(BaseHTTPMiddleware):
     """
@@ -47,10 +51,12 @@ class AuthMiddleware(BaseHTTPMiddleware):
         if request.method == "OPTIONS":
             return await call_next(request)
 
-        # Check if the current path should bypass authentication
         path = request.url.path
         if path in AUTH_BYPASS_PATHS or any(path.startswith(p) for p in AUTH_BYPASS_PATHS if p != "/"):
-            return await call_next(request)
+            async with SessionLocal() as db_session:
+                request.state.db = db_session
+                response = await call_next(request)
+            return response
 
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):

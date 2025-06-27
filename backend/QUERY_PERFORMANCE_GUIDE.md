@@ -61,4 +61,54 @@ This guide explains how to apply the new performance indexes, analyze query exec
 
 ---
 
+## Verifying and Testing the New Schema After Migrations
+
+After running Alembic migrations, verify your schema as follows:
+
+### 1. Check Database Structure (psql or SQL client)
+
+```
+\dt
+\d+ campaigns
+\d+ invitations
+\d+ roles
+\d+ team_memberships
+```
+- Ensure `campaigns` has `demographics` and `interests` columns.
+- Ensure `invitations`, `roles`, and `team_memberships` tables exist with correct columns and types.
+
+### 2. Check Enum Types
+
+```
+SELECT unnest(enum_range(NULL::userrole));
+SELECT unnest(enum_range(NULL::invitestatus));
+```
+- Confirm values match your models.
+
+### 3. Test with SQL Inserts
+
+```
+INSERT INTO roles (id, name) VALUES (gen_random_uuid(), 'Manager');
+-- Insert a company, then a user, then a team_membership, etc.
+```
+
+### 4. Test with SQLAlchemy (Python)
+- Write a script or use FastAPI shell to create/query objects for each new model and check relationships.
+
+### 5. Run Automated Tests (if available)
+
+```
+pytest
+```
+- Or create a new test in `backend/app/tests/` to check model creation and relationships.
+
+### 6. Check Alembic History
+
+```
+alembic history
+```
+- Ensure all migrations are listed and applied.
+
+---
+
 **For further help, see the FastAPI and SQLAlchemy documentation, or contact the backend maintainers.** 
