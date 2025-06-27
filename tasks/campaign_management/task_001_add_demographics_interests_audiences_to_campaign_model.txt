@@ -1,0 +1,17 @@
+Section: Campaign Model Enhancement
+Step 1: Add Demographics, Interests, and Audiences Fields to Campaign Model
+
+Task: Update the backend campaign model to support optional demographics, interests, and audiences fields. Ensure all three fields are nullable and can store multiple values (use JSON or comma-separated strings as appropriate). Add a new Alembic migration for the audiences field. Update Pydantic schemas and API logic to accept and persist these fields.
+
+Files:
+- app/models/campaign.py: Add audiences field (nullable, JSON or String).
+- app/schemas/campaign.py: Add demographics, interests, and audiences to CampaignBase, CampaignCreate, and CampaignUpdate (all optional).
+- app/api/campaigns.py, app/services/campaign_service.py: Accept and persist new fields.
+- migrations/versions/: New Alembic migration for audiences field.
+
+Step Dependencies: None (can be executed independently).
+
+User Instructions:
+- Run the Alembic migration to update the database schema.
+- Test campaign creation and update endpoints with the new fields.
+- Verify that all fields are optional and persisted correctly. 

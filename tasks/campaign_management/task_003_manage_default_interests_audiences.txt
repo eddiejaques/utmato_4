@@ -1,0 +1,16 @@
+Section: Company Settings Enhancement
+Step 3: Manage Default Interests and Audiences for Company
+
+Task: Implement backend and frontend logic to allow managers to view, add, and remove default interests and audiences for their company. Store these defaults in the company settings (JSON). Expose API endpoints to get and update these defaults. Add a UI section in the profile/settings page for managers to manage these lists.
+
+Files:
+- app/models/company.py: Ensure settings field is used for storing defaults.
+- app/api/company.py (new or existing): Add endpoints to get/update default interests and audiences.
+- src/app/user-profile/[[...user-profile]]/page.tsx: Add UI for managing default interests and audiences (Manager only).
+- src/api/company.ts (new or existing): Add API calls for these endpoints.
+
+Step Dependencies: None (can be executed independently).
+
+User Instructions:
+- As a manager, test adding, editing, and removing default interests and audiences from the settings page.
+- Verify that changes are reflected in the campaign form's predictive options. 

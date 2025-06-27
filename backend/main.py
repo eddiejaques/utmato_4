@@ -27,15 +27,10 @@ from app.api import invitations
 
 app = FastAPI()
 
-# CORS Middleware
-origins = [
-    "http://localhost:3000",
-    # Add other origins if needed, e.g., your production frontend URL
-]
-
+# --- CORS Middleware (must be before any other middleware or routers) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # Add more origins as needed
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

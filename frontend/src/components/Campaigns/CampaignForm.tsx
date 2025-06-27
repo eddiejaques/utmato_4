@@ -26,12 +26,20 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
+import { Badge } from "@/components/atoms/Badge";
+
+const INTEREST_SUGGESTIONS = ["sports", "music", "reading", "travel", "tech"];
+const AUDIENCE_SUGGESTIONS = ["audience1", "audience2", "audience3"];
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Campaign name must be at least 2 characters.",
   }),
   status: z.nativeEnum(CampaignStatus),
+  age: z.string().optional(),
+  gender: z.string().optional(),
+  interests: z.array(z.string()).optional(),
+  audiences: z.array(z.string()).optional(),
 });
 
 interface CampaignFormProps {
@@ -41,11 +49,20 @@ interface CampaignFormProps {
 
 export function CampaignForm({ campaign, onSuccess }: CampaignFormProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const [interests, setInterests] = useState<string[]>(campaign?.interests || []);
+  const [interestInput, setInterestInput] = useState("");
+  const [audiences, setAudiences] = useState<string[]>(campaign?.audiences || []);
+  const [audienceInput, setAudienceInput] = useState("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: campaign?.name || "",
       status: campaign?.status || CampaignStatus.DRAFT,
+      age: campaign?.demographics?.[0] || "",
+      gender: campaign?.demographics?.[1] || "",
+      interests: campaign?.interests || [],
+      audiences: campaign?.audiences || [],
     },
   });
 
@@ -54,19 +71,41 @@ export function CampaignForm({ campaign, onSuccess }: CampaignFormProps) {
       form.reset({
         name: campaign.name,
         status: campaign.status,
+        age: campaign.demographics?.[0] || "",
+        gender: campaign.demographics?.[1] || "",
+        interests: campaign.interests || [],
+        audiences: campaign.audiences || [],
       });
+      setInterests(campaign.interests || []);
+      setAudiences(campaign.audiences || []);
     }
   }, [campaign, form]);
 
+  function handleAddValue(input: string, setInput: (v: string) => void, values: string[], setValues: (v: string[]) => void) {
+    const trimmed = input.trim();
+    if (trimmed && !values.includes(trimmed)) {
+      setValues([...values, trimmed]);
+    }
+    setInput("");
+  }
+
+  function handleRemoveValue(value: string, values: string[], setValues: (v: string[]) => void) {
+    setValues(values.filter((v) => v !== value));
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const processedValues = {
-      ...values,
-      status: values.status.toLowerCase() as CampaignStatus,
+    const demographics = [values.age, values.gender].filter(Boolean);
+    const payload = {
+      name: values.name,
+      status: values.status.toLowerCase(),
+      demographics: demographics.length ? demographics : undefined,
+      interests: interests.length ? interests : undefined,
+      audiences: audiences.length ? audiences : undefined,
     };
     if (campaign) {
-      await dispatch(updateCampaign({ id: campaign.id, campaignData: processedValues }));
+      await dispatch(updateCampaign({ id: campaign.id, campaignData: payload }));
     } else {
-      await dispatch(createCampaign(processedValues));
+      await dispatch(createCampaign(payload));
     }
     onSuccess?.();
   }
@@ -111,6 +150,90 @@ export function CampaignForm({ campaign, onSuccess }: CampaignFormProps) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="age"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Age (optional)</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g. 18-24" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Gender (optional)</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g. male, female, other" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div>
+          <FormLabel>Interests (optional)</FormLabel>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {interests.map((interest) => (
+              <Badge key={interest} onClick={() => handleRemoveValue(interest, interests, setInterests)} className="cursor-pointer">
+                {interest} ×
+              </Badge>
+            ))}
+          </div>
+          <Input
+            placeholder="Type and press Enter..."
+            value={interestInput}
+            onChange={e => setInterestInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === "Enter" || e.key === ",") {
+                e.preventDefault();
+                handleAddValue(interestInput, setInterestInput, interests, setInterests);
+              }
+            }}
+            className="mb-1"
+          />
+          <div className="flex flex-wrap gap-1">
+            {INTEREST_SUGGESTIONS.filter(s => !interests.includes(s)).map(s => (
+              <button type="button" key={s} className="text-xs px-2 py-1 bg-muted rounded hover:bg-accent" onClick={() => handleAddValue(s, setInterestInput, interests, setInterests)}>
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <FormLabel>Audiences (optional)</FormLabel>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {audiences.map((aud) => (
+              <Badge key={aud} onClick={() => handleRemoveValue(aud, audiences, setAudiences)} className="cursor-pointer">
+                {aud} ×
+              </Badge>
+            ))}
+          </div>
+          <Input
+            placeholder="Type and press Enter..."
+            value={audienceInput}
+            onChange={e => setAudienceInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === "Enter" || e.key === ",") {
+                e.preventDefault();
+                handleAddValue(audienceInput, setAudienceInput, audiences, setAudiences);
+              }
+            }}
+            className="mb-1"
+          />
+          <div className="flex flex-wrap gap-1">
+            {AUDIENCE_SUGGESTIONS.filter(s => !audiences.includes(s)).map(s => (
+              <button type="button" key={s} className="text-xs px-2 py-1 bg-muted rounded hover:bg-accent" onClick={() => handleAddValue(s, setAudienceInput, audiences, setAudiences)}>
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
         <Button type="submit">{campaign ? 'Update Campaign' : 'Create Campaign'}</Button>
       </form>
     </Form>

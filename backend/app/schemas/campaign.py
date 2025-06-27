@@ -9,6 +9,9 @@ class CampaignBase(BaseModel):
     name: Optional[str] = None
     status: Optional[CampaignStatus] = None
     budget_info: Optional[Dict[str, Any]] = None
+    demographics: Optional[list[str]] = None
+    interests: Optional[list[str]] = None
+    audiences: Optional[list[str]] = None
 
 # Schema for creating a new campaign. Name is required.
 class CampaignCreate(CampaignBase):
@@ -23,6 +26,9 @@ class CampaignUpdate(CampaignBase):
 class CampaignResponse(CampaignCreate):
     id: uuid.UUID
     company_id: uuid.UUID
+    demographics: Optional[list[str]] = None
+    interests: Optional[list[str]] = None
+    audiences: Optional[list[str]] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
