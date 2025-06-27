@@ -44,8 +44,10 @@ export function PendingInvites() {
   };
 
   useEffect(() => {
-    loadInvites();
-  }, []);
+    if (token && company?.id) {
+      loadInvites();
+    }
+  }, [token, company]);
 
   const handleResend = (id: string) => {
     setMessage('Resend is not supported yet.');

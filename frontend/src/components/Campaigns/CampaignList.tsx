@@ -37,10 +37,10 @@ export function CampaignList() {
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | undefined>(undefined);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && campaigns.length === 0) {
       dispatch(fetchCampaigns());
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, isAuthenticated, campaigns.length]);
 
   const handleEdit = (campaign: Campaign) => {
     setSelectedCampaign(campaign);

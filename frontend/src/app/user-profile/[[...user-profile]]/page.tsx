@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@clerk/nextjs';
 import { InviteUserForm } from '@/components/Team/InviteUserForm';
 import { PendingInvites } from '@/components/Team/PendingInvites';
+import Link from 'next/link';
+import { Icon } from '@/components/atoms/Icon';
 
 export default function UserProfilePage() {
   const dispatch = useDispatch();
@@ -45,6 +47,14 @@ export default function UserProfilePage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-8">
+      <div className="mb-4">
+        <Link href="/dashboard" aria-label="Back to dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded-full p-1">
+          <Icon size={24} title="Back to dashboard">
+            <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </Icon>
+          <span className="hidden sm:inline">Back to Dashboard</span>
+        </Link>
+      </div>
       <section aria-label="User Info" className="bg-white rounded shadow p-6">
         <h2 className="text-xl font-bold mb-2">Profile</h2>
         <div className="flex flex-col gap-2">
