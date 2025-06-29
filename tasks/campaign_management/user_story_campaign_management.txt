@@ -1,0 +1,23 @@
+User Story: Campaign Management End-to-End Experience
+
+As a marketing manager or team member,
+I want to create, manage, and search campaigns with rich metadata (including demographics, interests, and audiences),
+so that my team can maintain consistent campaign tracking, leverage predictive and customizable targeting options, and collaborate efficiently.
+
+Acceptance Criteria:
+- I can create and edit campaigns with optional demographics (age, gender), interests, and audiences fields.
+- I can select interests and audiences from a comprehensive, predictive list, or add custom values as needed.
+- As a manager, I can manage the default lists of interests and audiences for my company in the settings page, ensuring the options reflect our marketing needs.
+- The system stores and updates these defaults, making them available to all team members in campaign forms.
+- All new fields are optional and do not block campaign creation or editing.
+- I can search and filter campaigns using the new metadata fields, improving discoverability and reporting.
+- The platform provides a seamless, user-friendly UI for campaign creation, editing, and management, with robust backend support for all new features.
+- All new features are covered by backend and frontend tests to ensure reliability and correctness.
+
+Business Value:
+- Enables consistent, high-quality campaign metadata across the organization.
+- Reduces manual entry and errors by providing predictive, customizable targeting options.
+- Empowers managers to tailor the platform to their team's needs.
+- Improves campaign discoverability, reporting, and collaboration.
+
+(See individual tasks in this folder for implementation details and step-by-step instructions.) 

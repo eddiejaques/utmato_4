@@ -1,0 +1,15 @@
+Section: Campaign Form Enhancement
+Step 2: Update Campaign Form and Types for Demographics, Interests, and Audiences
+
+Task: Update the frontend campaign creation/edit form to include optional fields for demographics (age, gender), interests, and audiences. Use multi-select with predictive search for interests and audiences, allowing custom values. Update TypeScript types and Redux logic to support the new fields.
+
+Files:
+- src/components/Campaigns/CampaignForm.tsx: Add new fields to the form UI and logic.
+- src/types/campaign.ts: Add demographics, interests, and audiences to Campaign, CampaignCreate, and CampaignUpdate interfaces.
+- src/store/campaignSlice.ts, src/api/campaigns.ts: Update to handle new fields in create/update actions.
+
+Step Dependencies: None (can be executed independently).
+
+User Instructions:
+- Test the form for campaign creation and editing with the new fields.
+- Verify that the new fields are optional and data is sent to the backend correctly. 

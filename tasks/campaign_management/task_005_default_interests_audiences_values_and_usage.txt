@@ -1,0 +1,126 @@
+Section: Default Values & Usage
+Step 5: Define and Use Default Interests and Audiences
+
+Task: Establish a comprehensive list of at least 50 default interests and 50 default audiences for use in campaign creation and company settings. Document how these values should be used in the platform, including predictive search, manager customization, and user experience.
+
+Default Interests (examples, expand as needed):
+- Fitness & Wellness
+- Hiking
+- Gardening
+- Cooking
+- Technology & Gadgets
+- Travel
+- Fashion & Style
+- Home Improvement
+- Photography
+- Music
+- Sports
+- Reading & Books
+- Gaming
+- Art & Design
+- Parenting
+- Finance & Investing
+- Food & Dining
+- Cars & Automotive
+- Pets & Animals
+- Movies & TV
+- Yoga
+- Meditation
+- Cycling
+- Running
+- Swimming
+- Camping
+- Fishing
+- Bird Watching
+- Baking
+- Crafting
+- Collecting
+- Dancing
+- Theater
+- Science & Nature
+- Astronomy
+- History
+- Politics
+- Volunteering
+- Languages
+- Board Games
+- Puzzles
+- Shopping
+- Beauty & Skincare
+- Jewelry
+- Weddings
+- Real Estate
+- Investing
+- Startups
+- E-sports
+- Podcasts
+- Blogging
+- Social Media
+
+Default Audiences (examples, expand as needed):
+- Shoppers
+- Frequent Travelers
+- Movie Goers
+- Students
+- Parents
+- Business Professionals
+- Homeowners
+- Fitness Enthusiasts
+- Tech Enthusiasts
+- Outdoor Adventurers
+- Pet Owners
+- Retirees
+- First-time Buyers
+- Event Attendees
+- Online Learners
+- Gamers
+- DIYers
+- Foodies
+- Commuters
+- Social Media Influencers
+- Entrepreneurs
+- Remote Workers
+- College Graduates
+- High School Students
+- Expecting Parents
+- Newlyweds
+- Empty Nesters
+- Small Business Owners
+- Nonprofit Volunteers
+- Healthcare Workers
+- Teachers
+- Artists
+- Musicians
+- Sports Fans
+- Car Enthusiasts
+- Investors
+- Real Estate Agents
+- Job Seekers
+- Freelancers
+- Digital Nomads
+- Fashionistas
+- Beauty Gurus
+- Bargain Hunters
+- Luxury Shoppers
+- Environmentalists
+- Political Activists
+- Science Buffs
+- Book Lovers
+- Podcast Listeners
+- Streaming Subscribers
+- App Users
+
+Usage Instructions:
+- These lists should be available as predictive, selectable options in the campaign creation/edit form (multi-select with search and custom value support).
+- Managers can view, add, or remove these defaults in the company settings page; changes update the predictive options for all users in the company.
+- Users can add custom interests/audiences not in the default list when creating or editing a campaign.
+- When a user adds a custom value, it is available only for that campaign unless a manager adds it to the company defaults.
+- The backend should store these lists in the company settings JSON and expose endpoints for retrieval and update.
+- The frontend should fetch and cache these lists for predictive UI, updating when company settings change.
+
+Step Dependencies: None (can be executed independently).
+
+User Instructions:
+- Review and adjust the default lists as needed for your organization.
+- Test the predictive search and custom value addition in the campaign form.
+- Test manager customization of defaults in the settings page. 

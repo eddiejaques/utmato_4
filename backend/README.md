@@ -374,4 +374,81 @@ http://127.0.0.1:8000/api/v1/utm/validate-url
 
 ```json
 {"is_valid":false,"message":"URL is from a known malicious domain."}
-``` 
+```
+
+## Testing the Campaign API (Demographics, Interests, Audiences)
+
+You can test the Campaign API and the new fields using HTTP tools like `curl`, `httpie`, or Postman. The following instructions assume your FastAPI server is running locally (default: `http://localhost:8000`).
+
+### 1. Create a Campaign with New Fields
+
+**Example Request (httpie):**
+```sh
+http POST http://localhost:8000/api/campaigns \
+    Authorization:"Bearer <your_token>" \
+    name="Test Campaign" \
+    demographics:='["18-24", "male"]' \
+    interests:='["sports", "music"]' \
+    audiences:='["audience1", "audience2"]'
+```
+
+**Example Request (curl):**
+```sh
+curl -X POST http://localhost:8000/api/campaigns \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test Campaign",
+    "demographics": ["18-24", "male"],
+    "interests": ["sports", "music"],
+    "audiences": ["audience1", "audience2"]
+  }'
+```
+
+**Expected Response:**
+- The response JSON should include the new fields as lists:
+  ```json
+  {
+    "id": "...",
+    "name": "Test Campaign",
+    ...
+    "demographics": ["18-24", "male"],
+    "interests": ["sports", "music"],
+    "audiences": ["audience1", "audience2"],
+    ...
+  }
+  ```
+
+### 2. Create a Campaign Without the New Fields (Optionality)
+
+**Example:**
+```sh
+http POST http://localhost:8000/api/campaigns \
+    Authorization:"Bearer <your_token>" \
+    name="No Metadata Campaign"
+```
+- The response should succeed, and the new fields will be empty lists or null.
+
+### 3. Update a Campaign
+
+**Example:**
+```sh
+http PUT http://localhost:8000/api/campaigns/<campaign_id> \
+    Authorization:"Bearer <your_token>" \
+    interests:='["reading", "travel"]'
+```
+- The updated campaign should reflect the new interests.
+
+### 4. Retrieve Campaigns
+
+**Example:**
+```sh
+http GET http://localhost:8000/api/campaigns Authorization:"Bearer <your_token>"
+```
+- Each campaign in the response should include the new fields as lists (may be empty if not set).
+
+### 5. Notes
+- Replace `<your_token>` with a valid JWT or session token.
+- Replace `<campaign_id>` with the actual campaign UUID.
+- All new fields are optional and can be omitted from requests.
+- The API will always return these fields as lists (empty if not set). 

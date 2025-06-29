@@ -1,0 +1,36 @@
+# Task 002: Add Invite API Endpoint
+
+## Description
+Implement a POST endpoint in the backend to handle team member invitations.
+
+## Requirements
+- Endpoint: POST /api/invitations
+- Accepts: email, role
+- Validates input and permissions
+- Calls service layer to process invitation
+- Returns success or error response
+
+## Acceptance Criteria
+- Endpoint is defined in backend/app/api/invitations.py
+- Input is validated using Pydantic schema
+- Proper error handling for all edge cases
+- Endpoint is covered by tests
+
+## Technical Details / Impacted Files
+- backend/app/api/invitations.py (new)
+- backend/app/services/invitation_service.py (new or update)
+- backend/app/schemas/invitation.py (update)
+- backend/app/dependencies/auth.py (may update for permission checks)
+- backend/app/main.py (update to include new router)
+- backend/app/tests/test_invitations.py (new or update)
+
+## Pseudocode Ideas
+```python
+# backend/app/api/invitations.py
+@router.post("/api/invitations")
+async def invite_user(request: InviteUserRequest, current_user: User = Depends(get_current_user)):
+    # Validate input
+    # Check permissions
+    # Call service to create invitation and send email
+    # Return response
+``` 

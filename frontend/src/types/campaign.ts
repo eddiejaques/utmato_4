@@ -12,6 +12,9 @@ export enum CampaignStatus {
     name: string;
     status: CampaignStatus;
     budget_info?: Record<string, any>;
+    demographics?: string[];
+    interests?: string[];
+    audiences?: string[];
     created_at: string;
     updated_at?: string;
   }
@@ -20,10 +23,16 @@ export enum CampaignStatus {
     name: string;
     status?: CampaignStatus;
     budget_info?: Record<string, any>;
+    demographics?: string[];
+    interests?: string[];
+    audiences?: string[];
   }
   
   export interface CampaignUpdate {
     name?: string;
     status?: CampaignStatus;
     budget_info?: Record<string, any>;
+    demographics?: string[];
+    interests?: string[];
+    audiences?: string[];
   } 

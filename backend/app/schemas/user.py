@@ -49,6 +49,7 @@ class CurrentUser(BaseModel):
     email: EmailStr
     company_id: Optional[UUID] = None
     company_domain: Optional[str] = None
+    role: Optional[str] = None
 
     @classmethod
     def from_orm(cls, user: UserModel, company: Optional[CompanyModel]):
@@ -58,6 +59,7 @@ class CurrentUser(BaseModel):
             email=user.email,
             company_id=user.company_id,
             company_domain=company.domain if company else None,
+            role=getattr(user, "role", None),
         )
 
     class Config:

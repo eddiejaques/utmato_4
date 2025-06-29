@@ -1,0 +1,39 @@
+# Task 004: Write Tests for Invitation Email Feature
+
+## Description
+Write unit and integration tests for the invitation email flow.
+
+## Requirements
+- Test invitation model (creation, constraints)
+- Test API endpoint (success, validation, error cases)
+- Test email utility (mock Resend API)
+- Test end-to-end flow (invite, email sent, onboarding)
+
+## Acceptance Criteria
+- Tests are located in backend/app/tests/test_invitations.py (or similar)
+- All major branches and edge cases are covered
+- Tests pass in CI/CD pipeline
+
+## Technical Details / Impacted Files
+- backend/app/tests/test_invitations.py (new or update)
+- backend/app/tests/test_email.py (new or update)
+
+## Pseudocode Ideas
+```python
+# backend/app/tests/test_invitations.py
+def test_invite_user_success():
+    # Arrange: mock dependencies, prepare input
+    # Act: call API endpoint
+    # Assert: check DB, email sent, response
+
+def test_invite_user_invalid_email():
+    # Arrange: invalid email
+    # Act: call API endpoint
+    # Assert: error response
+
+# backend/app/tests/test_email.py
+def test_send_email_success():
+    # Arrange: mock httpx
+    # Act: call send_email_via_resend
+    # Assert: email sent, no exception
+``` 

@@ -1,0 +1,15 @@
+Section: Testing & Validation
+Step 4: Test Campaign Fields and Company Settings
+
+Task: Add and update test cases to cover the new campaign fields (demographics, interests, audiences) and company settings for default interests/audiences. Ensure backend and frontend tests verify correct behavior for creation, update, and UI rendering. Test predictive search and custom value addition in the campaign form.
+
+Files:
+- backend/app/tests/: Add/extend tests for campaign creation/update with new fields, and company settings endpoints.
+- frontend/src/components/Campaigns/CampaignForm.test.tsx: Add/extend tests for form rendering, predictive search, and custom value addition.
+- frontend/src/app/user-profile/[[...user-profile]]/page.test.tsx: Add/extend tests for managing company defaults.
+
+Step Dependencies: None (can be executed independently).
+
+User Instructions:
+- Run backend and frontend test suites.
+- Verify all new and updated tests pass and cover the new features. 

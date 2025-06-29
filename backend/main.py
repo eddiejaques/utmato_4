@@ -24,18 +24,14 @@ from app.models.company import Company
 from app.schemas.user import CurrentUser
 from sqlalchemy.future import select
 from app.api import invitations
+from app.api import company
 
 app = FastAPI()
 
-# CORS Middleware
-origins = [
-    "http://localhost:3000",
-    # Add other origins if needed, e.g., your production frontend URL
-]
-
+# --- CORS Middleware (must be before any other middleware or routers) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # Add more origins as needed
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,6 +46,7 @@ app.include_router(campaigns.router, prefix="/api/v1/campaigns", tags=["campaign
 app.include_router(utm.router, prefix="/api/v1/utm", tags=["utm"])
 app.include_router(search.router, prefix="/api/v1/search", tags=["search"])
 app.include_router(invitations.router, prefix="/api/v1/invitations", tags=["invitations"])
+app.include_router(company.router, prefix="/api/v1/company", tags=["company"])
 
 @app.get("/")
 def read_root():

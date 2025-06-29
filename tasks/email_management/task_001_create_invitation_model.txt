@@ -1,0 +1,36 @@
+# Task 001: Create Invitation Model
+
+## Description
+Design and implement the SQLAlchemy model for the invitations table in the backend. The model should support all fields required for the invitation flow.
+
+## Requirements
+- Fields: id, email, role, inviter_id, company_id, token, status, created_at, updated_at
+- Use appropriate data types and constraints (unique, nullable, etc.)
+- Add indexes for efficient lookup by email and token
+
+## Acceptance Criteria
+- Model is defined in backend/app/models/invitation.py
+- Alembic migration is created and applied
+- Model is importable and usable in service and API layers
+
+## Technical Details / Impacted Files
+- backend/app/models/invitation.py (new)
+- backend/app/schemas/invitation.py (update or new)
+- backend/app/db/base.py (update to import new model)
+- backend/migrations/xxxx_create_invitation_table.py (new Alembic migration)
+
+## Pseudocode Ideas
+```python
+# backend/app/models/invitation.py
+class Invitation(Base):
+    __tablename__ = "invitations"
+    id = Column(Integer, primary_key=True)
+    email = Column(String, nullable=False, index=True)
+    role = Column(String, nullable=False)
+    inviter_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    token = Column(String, unique=True, nullable=False, index=True)
+    status = Column(String, default="pending", nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+``` 
