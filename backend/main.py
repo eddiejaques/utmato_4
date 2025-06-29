@@ -24,6 +24,7 @@ from app.models.company import Company
 from app.schemas.user import CurrentUser
 from sqlalchemy.future import select
 from app.api import invitations
+from app.api import company
 
 app = FastAPI()
 
@@ -45,6 +46,7 @@ app.include_router(campaigns.router, prefix="/api/v1/campaigns", tags=["campaign
 app.include_router(utm.router, prefix="/api/v1/utm", tags=["utm"])
 app.include_router(search.router, prefix="/api/v1/search", tags=["search"])
 app.include_router(invitations.router, prefix="/api/v1/invitations", tags=["invitations"])
+app.include_router(company.router, prefix="/api/v1/company", tags=["company"])
 
 @app.get("/")
 def read_root():

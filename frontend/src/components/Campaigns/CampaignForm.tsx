@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import { createCampaign, updateCampaign } from '@/store/campaignSlice';
 import { Campaign, CampaignStatus } from '@/types/campaign';
+import { getCompanyDefaults } from '@/api/company';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,8 +29,8 @@ import {
   } from "@/components/ui/select"
 import { Badge } from "@/components/atoms/Badge";
 
-const INTEREST_SUGGESTIONS = ["sports", "music", "reading", "travel", "tech"];
-const AUDIENCE_SUGGESTIONS = ["audience1", "audience2", "audience3"];
+const FALLBACK_INTERESTS = ["sports", "music", "reading", "travel", "tech"];
+const FALLBACK_AUDIENCES = ["audience1", "audience2", "audience3"];
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -53,6 +54,8 @@ export function CampaignForm({ campaign, onSuccess }: CampaignFormProps) {
   const [interestInput, setInterestInput] = useState("");
   const [audiences, setAudiences] = useState<string[]>(campaign?.audiences || []);
   const [audienceInput, setAudienceInput] = useState("");
+  const [interestSuggestions, setInterestSuggestions] = useState<string[]>(FALLBACK_INTERESTS);
+  const [audienceSuggestions, setAudienceSuggestions] = useState<string[]>(FALLBACK_AUDIENCES);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -80,6 +83,18 @@ export function CampaignForm({ campaign, onSuccess }: CampaignFormProps) {
       setAudiences(campaign.audiences || []);
     }
   }, [campaign, form]);
+
+  useEffect(() => {
+    getCompanyDefaults()
+      .then((defaults) => {
+        setInterestSuggestions(defaults.interests.length ? defaults.interests : FALLBACK_INTERESTS);
+        setAudienceSuggestions(defaults.audiences.length ? defaults.audiences : FALLBACK_AUDIENCES);
+      })
+      .catch(() => {
+        setInterestSuggestions(FALLBACK_INTERESTS);
+        setAudienceSuggestions(FALLBACK_AUDIENCES);
+      });
+  }, []);
 
   function handleAddValue(input: string, setInput: (v: string) => void, values: string[], setValues: (v: string[]) => void) {
     const trimmed = input.trim();
@@ -198,10 +213,10 @@ export function CampaignForm({ campaign, onSuccess }: CampaignFormProps) {
             className="mb-1"
           />
           <div className="flex flex-wrap gap-1">
-            {INTEREST_SUGGESTIONS.filter(s => !interests.includes(s)).map(s => (
-              <button type="button" key={s} className="text-xs px-2 py-1 bg-muted rounded hover:bg-accent" onClick={() => handleAddValue(s, setInterestInput, interests, setInterests)}>
+            {interestSuggestions.filter(s => !interests.includes(s)).map(s => (
+              <Badge key={s} onClick={() => handleAddValue(s, setInterestInput, interests, setInterests)} className="cursor-pointer">
                 {s}
-              </button>
+              </Badge>
             ))}
           </div>
         </div>
@@ -227,10 +242,10 @@ export function CampaignForm({ campaign, onSuccess }: CampaignFormProps) {
             className="mb-1"
           />
           <div className="flex flex-wrap gap-1">
-            {AUDIENCE_SUGGESTIONS.filter(s => !audiences.includes(s)).map(s => (
-              <button type="button" key={s} className="text-xs px-2 py-1 bg-muted rounded hover:bg-accent" onClick={() => handleAddValue(s, setAudienceInput, audiences, setAudiences)}>
+            {audienceSuggestions.filter(s => !audiences.includes(s)).map(s => (
+              <Badge key={s} onClick={() => handleAddValue(s, setAudienceInput, audiences, setAudiences)} className="cursor-pointer">
                 {s}
-              </button>
+              </Badge>
             ))}
           </div>
         </div>

@@ -1,0 +1,97 @@
+# Invitation Email Flow: Pseudocode & Sequence
+
+## Step-by-Step Flow Diagram
+
+```
+Frontend (Next.js)
+    |
+    |---POST /api/invitations--->|
+    |
+FastAPI Backend (Python)
+    |
+    |---Validate input, check permissions, check for existing user/invite--->|
+    |---Generate token, insert invitation, compose email--->|
+    |---Call Resend API to send email--->|
+    |
+Supabase (Postgres)
+    |
+    |---Store invitation row--->|
+    |
+Resend API
+    |
+    |---Send invitation email to invitee--->|
+    |
+Invitee
+    |
+    |---Receives email, clicks invite link, completes onboarding--->|
+```
+
+---
+
+## Backend Pseudocode (FastAPI)
+
+```python
+@router.post("/api/invitations")
+async def invite_user(request: InviteUserRequest, current_user: User = Depends(get_current_user)):
+    # 1. Validate input
+    if not is_valid_email(request.email):
+        raise HTTPException(400, "Invalid email")
+    if request.role not in ALLOWED_ROLES:
+        raise HTTPException(400, "Invalid role")
+    # 2. Check permissions
+    if not current_user.is_manager:
+        raise HTTPException(403, "Not authorized")
+    # 3. Check for existing user/invite
+    if await user_exists(request.email):
+        raise HTTPException(409, "User already exists")
+    if await invitation_exists(request.email):
+        raise HTTPException(409, "Invitation already sent")
+    # 4. Generate invitation token
+    token = generate_secure_token()
+    # 5. Insert invitation into Supabase
+    invitation = await db.insert_invitation(
+        email=request.email,
+        role=request.role,
+        inviter_id=current_user.id,
+        company_id=current_user.company_id,
+        token=token,
+        status="pending"
+    )
+    # 6. Compose email
+    invite_link = f"{FRONTEND_URL}/accept-invite?token={token}"
+    email_body = render_template("invite_email.html", {
+        "invite_link": invite_link,
+        "inviter_name": current_user.name,
+        "company_name": current_user.company_name,
+        "role": request.role
+    })
+    # 7. Send email via Resend API
+    await send_email_via_resend(
+        to=request.email,
+        subject="You're invited to join {company_name}",
+        html=email_body
+    )
+    # 8. Log event (optional)
+    log_event("invitation_sent", user_id=current_user.id, invitee=request.email)
+    # 9. Return response
+    return {"success": True, "message": "Invitation sent"}
+```
+
+---
+
+## Sequence Diagram (ASCII)
+
+```
+Frontend         FastAPI           Supabase DB         Resend API
+   |                 |                  |                  |
+   |---POST /invite->|                  |                  |
+   |                 |--validate------->|                  |
+   |                 |<--ok-------------|                  |
+   |                 |--check exists--->|                  |
+   |                 |<--not found------|                  |
+   |                 |--insert invite-->|                  |
+   |                 |<--row created----|                  |
+   |                 |--send email------------------------>|
+   |                 |<--email sent------------------------|
+   |<--success-------|                  |                  |
+``` 

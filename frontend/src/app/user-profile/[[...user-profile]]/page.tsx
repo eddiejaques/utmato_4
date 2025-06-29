@@ -14,6 +14,9 @@ import { InviteUserForm } from '@/components/Team/InviteUserForm';
 import { PendingInvites } from '@/components/Team/PendingInvites';
 import Link from 'next/link';
 import { Icon } from '@/components/atoms/Icon';
+import { getCompanyDefaults, updateCompanyDefaults } from '@/api/company';
+import type { CompanyDefaults } from '@/types/company';
+import { Input } from '@/components/ui/input';
 
 export default function UserProfilePage() {
   const dispatch = useDispatch();
@@ -26,6 +29,11 @@ export default function UserProfilePage() {
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
   const [deletingCampaignId, setDeletingCampaignId] = useState<string | null>(null);
   const [deletingUTMLinkId, setDeletingUTMLinkId] = useState<string | null>(null);
+  const [companyDefaults, setCompanyDefaults] = useState<CompanyDefaults | null>(null);
+  const [loadingDefaults, setLoadingDefaults] = useState(false);
+  const [newInterest, setNewInterest] = useState('');
+  const [newAudience, setNewAudience] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -40,6 +48,79 @@ export default function UserProfilePage() {
       dispatch(fetchUTMLinksByCampaign(selectedCampaignId) as any);
     }
   }, [dispatch, selectedCampaignId]);
+
+  // Fetch company defaults if user is manager
+  useEffect(() => {
+    if (user?.role === 'MANAGER') {
+      setLoadingDefaults(true);
+      getCompanyDefaults()
+        .then(setCompanyDefaults)
+        .catch(() => toast.error('Failed to load company defaults'))
+        .finally(() => setLoadingDefaults(false));
+    }
+  }, [user]);
+
+  const handleAddInterest = async () => {
+    if (!newInterest.trim() || !companyDefaults) return;
+    const updated = { ...companyDefaults, interests: [...companyDefaults.interests, newInterest.trim()] };
+    setSaving(true);
+    try {
+      const res = await updateCompanyDefaults({ interests: updated.interests });
+      setCompanyDefaults(res);
+      setNewInterest('');
+      toast.success('Interest added');
+    } catch {
+      toast.error('Failed to add interest');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemoveInterest = async (interest: string) => {
+    if (!companyDefaults) return;
+    const updated = { ...companyDefaults, interests: companyDefaults.interests.filter(i => i !== interest) };
+    setSaving(true);
+    try {
+      const res = await updateCompanyDefaults({ interests: updated.interests });
+      setCompanyDefaults(res);
+      toast.success('Interest removed');
+    } catch {
+      toast.error('Failed to remove interest');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAddAudience = async () => {
+    if (!newAudience.trim() || !companyDefaults) return;
+    const updated = { ...companyDefaults, audiences: [...companyDefaults.audiences, newAudience.trim()] };
+    setSaving(true);
+    try {
+      const res = await updateCompanyDefaults({ audiences: updated.audiences });
+      setCompanyDefaults(res);
+      setNewAudience('');
+      toast.success('Audience added');
+    } catch {
+      toast.error('Failed to add audience');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemoveAudience = async (audience: string) => {
+    if (!companyDefaults) return;
+    const updated = { ...companyDefaults, audiences: companyDefaults.audiences.filter(a => a !== audience) };
+    setSaving(true);
+    try {
+      const res = await updateCompanyDefaults({ audiences: updated.audiences });
+      setCompanyDefaults(res);
+      toast.success('Audience removed');
+    } catch {
+      toast.error('Failed to remove audience');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (!user) {
     return <div className="p-8">Loading profile...</div>;
@@ -88,6 +169,68 @@ export default function UserProfilePage() {
           </div>
         </div>
       </section>
+      {/* Company Defaults Management Section (Manager only) */}
+      {user.role === 'MANAGER' && (
+        <section aria-label="Company Defaults" className="bg-white rounded shadow p-6">
+          <h2 className="text-2xl font-bold mb-6">Default Interests & Audiences</h2>
+          {loadingDefaults ? (
+            <div>Loading defaults...</div>
+          ) : companyDefaults ? (
+            <>
+              <div className="mb-6">
+                <h3 className="font-semibold mb-2">Default Interests</h3>
+                <div className="flex gap-2 mb-2">
+                  <Input
+                    value={newInterest}
+                    onChange={e => setNewInterest(e.target.value)}
+                    placeholder="Add interest"
+                    className="w-64"
+                    disabled={saving}
+                    onKeyDown={e => e.key === 'Enter' && handleAddInterest()}
+                  />
+                  <Button onClick={handleAddInterest} disabled={saving || !newInterest.trim()} size="sm">Add</Button>
+                </div>
+                <ul className="flex flex-wrap gap-2">
+                  {companyDefaults.interests.map((interest) => (
+                    <li key={interest} className="bg-muted px-3 py-1 rounded-full flex items-center gap-2">
+                      <span>{interest}</span>
+                      <Button variant="ghost" size="icon" onClick={() => handleRemoveInterest(interest)} disabled={saving} aria-label={`Remove ${interest}`}>
+                        ×
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-2">Default Audiences</h3>
+                <div className="flex gap-2 mb-2">
+                  <Input
+                    value={newAudience}
+                    onChange={e => setNewAudience(e.target.value)}
+                    placeholder="Add audience"
+                    className="w-64"
+                    disabled={saving}
+                    onKeyDown={e => e.key === 'Enter' && handleAddAudience()}
+                  />
+                  <Button onClick={handleAddAudience} disabled={saving || !newAudience.trim()} size="sm">Add</Button>
+                </div>
+                <ul className="flex flex-wrap gap-2">
+                  {companyDefaults.audiences.map((audience) => (
+                    <li key={audience} className="bg-muted px-3 py-1 rounded-full flex items-center gap-2">
+                      <span>{audience}</span>
+                      <Button variant="ghost" size="icon" onClick={() => handleRemoveAudience(audience)} disabled={saving} aria-label={`Remove ${audience}`}>
+                        ×
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          ) : (
+            <div>No defaults set.</div>
+          )}
+        </section>
+      )}
     </div>
   );
 } 

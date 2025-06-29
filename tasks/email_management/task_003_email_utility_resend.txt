@@ -1,0 +1,38 @@
+# Task 003: Email Utility for Resend API
+
+## Description
+Implement a utility function to send transactional emails using the Resend API.
+
+## Requirements
+- Use async HTTP client (httpx)
+- Read API key and sender from environment/config
+- Function accepts recipient, subject, and HTML body
+- Handles errors and logs failures
+
+## Acceptance Criteria
+- Utility is defined in backend/app/utils/email.py
+- Function is reusable for other email types
+- Proper error handling and logging implemented
+- Covered by unit tests
+
+## Technical Details / Impacted Files
+- backend/app/utils/email.py (new)
+- backend/app/services/invitation_service.py (update to use utility)
+- backend/.env (add RESEND_API_KEY, RESEND_SENDER_EMAIL)
+- backend/app/tests/test_email.py (new or update)
+
+## Pseudocode Ideas
+```python
+# backend/app/utils/email.py
+import httpx
+
+async def send_email_via_resend(to: str, subject: str, html: str):
+    api_key = settings.RESEND_API_KEY
+    sender = settings.RESEND_SENDER_EMAIL
+    payload = {"to": to, "from": sender, "subject": subject, "html": html}
+    headers = {"Authorization": f"Bearer {api_key}"}
+    async with httpx.AsyncClient() as client:
+        response = await client.post("https://api.resend.com/emails", json=payload, headers=headers)
+        response.raise_for_status()
+    return response.json()
+``` 
